@@ -1,8 +1,8 @@
+using LetsTalk.Context;
 using LetsTalk.Client.ViewModels;
 using LetsTalk.Components;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
-using DbContext = LetsTalk.Client.Context.DbContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +11,7 @@ builder.Services.AddMudServices();
 
 builder.Services.AddScoped<CounterViewModel>();
 
-builder.Services.AddDbContext<DbContext>(options => 
+builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseMySql(
             connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
             ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))

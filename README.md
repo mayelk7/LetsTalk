@@ -80,3 +80,44 @@ LetsTalk.Client/
     └── MaPage.razor
 ```
 
+## EFCore - Migrations
+
+### Installation de l'outil CLI
+
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+### Créer une migration
+
+Après avoir modifié vos modèles ou `AppDbContext`, créez une migration :
+
+```bash
+dotnet ef migrations add InitialMigration --project LetsTalk --startup-project LetsTalk
+```
+
+> `InitialMigration` est le nom de la migration (à adapter selon vos changements)
+
+### Appliquer la migration à la base de données
+
+```bash
+dotnet ef database update --project LetsTalk --startup-project LetsTalk
+```
+
+### Commandes utiles
+
+- **Supprimer la dernière migration (non appliquée) :**
+  ```bash
+  dotnet ef migrations remove --project LetsTalk --startup-project LetsTalk
+  ```
+
+- **Lister les migrations :**
+  ```bash
+  dotnet ef migrations list --project LetsTalk --startup-project LetsTalk
+  ```
+
+- **Revenir à une migration spécifique :**
+  ```bash
+  dotnet ef database update NomDeLaMigration --project LetsTalk --startup-project LetsTalk
+  ```
+
