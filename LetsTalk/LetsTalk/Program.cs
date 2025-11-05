@@ -1,4 +1,4 @@
-using LetsTalk.Client.Pages;
+using LetsTalk.Client.ViewModels;
 using LetsTalk.Components;
 using MudBlazor.Services;
 
@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
+
+builder.Services.AddScoped<CounterViewModel>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

@@ -1,3 +1,4 @@
+using LetsTalk.Client.ViewModels;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 
