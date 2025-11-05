@@ -85,7 +85,7 @@ LetsTalk.Client/
 ### Installation de l'outil CLI
 
 Une classe Expemple est dans le Dossier Models dans LetsTalk.Client, pensez bien à mettre les attribus de Primary Key et Index.
-Pour qu'il se rajoute dans la base il faut également ajouter dans AppDbContext.cs votre classe comme sr l'exemple.
+Pour qu'il se rajoute dans la base il faut également ajouter dans AppDbContext.cs votre classe comme sur l'exemple.
 
 ```bash
 dotnet tool install --global dotnet-ef
