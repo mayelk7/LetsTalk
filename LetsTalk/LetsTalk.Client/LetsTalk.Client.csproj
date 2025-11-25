@@ -31,4 +31,8 @@
     <AdditionalFiles Include="Views\Layout\NavMenu.razor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\LetsTalk.Shared\LetsTalk.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
