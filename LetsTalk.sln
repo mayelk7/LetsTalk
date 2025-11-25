@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetsTalk", "LetsTalk\LetsTa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetsTalk.Client", "LetsTalk\LetsTalk.Client\LetsTalk.Client.csproj", "{940AC08F-BFC0-49B4-AAF4-669C046CDB3D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetsTalk.Shared", "LetsTalk.Shared\LetsTalk.Shared.csproj", "{DB558027-DD6F-460A-A73D-902045901464}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,11 +23,17 @@ Global
 		{940AC08F-BFC0-49B4-AAF4-669C046CDB3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{940AC08F-BFC0-49B4-AAF4-669C046CDB3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{940AC08F-BFC0-49B4-AAF4-669C046CDB3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB558027-DD6F-460A-A73D-902045901464}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB558027-DD6F-460A-A73D-902045901464}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB558027-DD6F-460A-A73D-902045901464}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB558027-DD6F-460A-A73D-902045901464}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D5A173CB-13F5-427C-9D91-A1FD30F1F2ED}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal
