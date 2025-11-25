@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetsTalk", "LetsTalk\LetsTa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetsTalk.Client", "LetsTalk\LetsTalk.Client\LetsTalk.Client.csproj", "{940AC08F-BFC0-49B4-AAF4-669C046CDB3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetsTalk.Shared", "LetsTalk.Shared\LetsTalk.Shared.csproj", "{DB558027-DD6F-460A-A73D-902045901464}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LetsTalk.Shared", "LetsTalk\LetsTalk.Shared\LetsTalk.Shared.csproj", "{DB558027-DD6F-460A-A73D-902045901464}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
