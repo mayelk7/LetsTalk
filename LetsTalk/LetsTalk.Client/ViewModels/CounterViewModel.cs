@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using LetsTalk.Shared.ModelsDTO;
+using LetsTalk.Shared.ModelsDto;
 
 namespace LetsTalk.Client.ViewModels;
 
