@@ -9,8 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add MudBlazor services
 builder.Services.AddMudServices();
 
-builder.Services.AddScoped<CounterViewModel>();
-
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseMySql(
             connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
