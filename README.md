@@ -1,102 +1,95 @@
-# LetsTalk - Guide MVVM
+# LetsTalk
+Un petit guide pour comprendre la structure du projet LetsTalk, comment le configurer et le lancer localement.
+## Aperçu du dépôt
+Le dépôt contient une solution multi-projet pour une application Blazor/MVVM :
+- `LetsTalk/` — Projet serveur (ASP.NET Core) qui expose des composants interactifs, configure EF Core et sert l'application.
+  - `Program.cs` : configuration et démarrage de l'application serveur.
+  - `Context/` : `AppDbContext.cs` (configuration EF Core).
+  - `Migrations/` : migrations EF Core.
+  - `Models/` : entités côté serveur.
+  - `Components/` et `wwwroot/` : ressources et composants Razor.
+- `LetsTalk.Client/` — Client Blazor WebAssembly (projet front-end). Contient les `Views/`, `ViewModels/` et les ressources front.
+  - `Program.cs` : point d'entrée WebAssembly.
+  - `ViewModels/` : ViewModels (ex. `CounterViewModel.cs`).
+  - `Views/` : pages et layout.
+- `LetsTalk.Shared/` — Types partagés entre le client et le serveur (DTOs, modèles légers).
+La solution racine contient `LetsTalk.sln`.
+## Prérequis
+- .NET 9 SDK (ou version compatible utilisée par le projet)
+- MySQL / MariaDB si vous utilisez la connexion configurée par défaut
+- (Optionnel) dotnet-ef pour gérer les migrations :
+## Configuration
 
-## Création d'une View et ViewModel
+Les fichiers de configuration sont situés dans :
 
-### 1. Créer le ViewModel
+- `LetsTalk/appsettings.json` et `LetsTalk/appsettings.Development.json`
+- `LetsTalk.Client/appsettings.json` et `LetsTalk.Client/appsettings.Development.json`
 
-**Emplacement :** `LetsTalk.Client/ViewModels/`
+Assurez-vous de renseigner la chaîne de connexion nommée `DefaultConnection` dans `LetsTalk/appsettings.json` avant de lancer les migrations ou de démarrer l'application.
+## Construire et lancer l'application (locale)
 
-```csharp
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+Depuis la racine du dépôt :
 
-namespace LetsTalk.Client.ViewModels;
-
-public partial class MonViewModel : ObservableObject
-{
-    // Propriété observable
-    [ObservableProperty]
-    private string _monTexte = "Valeur initiale";
-    
-    // Commande
-    [RelayCommand]
-    private void MonAction()
-    {
-        MonTexte = "Nouvelle valeur";
-    }
-}
-```
-
-### 2. Enregistrer le ViewModel
-
-**Fichier :** `LetsTalk/Program.cs`
-
-```csharp
-builder.Services.AddScoped<MonViewModel>();
-```
-
-### 3. Créer la View
-
-**Emplacement :** `LetsTalk.Client/Views/`
-
-```razor
-@page "/ma-page"
-@inject MonViewModel Vm
-
-<PageTitle>Ma Page</PageTitle>
-
-<MudText Typo="Typo.h3">@Vm.MonTexte</MudText>
-
-<MudButton Color="Color.Primary" 
-           Variant="Variant.Filled" 
-           @onclick="Vm.MonActionCommand.Execute">
-    Cliquer ici
-</MudButton>
-
-@code {
-    protected override void OnInitialized()
-    {
-        Vm.PropertyChanged += (_, __) => StateHasChanged();
-        base.OnInitialized();
-    }
-}
-```
-
-## Points clés
-
-- **`[ObservableProperty]`** : Génère automatiquement la propriété publique et `INotifyPropertyChanged`
-- **`[RelayCommand]`** : Génère automatiquement une commande avec le suffixe `Command`
-- **`@inject`** : Injecte le ViewModel dans la View
-- **`Vm.PropertyChanged += ...`** : Synchronise l'UI avec les changements du ViewModel
-- **CommunityToolkit.Mvvm** : Simplifie le pattern MVVM avec des source generators
-
-## Structure du projet
-
-```
-LetsTalk.Client/
-├── ViewModels/          # Logique métier
-│   └── MonViewModel.cs
-└── Views/               # Interface utilisateur
-    └── MaPage.razor
-```
-
-## EFCore - Migrations
-
-### Installation de l'outil CLI
-
-Une classe Expemple est dans le Dossier Models dans LetsTalk.Client, pensez bien à mettre les attribus de Primary Key et Index.
-Pour qu'il se rajoute dans la base il faut également ajouter dans AppDbContext.cs votre classe comme sur l'exemple.
+1) Restaurer les packages et compiler :
 
 ```bash
-dotnet tool install --global dotnet-ef
+dotnet restore
+dotnet build
 ```
 
-### Créer une migration
+2a) Lancer le projet serveur (recommandé) — le serveur expose les composants interactifs et peut servir le client :
+dotnet run --project LetsTalk/LetsTalk.csproj
+2b) (Optionnel) Lancer uniquement le client WebAssembly :
+dotnet run --project LetsTalk/LetsTalk.Client/LetsTalk.Client.csproj
+Accédez ensuite à l'URL indiquée dans la sortie (généralement https://localhost:nnnn).
 
-Après avoir modifié vos modèles ou `AppDbContext`, créez une migration :
+## EF Core — Migrations
+Exemples de commandes (depuis la racine du dépôt). Ici on cible explicitement le projet serveur :
+
+- Créer une nouvelle migration :
 
 ```bash
-dotnet ef migrations add InitialMigration --project LetsTalk --startup-project LetsTalk
+dotnet ef migrations add NomDeLaMigration --project LetsTalk/LetsTalk.csproj --startup-project LetsTalk/LetsTalk.csproj
+```
+- Appliquer les migrations à la base de données :
+
+```bash
+dotnet ef database update --project LetsTalk/LetsTalk.csproj --startup-project LetsTalk/LetsTalk.csproj
+```
+- Supprimer la dernière migration (non appliquée) :
+
+```bash
+dotnet ef migrations remove --project LetsTalk/LetsTalk.csproj --startup-project LetsTalk/LetsTalk.csproj
+```
+- Lister les migrations :
+
+```bash
+dotnet ef migrations list --project LetsTalk/LetsTalk.csproj --startup-project LetsTalk/LetsTalk.csproj
+```
+Notes :
+- Si `dotnet ef` signale des erreurs, vérifiez que le SDK et le package provider (ex. Pomelo.EntityFrameworkCore.MySql) sont correctement restaurés.
+- Vous pouvez exécuter les commandes EF depuis le dossier `LetsTalk/` en enlevant les paramètres `--project`/`--startup-project`.
+
+## Où modifier / ajouter du code
+
+- ViewModels : `LetsTalk.Client/ViewModels/`
+- Views : `LetsTalk.Client/Views/`
+- Entités / modèles serveur : `LetsTalk/Models/`
+- Contexte EF Core : `LetsTalk/Context/AppDbContext.cs`
+
+## Contribution
+
+- Créez une branche feature, testez localement et ouvrez une MR/PR vers la branche principale.
+- Pour des changements de schéma : ajoutez une migration et testez l'application après `dotnet ef database update`.
+
+---
+
+Si vous voulez, je peux :
+- Ajouter des instructions de debug plus détaillées (ex : variables d'environnement, ports),
+- Générer un script de lancement pour Windows (cmd) ou PowerShell,
+- Ajouter un fichier CONTRIBUTING.md ou des badges CI.
+
+Indiquez ce que vous souhaitez que j'ajoute ensuite.
 ```
 
 > `InitialMigration` est le nom de la migration (à adapter selon vos changements)
