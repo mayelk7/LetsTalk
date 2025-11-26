@@ -3,10 +3,12 @@ using LetsTalk.Client.ViewModels;
 using LetsTalk.Components;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add MudBlazor services
+builder.Services.AddControllers();
 builder.Services.AddMudServices();
 
 builder.Services.AddDbContext<AppDbContext>(options => 
@@ -15,6 +17,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
         )
     );
+
+builder.Services.AddScoped<CounterViewModel>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -37,13 +41,18 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
 
 app.UseAntiforgery();
+
+app.MapControllers();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(LetsTalk.Client._Imports).Assembly);
+
+app.MapFallbackToFile("index.html");
 
 app.Run();

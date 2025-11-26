@@ -9,7 +9,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88ba99b6-afb7-456e-8247-62c505dc6bc0" name="Changes" comment="" />
+    <list default="true" id="88ba99b6-afb7-456e-8247-62c505dc6bc0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/TestController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Program.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -41,7 +45,7 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/CounterViewModel.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Context/AppDbContext.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/fcari/source/repos/LetsTalk/LetsTalk/LetsTalk/Context/AppDbContext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/TestControllers.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -73,7 +77,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.LetsTalk: http">
+  <component name="RunManager" selected=".NET Launch Settings Profile.LetsTalk: https">
     <configuration name="LetsTalk.Client" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -129,6 +133,11 @@
         <option name="Build" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue=".NET Launch Settings Profile.LetsTalk: http" />
+      <item itemvalue=".NET Launch Settings Profile.LetsTalk: https" />
+      <item itemvalue=".NET Project.LetsTalk.Client" />
+    </list>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
