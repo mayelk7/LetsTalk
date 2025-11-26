@@ -1,36 +1,48 @@
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 namespace LetsTalk.Models;
-
-[PrimaryKey(nameof(Id))]
 public class Utilisateur
 {
-    public int Id { get; set; }
-    
-    [Column(TypeName = "varchar(255)")]
-    [Required]
+    [Key]
+    public int UtilisateurId { get; set; }
+
+    [Required, MaxLength(255)]
     public string Username { get; set; }
-    
-    [Column(TypeName = "varchar(300)")]
-    [Required]
+
+    [Required, MaxLength(255)]
     public string Email { get; set; }
-    
-    [Column(TypeName = "varchar(10)")]
-    [Phone]
+
+    [Required,MaxLength(10)]
     public string Phone { get; set; }
-    
-    [Required]
+
+    [Required, MaxLength(255)]
     public string Password { get; set; }
-    
-    public string ProfilePicture { get; set; }
-    
-    [Required]
+
+    public string? ProfilPicture { get; set; }
+
+    [Required,DefaultValue(true)]
     public bool Actif { get; set; }
-    
-    public string Type2FA { get; set; }
-    
+
+    [Required, MaxLength(255)]
+    public byte[] Salt { get; set; }
+
     [Required]
     public DateTime CreatedAt { get; set; }
+
+    [MaxLength(50)]
+    public string Type2Fa { get; set; }
+
+    // Navigations
+    public ICollection<Membre> Membres { get; set; }
+    public ICollection<MessageCanal> MessagesCanal { get; set; }
+    public ICollection<MessagePriver> MessagesPriver { get; set; }
+    public ICollection<MembreMP> MembreMPs { get; set; }
+    public ICollection<Notification> Notifications { get; set; }
+    public ICollection<MessageLu> MessageLus { get; set; }
+
+    // Owned servers (if user is owner referenced by Server.OwnerId)
+    public ICollection<Server> OwnedServers { get; set; }
 }
