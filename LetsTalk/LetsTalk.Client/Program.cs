@@ -6,4 +6,6 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddMudServices();
 
+builder.Services.AddScoped<CounterViewModel>();
+
 await builder.Build().RunAsync();

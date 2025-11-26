@@ -22,10 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="Layout\MainLayout.razor" />
     <_ContentIncludedByDefault Remove="Layout\NavMenu.razor" />
   </ItemGroup>
@@ -33,6 +29,10 @@
   <ItemGroup>
     <AdditionalFiles Include="Views\Layout\MainLayout.razor" />
     <AdditionalFiles Include="Views\Layout\NavMenu.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LetsTalk.Shared\LetsTalk.Shared.csproj" />
   </ItemGroup>
 
 </Project>
