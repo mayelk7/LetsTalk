@@ -1,7 +1,7 @@
 // Role.cs
 using System;
 using System.ComponentModel.DataAnnotations;
-namespace Models;
+namespace LetsTalk.Models;
 public class Role
 {
     [Key]

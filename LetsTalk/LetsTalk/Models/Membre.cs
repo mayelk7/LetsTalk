@@ -1,5 +1,5 @@
 // Membre.cs
-namespace Models;
+namespace LetsTalk.Models;
 public class Membre
 {
     // Composite PK (UtilisateurId, ServerId, RoleId)

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Models;
 using LetsTalk.Data;
+using LetsTalk.Models;
 
 namespace LetsTalk.Controllers
 {
@@ -15,30 +15,31 @@ namespace LetsTalk.Controllers
         {
             _db = db;
         }
-
+        
         [HttpGet("GetAllMessageCanal")]
-        public List<MessageCanal> GetAllMessageCanal()
+        public List<MessageCanalDto> GetAllMessageCanal()
         {
             return _db.GetAllMessagescanal();
         }
+
         [HttpGet("GetAllMessagePriver")]
-        public List<MessagePriver> GetAllMessagepriver()
+        public List<MessagePriverDto> GetAllMessagepriver()
         {
             return _db.GetAllMessagespriver();
         }
-
+        
         [HttpGet("GetAllGroupe")]
         public List<Canaux> GetAllGroupe()
         {
             return _db.GetAllSalons();
         }
-
+        /*
         [HttpGet("GetAllMessageNonLus")]
         public void GetAllMessageNonLus(int Userid)
         {
             _db.GetAllMessagesPriverNonLus(Userid);
         }
-
+        */
         [HttpGet("GetAllUser")]
         public List<Utilisateur> GetAllUser()
         {
@@ -56,19 +57,25 @@ namespace LetsTalk.Controllers
         {
             return _db.SetNewUser(token, username, email, phone, password, type2fa);
         }
-
+       
         [HttpPost("SetNewGroupe")]
-        public bool SetNewGroupe(string token, string nomsalon, string nomcanal, int canalid)
+        public bool SetNewGroupe(string token, string nomsalon, int idOwner)
         {
-            return _db.SetNewServer(token, nomsalon, canalid);
+            return _db.SetNewServer(token, nomsalon, idOwner);
         }
-
-        [HttpPost("NewMessage/{id_discution}")]
-        public bool NewMessage(int token, int id_discution, string contenue, int canalId)
+       
+       [HttpPost("NewMessageCanal")]
+       public bool NewMessageCanal(int iduser, string contenue, int canalId)
+       {
+           return _db.NewMessageCanal(iduser, contenue, canalId);
+       }
+        
+        [HttpPost("NewMessagePriver")]
+        public bool NewMessagePriver(int iduser, string contenue, int id_discution)
         {
-            return _db.NewMessageCanal(token, id_discution, contenue, canalId);
+            return _db.NewMessagePriver(iduser, id_discution, contenue);
         }
-
+        /*
         [HttpPatch("UpdateGroupe/{id_discution}")]
         public void UpdateGroupe(int token, int id_discution)
         {
@@ -98,5 +105,6 @@ namespace LetsTalk.Controllers
         {
             // à remplir
         }
+        */
     }
 }

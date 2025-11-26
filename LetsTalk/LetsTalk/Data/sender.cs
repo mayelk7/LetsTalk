@@ -1,10 +1,11 @@
 ﻿using Bogus;
-using Models;
+using LetsTalk.Models;
 using LetsTalk.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using LetsTalk.Shared;
+using LetsTalk.Models;
 
 namespace LetsTalk.Data
 {

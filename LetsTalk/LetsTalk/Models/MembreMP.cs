@@ -1,7 +1,7 @@
 // MembreMP.cs
 using System.ComponentModel.DataAnnotations;
 
-namespace Models;
+namespace LetsTalk.Models;
 public class MembreMP
 {
     // PK composite (UtilisateurId, ConversationId)

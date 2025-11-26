@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-namespace Models;
+namespace LetsTalk.Models;
 public class MessageCanal
 {
     [Key]

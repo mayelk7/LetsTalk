@@ -1,8 +1,9 @@
 // Server.cs
+using LetsTalk.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-namespace Models;
+namespace LetsTalk.Models;
 public class Server
 {
     [Key]

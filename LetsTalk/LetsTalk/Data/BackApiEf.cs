@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Models;
 using System.Security.Cryptography;
 using LetsTalk.Context;
+using LetsTalk.Models;
 using LetsTalk.Shared;
 namespace LetsTalk.Data;
 public class BackApiEf
@@ -53,18 +53,50 @@ public class BackApiEf
     }
 
     // Récupérer tous les messages
-    public List<MessageCanal> GetAllMessagescanal()
+    public List<MessageCanalDto> GetAllMessagescanal()
     {
-        return _db.MessagesCanal.Include(m => m.Utilisateur)
-                           .Include(m => m.Canal)
-                           .ToList();
+        return _db.MessagesCanal
+            .Include(m => m.Utilisateur)
+            .Include(m => m.Canal)
+            .Select(m => new MessageCanalDto
+            {
+                MessageId = m.MessageId,
+                Contenu = m.Contenu,
+                DateEnvoi = m.DateEnvoi,
+                UtilisateurId = m.UtilisateurId,
+                Username = m.Utilisateur.Username,
+                CanalId = m.CanalId,
+                NomCanal = m.Canal.Nom
+            })
+            .ToList();
     }
 
-    public List<MessagePriver> GetAllMessagespriver()
+    public List<MessagePriverDto> GetAllMessagespriver()
     {
         return _db.MessagesPriver
             .Include(m => m.Utilisateur)
-            .Include(m => m.ConversationPriver) 
+            .Include(m => m.ConversationPriver)
+                .ThenInclude(c => c.MembreMPs)
+                    .ThenInclude(mp => mp.Utilisateur)
+            .Select(m => new MessagePriverDto
+            {
+                MessageId = m.MessagePriverId,
+                Contenu = m.Contenu,
+                DateEnvoi = m.DateEnvoi,
+
+                UtilisateurId = m.UtilisateurId,
+                Username = m.Utilisateur.Username,
+
+                ConversationPriverId = m.ConversationPriverId,
+
+                MembreMPs = m.ConversationPriver.MembreMPs
+                    .Select(mp => new MembreMPDto
+                    {
+                        UtilisateurId = mp.UtilisateurId,
+                        Username = mp.Utilisateur.Username
+                    })
+                    .ToList()
+            })
             .ToList();
     }
 
@@ -75,7 +107,7 @@ public class BackApiEf
     }
 
     // Créer un nouveau message
-    public bool NewMessageCanal(int idUser, int id_discution, string contenu, int canalId)
+    public bool NewMessageCanal(int idUser, string contenu, int canalId)
     {
         var message = new MessageCanal
         {
@@ -90,7 +122,7 @@ public class BackApiEf
         return _db.SaveChanges() > 0;
     }
 
-    public bool NewMessagePriver(int idUser, int id_discution, string contenu, int canalId)
+    public bool NewMessagePriver(int idUser, int id_discution, string contenu)
     {
         var message = new MessagePriver
         {

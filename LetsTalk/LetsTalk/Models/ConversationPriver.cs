@@ -1,6 +1,6 @@
 // ConversationPriver.cs
 using System.ComponentModel.DataAnnotations;
-namespace Models;
+namespace LetsTalk.Models;
 public class ConversationPriver
 {
     [Key,Required]

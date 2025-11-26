@@ -1,7 +1,7 @@
 // Fichier.cs
 using LetsTalk.Shared;
 using System.ComponentModel.DataAnnotations;
-namespace Models;
+namespace LetsTalk.Models;
 public class Fichier
 {
     [Key]
