@@ -1,6 +1,23 @@
 ﻿@namespace LetsTalk.Client.Views.Components
 
-<h3>VoiceChannel @Channel.Name</h3>
+@if (Channel.Messages.Count != 0)
+{
+    @foreach(var message in Channel.Messages)
+    {
+        <MudChat Class="pa-2 mb-2" ChatPosition="ChatBubblePosition.Start">
+            <MudChatHeader Name="@message.User.Username" Time="@message.Timestamp.ToString()"></MudChatHeader>
+            <MudChatBubble>
+                @message.Content
+            </MudChatBubble>
+        </MudChat>
+    }
+}
+else
+{
+    <MudText>
+        Aucun message !
+    </MudText>
+}
 
 @code {
 

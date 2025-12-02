@@ -7,7 +7,7 @@
 {
     <MudGrid Spacing="0" Style="height: calc(100vh - 80px);">
         <MudItem Xs="2" Elevation="1" Class="mud-border-left">
-            <MudCard>
+            <MudCard Style="border-radius: 0;">
                 <MudCardHeader>
                     <h2>@ServerVm.Server.Name</h2>
                 </MudCardHeader>
@@ -15,8 +15,8 @@
             
             <ServerChannelList Channels="ServerVm.Server.Channels" @bind-SelectedChannel="ServerVm.SelectedChannel"/>
         </MudItem>
-        <MudItem Xs="8" Elevation="1" Class="mud-border-right mud-border-left">
-            <MudCard>
+        <MudItem Xs="8" Elevation="1" Class="mud-border-right mud-border-left border-x-2" Style="border-color: var(--mud-palette-divider);">
+            <MudCard Style="border-radius: 0;">
                 <MudCardHeader>
                     <h2>TextChannel - @ServerVm.SelectedChannel?.Name</h2>
                 </MudCardHeader>
@@ -35,13 +35,13 @@
             }
         </MudItem>
         <MudItem Xs="2" Elevation="1" Class="mud-border-right">
-            <MudCard>
+            <MudCard Style="border-radius: 0;">
                 <MudCardHeader>
                     <h2>Utilisateur - @ServerVm.Server.Users.Count</h2>
                 </MudCardHeader>
             </MudCard>
             
-            <ServerUserList Users="ServerVm.Server.Users"/>
+            <ServerUserList Users="@ServerVm.Server.Users"/>
         </MudItem>
     </MudGrid>
 }

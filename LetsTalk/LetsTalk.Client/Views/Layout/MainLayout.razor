@@ -28,7 +28,7 @@
             {
                 foreach (var item in MainLayoutVm.MenuItems)
                 {
-                    <MudNavLink Href="@item.Href" Match="NavLinkMatch.Prefix" Icon="@item.Icon">@item.Title</MudNavLink>
+                    <MudNavLink Href="@item.Href" Match="NavLinkMatch.All" Icon="@item.Icon">@item.Title</MudNavLink>
                 }
 
             }

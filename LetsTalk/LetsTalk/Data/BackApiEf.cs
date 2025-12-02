@@ -4,6 +4,7 @@ using LetsTalk.Context;
 using LetsTalk.Models;
 using LetsTalk.Shared;
 using LetsTalk.Shared.ModelsDto;
+
 namespace LetsTalk.Data;
 public class BackApiEf
 {
@@ -54,7 +55,7 @@ public class BackApiEf
     }
 
     // Récupérer tous les messages
-    public List<Shared.ModelsDto.MessageCanalDto> GetAllMessagescanal()
+    public List<MessageCanalDto> GetAllMessagescanal()
     {
         return _db.MessagesCanal
             .Include(m => m.Utilisateur)

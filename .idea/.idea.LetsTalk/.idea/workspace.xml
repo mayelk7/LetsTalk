@@ -10,20 +10,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88ba99b6-afb7-456e-8247-62c505dc6bc0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/MainLayoutViewModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/ServerChannelList.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/ServerUserList.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/TextChannel.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/VoiceChannel.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Counter.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Counter.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/LetsTalk.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/LetsTalk.Client.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/TextChannel.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/TextChannel.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/VoiceChannel.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/VoiceChannel.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Layout/MainLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Layout/MainLayout.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Layout/NavMenu.razor" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/MessageCanalDto.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MembreMPDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MembreMPDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageCanalDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageCanalDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessagePriverDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessagePriverDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/LetsTalkController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/LetsTalkController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Data/BackApiEf.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Data/BackApiEf.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Migrations/AppDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Migrations/AppDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/appsettings.Development.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,8 +64,12 @@
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/MainLayoutViewModel.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/ServerChannelList.razor" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/fcari/source/repos/LetsTalk/LetsTalk/LetsTalk.Client/Views/Layout/MainLayout.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/fcari/source/repos/LetsTalk/LetsTalk/LetsTalk.Client/Views/Layout/MainLayout.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Context/AppDbContext.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/fcari/source/repos/LetsTalk/LetsTalk/LetsTalk/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/fcari/source/repos/LetsTalk/LetsTalk/LetsTalk/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="HttpClientEndpointsTabState">
     <option name="cachedRequestData" value="&lt;CachedHttpClientTabRequests&gt;&#10;  &lt;entry key=&quot;2a487995b2b4cb3525ad7d054f4ab9eb72071621&quot; value=&quot;###&amp;#10;GET http://localhost:5278/api/Test&quot; /&gt;&#10;&lt;/CachedHttpClientTabRequests&gt;" />
@@ -182,7 +187,7 @@
       <workItem from="1764252806628" duration="6188000" />
       <workItem from="1764496165704" duration="4107000" />
       <workItem from="1764508778944" duration="12510000" />
-      <workItem from="1764678192580" duration="487000" />
+      <workItem from="1764678192580" duration="4224000" />
     </task>
     <task id="LOCAL-00001" summary="init MVVM + EFCore&#10;README">
       <option name="closed" value="true" />
@@ -240,7 +245,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764161202247</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Implement MainLayout and ServerViewModels; add dynamic menu and server components">
+      <option name="closed" value="true" />
+      <created>1764678946972</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1764678946972</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -257,7 +270,8 @@
     <MESSAGE value="Add Utilisateur model and update AppDbContext; modify connection strings and adding Dto (Data Transfer Object)" />
     <MESSAGE value="Add TestController and configure API services in Program.cs" />
     <MESSAGE value="Add Swagger support for API documentation in Program.cs and update project references" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Swagger support for API documentation in Program.cs and update project references" />
+    <MESSAGE value="Implement MainLayout and ServerViewModels; add dynamic menu and server components" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement MainLayout and ServerViewModels; add dynamic menu and server components" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
