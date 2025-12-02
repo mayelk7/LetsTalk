@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using LetsTalk.Data;
 using LetsTalk.Models;
+using LetsTalk.Shared.ModelsDto;
 
 namespace LetsTalk.Controllers
 {

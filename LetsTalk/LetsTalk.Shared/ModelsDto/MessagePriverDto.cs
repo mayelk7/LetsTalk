@@ -1,6 +1,6 @@
 ﻿namespace LetsTalk.Shared.ModelsDto
 {
-    public class MessagePriverDto
+    public record MessagePriverDto
     {
         public int MessageId { get; set; }
         public string Contenu { get; set; }
