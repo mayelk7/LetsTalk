@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject MainLayoutViewModel MainLayoutVm
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -6,16 +7,45 @@
 <MudSnackbarProvider />
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="ml-3">Let's Talk</MudText>
         <MudSpacer />
+        <MudInput T="string" @bind-Value="@MainLayoutVm.Search" Immediate="true" Variant="Variant.Filled"></MudInput>
+        <MudSpacer />
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+        <MudIconButton Icon="@Icons.Material.Filled.SupervisedUserCircle" Color="Color.Inherit" />
     </MudAppBar>
-    <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavMenu />
+    
+    <MudDrawer id="nav-drawer"
+               ClipMode="DrawerClipMode.Docked"
+               OverlayAutoClose="false"
+               Variant="DrawerVariant.Mini"
+               Open="false"
+               Anchor="Anchor.Start"
+               Elevation="1">
+        <MudNavMenu>
+    
+            @if (MainLayoutVm.MenuItems is not null)
+            {
+                foreach (var item in MainLayoutVm.MenuItems)
+                {
+                    <MudNavLink Href="@item.Href" Match="NavLinkMatch.Prefix" Icon="@item.Icon">@item.Title</MudNavLink>
+                }
+
+            }
+            else
+            {
+                <MudText>Loading...</MudText>
+            }
+
+
+            @* <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="ml-auto"> *@
+            @*     <MudIcon Icon="@Icons.Material.Filled.Add"/> *@
+            @* </MudButton> *@
+
+        </MudNavMenu>
     </MudDrawer>
-    <MudMainContent Class="pt-16 pa-4">
+
+    <MudMainContent Class="pt-16">
         @Body
     </MudMainContent>
 </MudLayout>
@@ -35,6 +65,8 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        
+        MainLayoutVm.PropertyChanged += (_, __) => StateHasChanged();
 
         _theme = new()
         {
@@ -56,18 +88,19 @@
 
     private readonly PaletteLight _lightPalette = new()
     {
-        Primary = "#9225A6",
-        Secondary = "#CA58E0",
-        Background = "#f5f5f5",
-        Surface = "#312C4A",
-        AppbarBackground = "#070512",
-        AppbarText = "#EAE9F1",
-        DrawerBackground = "#1E1A2B",
-        DrawerText = "#EAE9F1",
-        TextPrimary = "#0b0716",
-        TextSecondary = "#B9B6C8",
-        ActionDefault = "#8C869E",
-        LinesDefault = "#5C5B5F33"
+        Primary = "#7C3AED",
+        Secondary = "#6D28D9",
+
+        Background = "#F8FAFC",
+        Surface = "#FFFFFF",
+        AppbarBackground = "#FFFFFF",
+        AppbarText = "#111827",
+        DrawerBackground = "#FFFFFF",
+        DrawerText = "#111827",
+        TextPrimary = "#111827",
+        TextSecondary = "#6B7280",
+        ActionDefault = "#7C3AED",
+        LinesDefault = "#E5E7EB",
     };
 
     private readonly PaletteDark _darkPalette = new()
@@ -99,7 +132,8 @@
         Body2 = new Body2Typography() { FontSize = "13px", FontWeight = "400", LineHeight = "1.4" },
         Caption = new CaptionTypography() { FontSize = "11px", FontWeight = "400", LetterSpacing = "0.2px" }
     };
-    public string DarkLightModeButtonIcon => _isDarkMode switch
+    
+    private string DarkLightModeButtonIcon => _isDarkMode switch
     {
         true => Icons.Material.Rounded.AutoMode,
         false => Icons.Material.Outlined.DarkMode,

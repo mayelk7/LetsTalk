@@ -20,7 +20,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         )
     );
 
+builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
+builder.Services.AddScoped<ServerViewModel>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
