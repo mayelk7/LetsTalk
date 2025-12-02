@@ -1,8 +1,7 @@
-﻿namespace LetsTalk.Shared.ModelsDto
+﻿namespace LetsTalk.Shared.ModelsDto;
+
+public class MembreMPDto
 {
-    public record MembreMPDto
-    {
-        public int UtilisateurId { get; set; }
-        public string Username { get; set; }
-    }
+    public int UtilisateurId { get; set; }
+    public string Username { get; set; }
 }

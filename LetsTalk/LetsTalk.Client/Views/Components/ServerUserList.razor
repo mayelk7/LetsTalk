@@ -1,0 +1,16 @@
+﻿@namespace LetsTalk.Client.Views.Components
+
+<MudStack AlignItems="AlignItems.Start" Class="pl-2 pt-2" Spacing="2">
+    @foreach (var user in Users)
+    {
+        <MudText>@user.Username</MudText>
+    }
+
+</MudStack>
+
+@code {
+
+    [Parameter]
+    public required List<User> Users { get; set; }
+
+}

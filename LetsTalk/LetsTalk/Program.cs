@@ -4,7 +4,6 @@ using LetsTalk.Components;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Microsoft.AspNetCore.Mvc;
-using LetsTalk.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,8 +20,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         )
     );
 
+builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
-builder.Services.AddScoped<BackApiEf>();
+builder.Services.AddScoped<ServerViewModel>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

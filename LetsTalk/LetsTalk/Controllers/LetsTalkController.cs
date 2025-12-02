@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using LetsTalk.Data;
 using LetsTalk.Models;
 using LetsTalk.Shared.ModelsDto;
@@ -21,6 +20,7 @@ namespace LetsTalk.Controllers
         public List<MessageCanalDto> GetAllMessageCanal()
         {
             return _db.GetAllMessagescanal();
+            // return _db.GetAllMessagescanal();
         }
 
         [HttpGet("GetAllMessagePriver")]
