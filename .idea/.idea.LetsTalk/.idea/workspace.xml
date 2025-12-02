@@ -11,8 +11,20 @@
   <component name="ChangeListManager">
     <list default="true" id="88ba99b6-afb7-456e-8247-62c505dc6bc0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/LetsTalk.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/LetsTalk.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/LetsTalk.Client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/LetsTalk.Client.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/TextChannel.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/TextChannel.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/VoiceChannel.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/VoiceChannel.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Layout/MainLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Layout/MainLayout.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/MessageCanalDto.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MembreMPDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MembreMPDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageCanalDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageCanalDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessagePriverDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessagePriverDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/LetsTalkController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/LetsTalkController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Data/BackApiEf.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Data/BackApiEf.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Migrations/AppDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Migrations/AppDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/appsettings.Development.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +37,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Frederic" />
+        <entry key="$PROJECT_DIR$" value="Luc" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -43,10 +55,28 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/2E930CDD0A818B43944FD034/CommunityToolkit.Mvvm.SourceGenerators/CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator/LetsTalk.Client.ViewModels.CounterViewModel.g.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/2E930CDD0A818B43944FD034/CommunityToolkit.Mvvm.SourceGenerators/CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator/LetsTalk.Client.ViewModels.ServerViewModel.g.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/2E930CDD0A818B43944FD034/CommunityToolkit.Mvvm.SourceGenerators/CommunityToolkit.Mvvm.SourceGenerators.RelayCommandGenerator/LetsTalk.Client.ViewModels.CounterViewModel.IncrementCount.g.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5f31487fff1980d37e4d364d4338723083a7b5b946eb3aa8d9fa641aa3a9890/LayoutProperties.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bbe38c655b347698f66543a91526d6734be5771ed22d1d7a72aac3624d5/RelayCommandAttribute.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/CounterViewModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/MainLayoutViewModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/ServerChannelList.razor" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/fcari/source/repos/LetsTalk/LetsTalk/LetsTalk.Client/Views/Layout/MainLayout.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/fcari/source/repos/LetsTalk/LetsTalk/LetsTalk.Client/Views/Layout/MainLayout.razor" root0="SKIP_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Context/AppDbContext.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/TestControllers.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/fcari/source/repos/LetsTalk/LetsTalk/LetsTalk/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/fcari/source/repos/LetsTalk/LetsTalk/LetsTalk/Program.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
+  <component name="HttpClientEndpointsTabState">
+    <option name="cachedRequestData" value="&lt;CachedHttpClientTabRequests&gt;&#10;  &lt;entry key=&quot;2a487995b2b4cb3525ad7d054f4ab9eb72071621&quot; value=&quot;###&amp;#10;GET http://localhost:5278/api/Test&quot; /&gt;&#10;&lt;/CachedHttpClientTabRequests&gt;" />
+  </component>
+  <component name="HttpClientOnboardingState">{
+  &quot;isOnboardingCommentShown&quot;: true
+}</component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -77,7 +107,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.LetsTalk: https">
+  <component name="RunManager" selected=".NET Launch Settings Profile.LetsTalk: http">
     <configuration name="LetsTalk.Client" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
       <option name="PROGRAM_PARAMETERS" value="" />
@@ -108,6 +138,7 @@
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
+      <browser name="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" />
       <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
@@ -124,6 +155,7 @@
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
+      <browser name="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" />
       <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
@@ -151,6 +183,11 @@
       <workItem from="1762344960749" duration="11445000" />
       <workItem from="1764073819162" duration="2728000" />
       <workItem from="1764148156403" duration="46000" />
+      <workItem from="1764246049122" duration="6515000" />
+      <workItem from="1764252806628" duration="6188000" />
+      <workItem from="1764496165704" duration="4107000" />
+      <workItem from="1764508778944" duration="12510000" />
+      <workItem from="1764678192580" duration="4224000" />
     </task>
     <task id="LOCAL-00001" summary="init MVVM + EFCore&#10;README">
       <option name="closed" value="true" />
@@ -200,7 +237,23 @@
       <option name="project" value="LOCAL" />
       <updated>1764151375129</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Add Swagger support for API documentation in Program.cs and update project references">
+      <option name="closed" value="true" />
+      <created>1764161202247</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1764161202247</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Implement MainLayout and ServerViewModels; add dynamic menu and server components">
+      <option name="closed" value="true" />
+      <created>1764678946972</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1764678946972</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -216,7 +269,9 @@
     <MESSAGE value="Add AppDbContextModelSnapshot for EF Core migrations" />
     <MESSAGE value="Add Utilisateur model and update AppDbContext; modify connection strings and adding Dto (Data Transfer Object)" />
     <MESSAGE value="Add TestController and configure API services in Program.cs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add TestController and configure API services in Program.cs" />
+    <MESSAGE value="Add Swagger support for API documentation in Program.cs and update project references" />
+    <MESSAGE value="Implement MainLayout and ServerViewModels; add dynamic menu and server components" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implement MainLayout and ServerViewModels; add dynamic menu and server components" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

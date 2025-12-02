@@ -1,0 +1,49 @@
+﻿@namespace LetsTalk.Client.Views.Components
+
+<MudStack AlignItems="AlignItems.Start" Class="pl-2 pt-2" Spacing="2">
+    @foreach (var channel in Channels)
+    {
+        switch (channel.Type)
+        {
+            case ChannelType.Text:
+                <MudButton StartIcon="@Icons.Material.Filled.Chat" @onclick="_ => HandleChange(channel)">
+                    @channel.Name
+                </MudButton>
+                break;
+            case ChannelType.Voice:
+                <MudButton StartIcon="@Icons.Material.Filled.VolumeUp" @onclick="_ => HandleChange(channel)">
+                    @channel.Name
+                </MudButton>
+                break;
+            default:
+                break;
+        }
+    }
+
+</MudStack>
+
+@code {
+    [Parameter]
+    public required List<Channel> Channels { get; set; }
+    
+    [Parameter]
+    public required Channel SelectedChannel { get; set; }
+    [Parameter]
+    public EventCallback<Channel> SelectedChannelChanged { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        SelectedChannel = Channels[0];
+        
+        base.OnInitialized();
+    }
+
+    private async Task HandleChange(Channel channel)
+    {
+        SelectedChannel = channel;
+        if (SelectedChannelChanged.HasDelegate)
+        {
+            await SelectedChannelChanged.InvokeAsync(channel);
+        }
+    }
+}
