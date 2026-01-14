@@ -12,10 +12,10 @@ namespace LetsTalk.Shared.Validators
         public static class PasswordValidator
         {
             private static readonly HashSet<string> CommonPasswords = new(StringComparer.OrdinalIgnoreCase)
-        {
-            "password", "azerty", "qwerty", "123456", "12345678", "000000", "111111",
-            "admin", "welcome"
-        };
+            {
+                "password", "azerty", "qwerty", "123456", "12345678", "000000", "111111",
+                "admin", "welcome"
+            };
 
             public static PasswordValidationResult Validate(string? password, string? username = null, string? email = null)
             {
