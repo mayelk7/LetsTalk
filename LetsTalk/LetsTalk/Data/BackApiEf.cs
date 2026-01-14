@@ -4,6 +4,8 @@ using LetsTalk.Context;
 using LetsTalk.Models;
 using LetsTalk.Shared;
 using LetsTalk.Shared.ModelsDto;
+using Microsoft.AspNetCore.Identity;
+using LetsTalk.Helpers;
 
 namespace LetsTalk.Data;
 public class BackApiEf
@@ -42,7 +44,7 @@ public class BackApiEf
             Username = username,
             Email = email,
             Phone = phone,
-            Password = Convert.ToBase64String(pbkdf2.GetBytes(32)), // Stocker la clé dérivée en Base64
+            Password = PasswordHelper.Hash(password),
             ProfilPicture = null,
             Actif = true,
             Salt = salt,
