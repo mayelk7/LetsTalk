@@ -25,7 +25,7 @@ public partial class MainLayoutViewModel : ObservableObject
     public async Task InitAsync()
     {
         
-        var userServerDtos = await ApiManagerService.MakeGetRequest<List<UserServerDto>>("letstalk/GetUserServers/1");
+        var userServerDtos = await ApiManagerService.MakeGetRequest<List<UserServerDto>>("/api/user/1/servers");
         
         foreach (var userServerDto in userServerDtos ?? Enumerable.Empty<UserServerDto>())
         {

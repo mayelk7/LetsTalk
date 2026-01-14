@@ -35,7 +35,7 @@ public partial class ServerViewModel : ObservableObject
     
     public async Task InitAsync(int serverId)
     {
-        Server = await ApiManagerService.MakeGetRequest<FullServerDto>("letstalk/GetServerById/" + serverId);
+        Server = await ApiManagerService.MakeGetRequest<FullServerDto>("/api/server/" + serverId);
         
         ServerId = serverId;
         

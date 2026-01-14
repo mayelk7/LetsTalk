@@ -19,69 +19,69 @@ namespace LetsTalk.Controllers
             _db = db;
         }
 
-        [HttpGet("GetServerById/{id:int}")]
-        public FullServerDto? GetServerById(int id)
-        {
-            var server = _db.GetServerById(id);
-
-            if (server == null)
-                return null;
-            
-            var channels = server.Canaux.Select(canal => new ChannelDto(
-                canal.CanauxId,
-                canal.Nom,
-                canal.Messages.Select(msg => new MessageDto(
-                    msg.MessageId,
-                    new UserDto(
-                        msg.Utilisateur.UtilisateurId,
-                        msg.Utilisateur.Username
-                    ),
-                    msg.Contenu,
-                    msg.DateEnvoi
-                )).ToList(),
-                canal.Type
-            )).ToList();
-
-            var users = server.Membres.Select(user => new UserDto(
-                user.UtilisateurId,
-                user.Utilisateur.Username
-            )).ToList();
-            
-            return new FullServerDto(
-                server.ServerId,
-                server.Nom,
-                channels,
-                users
-            );
-        }
+        // [HttpGet("GetServerById/{id:int}")]
+        // public FullServerDto? GetServerById(int id)
+        // {
+        //     var server = _db.GetServerById(id);
+        //
+        //     if (server == null)
+        //         return null;
+        //     
+        //     var channels = server.Canaux.Select(canal => new ChannelDto(
+        //         canal.CanauxId,
+        //         canal.Nom,
+        //         canal.Messages.Select(msg => new MessageDto(
+        //             msg.MessageId,
+        //             new UserDto(
+        //                 msg.Utilisateur.UtilisateurId,
+        //                 msg.Utilisateur.Username
+        //             ),
+        //             msg.Contenu,
+        //             msg.DateEnvoi
+        //         )).ToList(),
+        //         canal.Type
+        //     )).ToList();
+        //
+        //     var users = server.Membres.Select(user => new UserDto(
+        //         user.UtilisateurId,
+        //         user.Utilisateur.Username
+        //     )).ToList();
+        //     
+        //     return new FullServerDto(
+        //         server.ServerId,
+        //         server.Nom,
+        //         channels,
+        //         users
+        //     );
+        // }
         
-        /// <summary>
-        ///     Retrieve all servers linked to a user
-        /// </summary>
-        /// <param name="userid"></param>
-        /// <returns>
-        ///     List of UserServerDto representing the servers associated with the specified user ID
-        /// </returns>
-        [HttpGet("GetUserServers/{userid:int}")]
-        public List<UserServerDto> GetUserServers(int userid)
-        {
-            var servers = _db.GetUserServers(userid);
-
-            return servers.Select(server => new UserServerDto(userid, server.ServerId, server.Nom)).ToList();
-        }
+        // /// <summary>
+        // ///     Retrieve all servers linked to a user
+        // /// </summary>
+        // /// <param name="userid"></param>
+        // /// <returns>
+        // ///     List of UserServerDto representing the servers associated with the specified user ID
+        // /// </returns>
+        // [HttpGet("GetUserServers/{userid:int}")]
+        // public List<UserServerDto> GetUserServers(int userid)
+        // {
+        //     var servers = _db.GetUserServers(userid);
+        //
+        //     return servers.Select(server => new UserServerDto(userid, server.ServerId, server.Nom)).ToList();
+        // }
         
-        [HttpGet("GetAllMessageCanal")]
-        public List<MessageCanalDto> GetAllMessageCanal()
-        {
-            return _db.GetAllMessagesCanal();
-            // return _db.GetAllMessagesCanal();
-        }
+        // [HttpGet("GetAllMessageCanal")]
+        // public List<MessageCanalDto> GetAllMessageCanal()
+        // {
+        //     return _db.GetAllMessagesCanal();
+        //     // return _db.GetAllMessagesCanal();
+        // }
 
-        [HttpGet("GetAllMessagePriver")]
-        public List<MessagePriverDto> GetAllMessagepriver()
-        {
-            return _db.GetAllMessagesPriver();
-        }
+        // [HttpGet("GetAllMessagePriver")]
+        // public List<MessagePriverDto> GetAllMessagepriver()
+        // {
+        //     return _db.GetAllMessagesPriver();
+        // }
         
         [HttpGet("GetAllGroupe")]
         public List<Canaux> GetAllGroupe()

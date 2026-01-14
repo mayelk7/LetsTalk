@@ -29,6 +29,8 @@ builder.Services.AddTransient<ServerViewModel>();
 // Api controllers
 builder.Services.AddScoped<BackApiEf>();
 builder.Services.AddScoped<LetsTalkController>();
+builder.Services.AddScoped<ServerApiController>();
+builder.Services.AddScoped<UserApiController>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
