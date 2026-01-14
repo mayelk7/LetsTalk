@@ -8,7 +8,6 @@ builder.Services.AddMudServices();
 
 builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
-builder.Services.AddScoped<ServerViewModel>();
-
+builder.Services.AddTransient<ServerViewModel>();
 
 await builder.Build().RunAsync();

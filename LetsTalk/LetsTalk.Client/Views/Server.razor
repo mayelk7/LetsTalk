@@ -2,11 +2,12 @@
 @page "/server/{ServerId}"
 
 @using LetsTalk.Client.Views.Components
+@using LetsTalk.Shared.Enum
 
 @if (ServerVm.Server is not null)
 {
     <MudGrid Spacing="0" Style="height: calc(100vh - 80px);">
-        <MudItem Xs="2" Elevation="1" Class="mud-border-left">
+        <MudItem Xs="2" Class="mud-border-left">
             <MudCard Style="border-radius: 0;">
                 <MudCardHeader>
                     <h2>@ServerVm.Server.Name</h2>
@@ -15,26 +16,32 @@
             
             <ServerChannelList Channels="ServerVm.Server.Channels" @bind-SelectedChannel="ServerVm.SelectedChannel"/>
         </MudItem>
-        <MudItem Xs="8" Elevation="1" Class="mud-border-right mud-border-left border-x-2" Style="border-color: var(--mud-palette-divider);">
+        <MudItem Xs="8" Class="mud-border-right mud-border-left border-x-2" 
+                 Style="border-color: var(--mud-palette-divider);">
+            
             <MudCard Style="border-radius: 0;">
                 <MudCardHeader>
-                    <h2>TextChannel - @ServerVm.SelectedChannel?.Name</h2>
+                    <h2> @(ServerVm.SelectedChannel?.ChannelType == ChannelType.Text ? "TextChannel" : "VoiceChannel")  - @ServerVm.SelectedChannel?.Name</h2>
                 </MudCardHeader>
             </MudCard>
             
-            @switch (ServerVm.SelectedChannel?.Type)
-            {
-                case ChannelType.Text:
-                    <TextChannel Channel="ServerVm.SelectedChannel"/>
-                    break;
-                case ChannelType.Voice:
-                    <VoiceChannel Channel="ServerVm.SelectedChannel"/>
-                    break;
-                default:
-                    break;
-            }
+            <MudStack Style="max-height: calc(100vh - 200px); overflow-y: auto;">
+                @switch (ServerVm.SelectedChannel?.ChannelType)
+                {
+                    case ChannelType.Text:
+                        <TextChannel Channel="ServerVm.SelectedChannel"/>
+                        break;
+                    case ChannelType.Voice:
+                        <VoiceChannel Channel="ServerVm.SelectedChannel"/>
+                        break;
+                    default:
+                        break;
+                }
+            </MudStack>
+            
+            <MessageInput @bind-value="ServerVm.CurrentMessage" @bind-value:after="ServerVm.OnMessageInput"/>
         </MudItem>
-        <MudItem Xs="2" Elevation="1" Class="mud-border-right">
+        <MudItem Xs="2" Class="mud-border-right">
             <MudCard Style="border-radius: 0;">
                 <MudCardHeader>
                     <h2>Utilisateur - @ServerVm.Server.Users.Count</h2>
@@ -56,18 +63,18 @@ else
     [Parameter]
     public required string ServerId { get; set; }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (int.TryParse(ServerId, out var serverId))
         {
-            ServerVm.Initialize(serverId);
+            await ServerVm.InitAsync(serverId);
         }
         else
         {
             // TODO: Error handling for invalid ServerId
         }
         
-        base.OnParametersSet();
+        await base.OnParametersSetAsync();
     }
 
     protected override void OnInitialized()

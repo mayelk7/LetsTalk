@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LetsTalk.Data;
 using LetsTalk.Models;
+using LetsTalk.Shared;
 using LetsTalk.Shared.ModelsDto;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using MudBlazor.Extensions;
 
 namespace LetsTalk.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class LetsTalkController : ControllerBase
     {
         private readonly BackApiEf _db;
@@ -15,18 +18,69 @@ namespace LetsTalk.Controllers
         {
             _db = db;
         }
+
+        [HttpGet("GetServerById/{id:int}")]
+        public FullServerDto? GetServerById(int id)
+        {
+            var server = _db.GetServerById(id);
+
+            if (server == null)
+                return null;
+            
+            var channels = server.Canaux.Select(canal => new ChannelDto(
+                canal.CanauxId,
+                canal.Nom,
+                canal.Messages.Select(msg => new MessageDto(
+                    msg.MessageId,
+                    new UserDto(
+                        msg.Utilisateur.UtilisateurId,
+                        msg.Utilisateur.Username
+                    ),
+                    msg.Contenu,
+                    msg.DateEnvoi
+                )).ToList(),
+                canal.Type
+            )).ToList();
+
+            var users = server.Membres.Select(user => new UserDto(
+                user.UtilisateurId,
+                user.Utilisateur.Username
+            )).ToList();
+            
+            return new FullServerDto(
+                server.ServerId,
+                server.Nom,
+                channels,
+                users
+            );
+        }
+        
+        /// <summary>
+        ///     Retrieve all servers linked to a user
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns>
+        ///     List of UserServerDto representing the servers associated with the specified user ID
+        /// </returns>
+        [HttpGet("GetUserServers/{userid:int}")]
+        public List<UserServerDto> GetUserServers(int userid)
+        {
+            var servers = _db.GetUserServers(userid);
+
+            return servers.Select(server => new UserServerDto(userid, server.ServerId, server.Nom)).ToList();
+        }
         
         [HttpGet("GetAllMessageCanal")]
         public List<MessageCanalDto> GetAllMessageCanal()
         {
-            return _db.GetAllMessagescanal();
-            // return _db.GetAllMessagescanal();
+            return _db.GetAllMessagesCanal();
+            // return _db.GetAllMessagesCanal();
         }
 
         [HttpGet("GetAllMessagePriver")]
         public List<MessagePriverDto> GetAllMessagepriver()
         {
-            return _db.GetAllMessagespriver();
+            return _db.GetAllMessagesPriver();
         }
         
         [HttpGet("GetAllGroupe")]
@@ -50,7 +104,7 @@ namespace LetsTalk.Controllers
         [HttpGet("GetUser/{id}")]
         public Utilisateur GetUser(int id)
         {
-            return _db.GetUserByID(id);
+            return _db.GetUserById(id);
         }
 
         [HttpPost("SetNewUser")]
@@ -65,11 +119,11 @@ namespace LetsTalk.Controllers
             return _db.SetNewServer(token, nomsalon, idOwner);
         }
        
-       [HttpPost("NewMessageCanal")]
-       public bool NewMessageCanal(int iduser, string contenue, int canalId)
-       {
+        [HttpPost("NewMessageCanal")]
+        public bool NewMessageCanal(int iduser, string contenue, int canalId)
+        {
            return _db.NewMessageCanal(iduser, contenue, canalId);
-       }
+        }
         
         [HttpPost("NewMessagePriver")]
         public bool NewMessagePriver(int iduser, string contenue, int id_discution)

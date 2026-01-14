@@ -29,7 +29,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Server>().ToTable("server");
         modelBuilder.Entity<Canaux>().ToTable("canaux");
         modelBuilder.Entity<Role>().ToTable("role");
-        modelBuilder.Entity<Membre>().ToTable("Membre");
+        modelBuilder.Entity<Membre>().ToTable("membre");
         modelBuilder.Entity<MessageCanal>().ToTable("messageCanal");
         modelBuilder.Entity<ConversationPriver>().ToTable("ConversationPriver");
         modelBuilder.Entity<MembreMP>().ToTable("membreMP");

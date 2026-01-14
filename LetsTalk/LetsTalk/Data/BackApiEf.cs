@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using LetsTalk.Context;
 using LetsTalk.Models;
 using LetsTalk.Shared;
+using LetsTalk.Shared.Enum;
 using LetsTalk.Shared.ModelsDto;
 
 namespace LetsTalk.Data;
@@ -22,7 +23,7 @@ public class BackApiEf
     }
 
     // Récupérer un utilisateur par ID
-    public Utilisateur GetUserByID(int id)
+    public Utilisateur? GetUserById(int id)
     {
         return _db.Utilisateurs
                   .FirstOrDefault(u => u.UtilisateurId == id);
@@ -31,7 +32,7 @@ public class BackApiEf
     // Créer un nouvel utilisateur
     public bool SetNewUser(string token, string username, string email, string phone, string password, string type2fa)
     {
-        if (!isAdmin(token))
+        if (!IsAdmin(token))
             throw new UnauthorizedAccessException("Seul un administrateur peut créer un nouvel utilisateur.");
 
         byte[] salt = RandomNumberGenerator.GetBytes(16);
@@ -55,12 +56,12 @@ public class BackApiEf
     }
 
     // Récupérer tous les messages
-    public List<MessageCanalDto> GetAllMessagescanal()
+    public List<MessageCanalDto> GetAllMessagesCanal()
     {
         return _db.MessagesCanal
             .Include(m => m.Utilisateur)
             .Include(m => m.Canal)
-            .Select(m => new Shared.ModelsDto.MessageCanalDto
+            .Select(m => new MessageCanalDto
             {
                 MessageId = m.MessageId,
                 Contenu = m.Contenu,
@@ -73,14 +74,14 @@ public class BackApiEf
             .ToList();
     }
 
-    public List<Shared.ModelsDto.MessagePriverDto> GetAllMessagespriver()
+    public List<MessagePriverDto> GetAllMessagesPriver()
     {
         return _db.MessagesPriver
             .Include(m => m.Utilisateur)
             .Include(m => m.ConversationPriver)
                 .ThenInclude(c => c.MembreMPs)
                     .ThenInclude(mp => mp.Utilisateur)
-            .Select(m => new Shared.ModelsDto.MessagePriverDto
+            .Select(m => new MessagePriverDto
             {
                 MessageId = m.MessagePriverId,
                 Contenu = m.Contenu,
@@ -92,7 +93,7 @@ public class BackApiEf
                 ConversationPriverId = m.ConversationPriverId,
 
                 MembreMPs = m.ConversationPriver.MembreMPs
-                    .Select(mp => new Shared.ModelsDto.MembreMPDto
+                    .Select(mp => new MembreMPDto
                     {
                         UtilisateurId = mp.UtilisateurId,
                         Username = mp.Utilisateur.Username
@@ -142,7 +143,7 @@ public class BackApiEf
     // Créer un nouveau salon + canal
     public bool SetNewServer(string token, string nomSalon, int idOwner)
     {
-        if (!isAdmin(token))
+        if (!IsAdmin(token))
             throw new UnauthorizedAccessException("Seul un administrateur peut créer un nouveau salon.");
 
         var server = new Server { Nom = nomSalon,OwnerId = idOwner};
@@ -155,7 +156,7 @@ public class BackApiEf
         {
             Nom = "Général",
             ServerId = server.ServerId,
-            Type = ChannelType.texte
+            Type = ChannelType.Text
         };
 
         _db.Canaux.Add(canal);
@@ -176,8 +177,51 @@ public class BackApiEf
                   .ToList();
     }
     // Vérification administrateur
-    public bool isAdmin(string token)
+    public bool IsAdmin(string token)
     {
         return token == "serveradmin";
     }
+    
+    /// <summary>
+    ///     Get all servers record
+    /// </summary>
+    ///
+    /// <returns> List of <c>Server</c>  </returns>
+    public List<Server> GetAllServers()
+    {
+        return _db.Servers.ToList();
+    }
+    
+    /// <summary>
+    ///     Retrieve a server by its ID
+    /// </summary>
+    /// 
+    /// <param name="serverId"></param>
+    ///
+    /// <returns> The <c>Server</c> corresponding to the Id or null </returns>
+    public Server? GetServerById(int serverId)
+    {
+        return _db.Servers
+            .Include(s => s.Canaux)
+                .ThenInclude(c => c.Messages)
+            .Include(s => s.Membres)
+                .ThenInclude(m => m.Utilisateur)
+            .FirstOrDefault(s => s.ServerId == serverId);
+    }
+    
+    
+    /// <summary>
+    ///    Retrieve all servers linked to a user
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns>
+    ///      List of <c>Server</c> representing the servers associated with the specified user ID
+    /// </returns>
+    public List<Server> GetUserServers(int userId)
+    {
+        return _db.Servers
+            .Where(s => s.Membres.Any(m => m.UtilisateurId == userId))
+            .ToList();
+    }
+    
 }

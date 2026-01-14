@@ -18,7 +18,7 @@ public class MessagePriver
     public bool Epingle { get; set; }
 
     [Required]
-    public int UtilisateurId { get; set; }
+    public int? UtilisateurId { get; set; }
     public Utilisateur Utilisateur { get; set; }
 
     [Required]

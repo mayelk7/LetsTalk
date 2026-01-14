@@ -1,6 +1,8 @@
 using LetsTalk.Context;
 using LetsTalk.Client.ViewModels;
 using LetsTalk.Components;
+using LetsTalk.Controllers;
+using LetsTalk.Data;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +24,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
-builder.Services.AddScoped<ServerViewModel>();
+builder.Services.AddTransient<ServerViewModel>();
+
+// Api controllers
+builder.Services.AddScoped<BackApiEf>();
+builder.Services.AddScoped<LetsTalkController>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

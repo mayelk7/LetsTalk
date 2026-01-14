@@ -62,10 +62,15 @@
     private bool _isDarkMode = true;
     private MudTheme? _theme = null;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await MainLayoutVm.InitAsync();
+        
+        await base.OnInitializedAsync();
+    }
+
     protected override void OnInitialized()
     {
-        base.OnInitialized();
-        
         MainLayoutVm.PropertyChanged += (_, __) => StateHasChanged();
 
         _theme = new()
@@ -74,6 +79,8 @@
             PaletteDark = _darkPalette,
             LayoutProperties = new LayoutProperties()
         };
+        
+        base.OnInitialized();
     }
 
     private void DrawerToggle()

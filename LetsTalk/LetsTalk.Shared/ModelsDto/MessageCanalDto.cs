@@ -6,7 +6,7 @@ public class MessageCanalDto
     public string Contenu { get; set; }
     public DateTime DateEnvoi { get; set; }
 
-    public int UtilisateurId { get; set; }
+    public int? UtilisateurId { get; set; }
     public string Username { get; set; }
 
     public int CanalId { get; set; }

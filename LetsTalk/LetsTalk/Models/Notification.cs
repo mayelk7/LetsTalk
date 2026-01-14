@@ -1,6 +1,8 @@
 // Notification.cs
 using LetsTalk.Shared;
 using System.ComponentModel.DataAnnotations;
+using LetsTalk.Shared.Enum;
+
 namespace LetsTalk.Models;
 public class Notification
 {
@@ -8,7 +10,7 @@ public class Notification
     public int NotificationId { get; set; }
 
     [Required]
-    public int UtilisateurId { get; set; }
+    public int? UtilisateurId { get; set; }
     public Utilisateur Utilisateur { get; set; }
 
     [Required]

@@ -1,4 +1,5 @@
-﻿@namespace LetsTalk.Client.Views.Components
+﻿@using LetsTalk.Shared.ModelsDto
+@namespace LetsTalk.Client.Views.Components
 
 <MudStack AlignItems="AlignItems.Start" Class="pl-2 pt-2" Spacing="2">
     @foreach (var user in Users)
@@ -11,6 +12,6 @@
 @code {
 
     [Parameter]
-    public required List<User> Users { get; set; }
+    public required List<UserDto> Users { get; set; }
 
 }

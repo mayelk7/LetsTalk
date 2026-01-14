@@ -2,12 +2,17 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace LetsTalk.Models;
+
+[Index(nameof(Username), IsUnique = true)]
+[Index(nameof(Email), IsUnique = true)]
+[PrimaryKey("UtilisateurId")]
 public class Utilisateur
 {
     [Key]
-    public int UtilisateurId { get; set; }
+    public int? UtilisateurId { get; set; }
 
     [Required, MaxLength(255)]
     public string Username { get; set; }
@@ -20,7 +25,7 @@ public class Utilisateur
 
     [Required, MaxLength(255)]
     public string Password { get; set; }
-
+    
     public string? ProfilPicture { get; set; }
 
     [Required,DefaultValue(true)]
@@ -33,9 +38,10 @@ public class Utilisateur
     public DateTime CreatedAt { get; set; }
 
     [MaxLength(50)]
-    public string Type2Fa { get; set; }
+    public string? Type2Fa { get; set; }
 
     // Navigations
+    
     public ICollection<Membre> Membres { get; set; }
     public ICollection<MessageCanal> MessagesCanal { get; set; }
     public ICollection<MessagePriver> MessagesPriver { get; set; }
