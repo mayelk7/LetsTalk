@@ -1,11 +1,7 @@
 ﻿using Bogus;
 using LetsTalk.Models;
 using LetsTalk.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using LetsTalk.Shared;
-using LetsTalk.Models;
+using LetsTalk.Shared.Enum;
 
 namespace LetsTalk.Data
 {
@@ -61,9 +57,9 @@ namespace LetsTalk.Data
             {
                 var channels = new List<Canaux>
                 {
-                    new Canaux { Nom = "Général", ServerId = allServers[0].ServerId, Type =  Shared.ChannelType.texte},
-                    new Canaux { Nom = "Discussion vocale", ServerId = allServers[0].ServerId,Type = Shared.ChannelType.vocal },
-                    new Canaux { Nom = "Général 2", ServerId = allServers[1].ServerId, Type = Shared.ChannelType.texte }
+                    new Canaux { Nom = "Général", ServerId = allServers[0].ServerId, Type =  ChannelType.Text},
+                    new Canaux { Nom = "Discussion vocale", ServerId = allServers[0].ServerId,Type = ChannelType.Voice },
+                    new Canaux { Nom = "Général 2", ServerId = allServers[1].ServerId, Type = ChannelType.Text }
                 };
                 context.Canaux.AddRange(channels);
                 context.SaveChanges();
@@ -157,7 +153,7 @@ namespace LetsTalk.Data
                     Nom = "image_test.png",
                     Url = "/images/image_test.png",
                     Type = "image",
-                    MessageType = MessageType.canal,
+                    MessageType = MessageType.Canal,
                     MessageId = context.MessagesCanal.First().MessageId
                 };
                 context.Fichiers.Add(fichier);
@@ -172,7 +168,7 @@ namespace LetsTalk.Data
                 var notification = new Notification
                 {
                     UtilisateurId = allUsers[1].UtilisateurId,
-                    MessageType = MessageType.canal,
+                    MessageType = MessageType.Canal,
                     MessageId = context.MessagesCanal.First().MessageId,
                     Lu = false
                 };
@@ -188,7 +184,7 @@ namespace LetsTalk.Data
                 var messagelus = new MessageLu
                 {
                     UtilisateurId = allUsers[1].UtilisateurId,
-                    MessageType = MessageType.canal,
+                    MessageType = MessageType.Canal,
                     MessageId = context.MessagesCanal.First().MessageId,
                     Lu = false
                 };

@@ -1,6 +1,8 @@
 // Canaux.cs
 using LetsTalk.Shared;
 using System.ComponentModel.DataAnnotations;
+using LetsTalk.Shared.Enum;
+
 namespace LetsTalk.Models;
 
 public class Canaux

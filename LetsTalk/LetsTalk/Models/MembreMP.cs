@@ -6,7 +6,7 @@ public class MembreMP
 {
     // PK composite (UtilisateurId, ConversationId)
     [Required]
-    public int UtilisateurId { get; set; }
+    public int? UtilisateurId { get; set; }
     public Utilisateur Utilisateur { get; set; }
 
     [Required]

@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using LetsTalk.Data;
 using LetsTalk.Models;
-using LetsTalk.Shared.ModelsDto;
 
 namespace LetsTalk.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class LetsTalkController : ControllerBase
     {
         private readonly BackApiEf _db;
@@ -14,19 +13,6 @@ namespace LetsTalk.Controllers
         public LetsTalkController(BackApiEf db)
         {
             _db = db;
-        }
-        
-        [HttpGet("GetAllMessageCanal")]
-        public List<MessageCanalDto> GetAllMessageCanal()
-        {
-            return _db.GetAllMessagescanal();
-            // return _db.GetAllMessagescanal();
-        }
-
-        [HttpGet("GetAllMessagePriver")]
-        public List<MessagePriverDto> GetAllMessagepriver()
-        {
-            return _db.GetAllMessagespriver();
         }
         
         [HttpGet("GetAllGroupe")]
@@ -41,23 +27,6 @@ namespace LetsTalk.Controllers
             _db.GetAllMessagesPriverNonLus(Userid);
         }
         */
-        [HttpGet("GetAllUser")]
-        public List<Utilisateur> GetAllUser()
-        {
-            return _db.GetAllUsers();
-        }
-
-        [HttpGet("GetUser/{id}")]
-        public Utilisateur GetUser(int id)
-        {
-            return _db.GetUserByID(id);
-        }
-
-        [HttpPost("SetNewUser")]
-        public bool SetNewUser(string token, string username, string email, string phone, string password, string type2fa)
-        {
-            return _db.SetNewUser(token, username, email, phone, password, type2fa);
-        }
        
         [HttpPost("SetNewGroupe")]
         public bool SetNewGroupe(string token, string nomsalon, int idOwner)
@@ -65,11 +34,11 @@ namespace LetsTalk.Controllers
             return _db.SetNewServer(token, nomsalon, idOwner);
         }
        
-       [HttpPost("NewMessageCanal")]
-       public bool NewMessageCanal(int iduser, string contenue, int canalId)
-       {
+        [HttpPost("NewMessageCanal")]
+        public bool NewMessageCanal(int iduser, string contenue, int canalId)
+        {
            return _db.NewMessageCanal(iduser, contenue, canalId);
-       }
+        }
         
         [HttpPost("NewMessagePriver")]
         public bool NewMessagePriver(int iduser, string contenue, int id_discution)

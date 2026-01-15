@@ -1,44 +1,57 @@
-﻿@namespace LetsTalk.Client.Views.Components
+﻿@using LetsTalk.Shared.Enum
+@using LetsTalk.Shared.ModelsDto
+
+@namespace LetsTalk.Client.Views.Components
 
 <MudStack AlignItems="AlignItems.Start" Class="pl-2 pt-2" Spacing="2">
-    @foreach (var channel in Channels)
+    @if (Channels.Count > 0)
     {
-        switch (channel.Type)
+        foreach (var channel in Channels)
         {
-            case ChannelType.Text:
-                <MudButton StartIcon="@Icons.Material.Filled.Chat" @onclick="_ => HandleChange(channel)">
-                    @channel.Name
-                </MudButton>
-                break;
-            case ChannelType.Voice:
-                <MudButton StartIcon="@Icons.Material.Filled.VolumeUp" @onclick="_ => HandleChange(channel)">
-                    @channel.Name
-                </MudButton>
-                break;
-            default:
-                break;
+            switch (channel.ChannelType)
+            {
+                case ChannelType.Text:
+                    <MudButton StartIcon="@Icons.Material.Filled.Chat" @onclick="_ => HandleChange(channel)">
+                        @channel.Name
+                    </MudButton>
+                    break;
+                case ChannelType.Voice:
+                    <MudButton StartIcon="@Icons.Material.Filled.VolumeUp" @onclick="_ => HandleChange(channel)">
+                        @channel.Name
+                    </MudButton>
+                    break;
+                default:
+                    break;
+            }
         }
+    }
+    else
+    {
+        <MudText>
+            Aucun canal disponible.
+        </MudText>
     }
 
 </MudStack>
 
 @code {
     [Parameter]
-    public required List<Channel> Channels { get; set; }
+    public required List<ChannelDto> Channels { get; set; }
     
     [Parameter]
-    public required Channel SelectedChannel { get; set; }
+    public required ChannelDto SelectedChannel { get; set; }
     [Parameter]
-    public EventCallback<Channel> SelectedChannelChanged { get; set; }
+    public EventCallback<ChannelDto> SelectedChannelChanged { get; set; }
     
     protected override void OnInitialized()
     {
-        SelectedChannel = Channels[0];
+        if (Channels.Count > 0)
+            SelectedChannel = Channels[0];
         
         base.OnInitialized();
     }
 
-    private async Task HandleChange(Channel channel)
+    private async Task HandleChange(ChannelDto channel)
     {
         SelectedChannel = channel;
         if (SelectedChannelChanged.HasDelegate)

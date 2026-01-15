@@ -1,28 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Text.Json;
+using CommunityToolkit.Mvvm.ComponentModel;
+using LetsTalk.Client.Services;
+using LetsTalk.Shared.ModelsDto;
 using MudBlazor;
 
 namespace LetsTalk.Client.ViewModels;
 
 public partial class MainLayoutViewModel : ObservableObject
 {
-    // TODO: Implement dynamic menu item loading based on user server data
     [ObservableProperty]
-    private List<MenuItem>? _menuItems;
+    private List<MenuItem> _menuItems = [
+        new() { Title = "Home", Icon = Icons.Material.Rounded.Home, Href = "" }
+    ];
 
     [ObservableProperty]
-    private string _search;
-    
-    public MainLayoutViewModel()
-    {
-        Search = string.Empty;
-        
-        MenuItems = new List<MenuItem>
-        {
-            new() { Title = "Home", Icon = Icons.Material.Rounded.Home, Href = "" },
-            new() { Title = "Server1", Icon = Icons.Material.Rounded.Cloud, Href = "server/1"},
-            new() { Title = "Server2", Icon = Icons.Material.Rounded.CloudSync, Href = "server/2"},
-        };
-    }
+    private string _search = string.Empty;
 
     // TODO: Exemple of reacting to property changes
     partial void OnSearchChanged(string value)
@@ -30,7 +22,29 @@ public partial class MainLayoutViewModel : ObservableObject
         Console.WriteLine(value);
         // Search = "test";
     }
+    
+    public async Task InitAsync()
+    {
+        var response = await ApiManagerService.MakeGetRequest<List<UserServerDto>>("/api/user/1/servers");
+
+        if (response is { Success: false })
+        {
+            Console.WriteLine("Error fetching user servers: " + response?.Message);
+            return;
+        }
+
+        var userServerDtos = response?.Data;
+
+        foreach (var userServerDto in userServerDtos ?? Enumerable.Empty<UserServerDto>())
+        {
+            MenuItems.Add(new MenuItem(
+                    userServerDto.ServerName,
+                    Icons.Material.Rounded.Cloud,
+                    "server/" + userServerDto.ServerId
+                )
+            );
+        }
+    }
 }
 
-// TODO: Temporary static menu items until dynamic loading is implemented
 public record struct MenuItem (string Title, string Icon, string Href);

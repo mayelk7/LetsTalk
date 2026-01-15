@@ -7,6 +7,8 @@ using LetsTalk.Services.Livekit;
 using LetsTalk.Services.Voice;
 using LetsTalk.Shared.Service;
 using Microsoft.AspNetCore.Mvc;
+using LetsTalk.Controllers;
+using LetsTalk.Data;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
@@ -28,7 +30,13 @@ builder.Services.Configure<LivekitSettings>(
     builder.Configuration.GetSection("LivekitSettings"));
 builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
-builder.Services.AddScoped<ServerViewModel>();
+builder.Services.AddTransient<ServerViewModel>();
+
+// Api controllers
+builder.Services.AddScoped<BackApiEf>();
+builder.Services.AddScoped<LetsTalkController>();
+builder.Services.AddScoped<ServerApiController>();
+builder.Services.AddScoped<UserApiController>();
 
 /*
 builder.Services.AddScoped<VoiceServer>();
