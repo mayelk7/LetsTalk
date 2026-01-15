@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using LetsTalk.Shared;
+using LetsTalk.Shared.Enum;
 
 namespace LetsTalk.Services.Livekit
 {
@@ -49,7 +49,7 @@ namespace LetsTalk.Services.Livekit
                     var db = scope.ServiceProvider.GetRequiredService<LetsTalk.Context.AppDbContext>();
 
                     // Assurez-vous d'avoir un using System.Linq; pour .Where().ToList()
-                    foreach (var canal in db.Canaux.Where(c => c.Type == LetsTalk.Shared.ChannelType.vocal))
+                    foreach (var canal in db.Canaux.Where(c => c.Type == ChannelType.Voice))
                     {
                         // ⚠️ On utilise le mot-clé await ici
                         await CreerNouveauSalon(canal.Nom, 120);
