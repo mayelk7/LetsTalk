@@ -15,8 +15,25 @@
     ❌ Quitter
 </MudButton>
 
+<MudToggleIconButton 
+    Toggled="@isMuted"
+    ToggledChanged="OnMuteToggled"
+    Icon="@Icons.Material.Filled.Mic" 
+    ToggledIcon="@Icons.Material.Filled.MicOff"
+    Color="Color.Success"
+    ToggledColor="Color.Error"
+    Title="@(isMuted ? "Activer le micro" : "Couper le micro")" />
+
 @code {
     public string TextValue { get; set; }
+
+    private bool isMuted = false;
+
+    private async Task OnMuteToggled(bool toggled)
+    {
+        isMuted = toggled;
+        await JS.InvokeVoidAsync("livekitInterop.toggleMute", isMuted);
+    }
 
     async Task JoinCall()
     {

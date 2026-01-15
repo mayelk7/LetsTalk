@@ -32,4 +32,5 @@ namespace LetsTalk.Shared.Service
             return token.ToJwt();
         }
     }
+
 }

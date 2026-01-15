@@ -1,21 +1,35 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
+﻿using Bogus.Extensions.Italy;
 using LetsTalk.Context;
+using LetsTalk.Helpers;
 using LetsTalk.Models;
+using LetsTalk.Services.Livekit;
 using LetsTalk.Shared;
 using LetsTalk.Shared.Enum;
 using LetsTalk.Shared.ModelsDto;
+using Livekit.Client;
+using Livekit.Server.Sdk;
+using Livekit.Server.Sdk.Dotnet;
 using Microsoft.AspNetCore.Identity;
-using LetsTalk.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Diagnostics;
+using System.Numerics;
+using System.Security;
+using System.Security.Cryptography;
+using System.Security.Principal;
+using static Livekit.Server.Sdk.Dotnet.ParticipantInfo.Types;
 
 namespace LetsTalk.Data;
 public class BackApiEf
 {
     private readonly AppDbContext _db;
+    private readonly LivekitService _livekit;
 
-    public BackApiEf(AppDbContext db)
+    public BackApiEf(AppDbContext db, LivekitService livekit)
     {
         _db = db;
+        _livekit = livekit;
     }
 
     // Récupérer tous les utilisateurs
@@ -225,5 +239,51 @@ public class BackApiEf
             .Where(s => s.Membres.Any(m => m.UtilisateurId == userId))
             .ToList();
     }
-    
+
+    public async Task<List<ParticipantLiveKit>> GetMembersWithDbInfo(string roomName)
+    {
+        // 1️⃣ Récupérer les participants LiveKit
+        var participants = await _livekit.GetVoiceMembersr(roomName);
+        Debug.WriteLine("participant recupere");
+        // 2️⃣ Créer la liste finale avec infos DB
+        var allParticipants = new List<ParticipantLiveKit>();
+        foreach (var p in participants)
+        {
+            Debug.WriteLine("premier menbre :", p.Identity);
+
+            var success = int.TryParse(p.Identity, out var identityId);
+
+            if (!success)
+            {
+                throw new InvalidOperationException($"Impossible de récupérer ou caster en id l'ID pour le participant LiveKit : {p.Identity}");
+            }
+
+            // Si on arrive ici, identityId est valide
+            var userFromDb = GetUserById(identityId); // ou await si async
+                                                      // 3️⃣ Récupérer les infos de ton serveur / BDD
+            if (userFromDb == null)
+                throw new InvalidOperationException($"Aucun utilisateur trouvé en base pour l'ID {identityId}");
+
+
+            // 4️⃣ Créer ton objet final
+            var utilisateur = new ParticipantLiveKit
+                (
+                    identityId,
+                    p.Name,
+                    p.State.ToString(),
+                    p.Permission?.CanPublish ?? false,
+                    p.Permission?.CanSubscribe ?? false,
+                    // Ajouter les infos D
+                    userFromDb.ProfilPicture,
+                    userFromDb.Username
+
+            );
+
+            allParticipants.Add(utilisateur);
+        }
+
+        return allParticipants;
+    }
+
+
 }
