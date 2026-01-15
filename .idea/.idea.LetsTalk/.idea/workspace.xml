@@ -10,18 +10,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88ba99b6-afb7-456e-8247-62c505dc6bc0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/FullUser.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/BaseApiController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/CanauxApiController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/MessagePriveApiController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/ServerApiController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/UserApiController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/Api/ApiResponse.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Services/ApiManagerService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Services/ApiManagerService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/MainLayoutViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/MainLayoutViewModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/FullUser.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/UserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/UserDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/BaseApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/BaseApiController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/LetsTalkController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/LetsTalkController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/ServerApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/ServerApiController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/UserApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/UserApiController.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +51,8 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/2E930CDD0A818B43944FD034/CommunityToolkit.Mvvm.SourceGenerators/CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator/LetsTalk.Client.ViewModels.ServerViewModel.g.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5ef7f3c9db445621211faddebc3c1c9bb48a942f1b8cba4caa2501466f85f/JsonSerializerOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6fa05d7dbf2e454ce78b261b422234da1f1ccedee678fd997e5ef4afe6df6e/ControllerBase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Services/ApiManagerService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/CounterViewModel.cs" root0="FORCE_HIGHLIGHTING" />
@@ -60,10 +61,10 @@
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/MessageInput.razor" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/ServerChannelList.razor" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" root0="FORCE_HIGHLIGHTING" root1="FORCE_HIGHLIGHTING" root2="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/Api/ApiResponse.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/Enum/ChannelType.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/Enum/MessageType.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/FullServerDto.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/FullUser.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/UserServerDto.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Context/AppDbContext.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/BaseApiController.cs" root0="FORCE_HIGHLIGHTING" />
@@ -194,7 +195,8 @@
       <workItem from="1764678192580" duration="11185000" />
       <workItem from="1764745579485" duration="23410000" />
       <workItem from="1768374808019" duration="12128000" />
-      <workItem from="1768395996516" duration="3349000" />
+      <workItem from="1768395996516" duration="10145000" />
+      <workItem from="1768482858516" duration="2616000" />
     </task>
     <task id="LOCAL-00001" summary="init MVVM + EFCore&#10;README">
       <option name="closed" value="true" />
@@ -276,7 +278,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768382403042</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Add API controllers for channels, private messages, and users; update connection string and refactor server retrieval logic">
+      <option name="closed" value="true" />
+      <created>1768400395143</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1768400395144</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -296,7 +306,8 @@
     <MESSAGE value="Implement MainLayout and ServerViewModels; add dynamic menu and server components" />
     <MESSAGE value="Update AppDbContext and DTOs; refactor message handling in channels and improve layout components" />
     <MESSAGE value="Add DTOs and enums for channels and messages; update related components" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add DTOs and enums for channels and messages; update related components" />
+    <MESSAGE value="Add API controllers for channels, private messages, and users; update connection string and refactor server retrieval logic" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add API controllers for channels, private messages, and users; update connection string and refactor server retrieval logic" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

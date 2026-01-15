@@ -1,4 +1,6 @@
-﻿using LetsTalk.Data;
+﻿using System.Text.Json;
+using LetsTalk.Data;
+using LetsTalk.Shared.Api;
 using LetsTalk.Shared.ModelsDto;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,11 +10,40 @@ namespace LetsTalk.Controllers;
 [Route("api/user")]
 public class UserApiController(BackApiEf _db) : BaseApiController
 {
-    // [HttpGet("GetAllUser")]
-    // public List<Utilisateur> GetAllUser()
-    // {
-    //     return _db.GetAllUsers();
-    // }
+    [HttpGet("")]
+    public ApiResponse<List<UserDto>> GetAllUser()
+    {
+        return this.Response("Liste des utilisateurs récupérée avec succès", _db.GetAllUsers().Select(user => new UserDto(
+            user.UtilisateurId,
+            user.Username,
+            user.Email,
+            user.Phone,
+            user.ProfilPicture,
+            user.CreatedAt
+        )).ToList());
+    }
+    
+    [HttpGet("{id:int}")]
+    public UserDto? GetUser(int id)
+    {
+        var user = _db.GetUserById(id);
+        return  user == null 
+            ? null 
+            : new UserDto(
+                user.UtilisateurId,
+                user.Username,
+                user.Email,
+                user.Phone,
+                user.ProfilPicture,
+                user.CreatedAt
+            );
+    }
+    
+    [HttpPost("")]
+    public bool SetNewUser(string token, string username, string email, string phone, string password, string type2fa)
+    {
+        return _db.SetNewUser(token, username, email, phone, password, type2fa);
+    }
     
     /// <summary>
     ///     Retrieve all servers linked to a user
@@ -22,10 +53,14 @@ public class UserApiController(BackApiEf _db) : BaseApiController
     ///     List of UserServerDto representing the servers associated with the specified user ID
     /// </returns>
     [HttpGet("{userid:int}/servers")]
-    public List<UserServerDto> GetUserServers(int userid)
+    public ApiResponse<List<UserServerDto>> GetUserServers(int userid)
     {
         var servers = _db.GetUserServers(userid);
 
-        return servers.Select(server => new UserServerDto(userid, server.ServerId, server.Nom)).ToList();
+        return this.Response("Liste des serveurs de l'utilisateur récupérée avec succès",
+            servers.Select(
+                server => new UserServerDto(userid, server.ServerId, server.Nom)
+                ).ToList()
+            );
     }
 }
