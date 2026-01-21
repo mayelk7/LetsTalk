@@ -39,7 +39,9 @@ public class ServerApiController(AppDbContext appDbContext) : BaseApiController
                     msg.Utilisateur.CreatedAt
                 ),
                 msg.Contenu,
-                msg.DateEnvoi
+                msg.DateEnvoi,
+                msg.CanalId,
+                msg.Epingle
             )).ToList(),
             canal.Type
         )).ToList();
