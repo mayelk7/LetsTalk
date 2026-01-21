@@ -22,7 +22,7 @@ public class UserApiController(BackApiEf _db) : BaseApiController
             user.CreatedAt
         )).ToList());
     }
-    
+
     [HttpGet("{id:int}")]
     public UserDto? GetUser(int id)
     {

@@ -14,3 +14,12 @@ public class MessagePriveApiController(BackApiEf _db) : BaseApiController
         return _db.GetAllMessagesPriver();
     }
 }
+//[Route("api/nouvelleConversationPrive")]
+//public class NouvelleConversationPriveApiController(BackApiEf _db) : BaseApiController
+//{
+//    [HttpPost("")]
+//    public ConversationPriverDto CreateNouvelleConversationPrive([FromBody] NouvelleConversationPriveDto nouvelleConversationPriveDto)
+//    {
+//        return _db.CreateNouvelleConversationPrive(nouvelleConversationPriveDto);
+//    }
+//}

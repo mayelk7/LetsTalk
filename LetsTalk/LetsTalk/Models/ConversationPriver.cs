@@ -7,6 +7,8 @@ public class ConversationPriver
     public int ConversationPriverId { get; set; }
     [Required]
     public DateTime? CreatedAt { get; set; }
+    [Required]
+    public string ConversationNom { get; set; }
 
     public ICollection<MembreMP> MembreMPs { get; set; }
     public ICollection<MessagePriver> MessagesPriver { get; set; }

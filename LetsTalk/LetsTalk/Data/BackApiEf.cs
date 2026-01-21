@@ -1,13 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
+﻿#region Imports
 using LetsTalk.Context;
+using LetsTalk.Helpers;
 using LetsTalk.Models;
 using LetsTalk.Shared;
 using LetsTalk.Shared.Enum;
 using LetsTalk.Shared.ModelsDto;
 using Microsoft.AspNetCore.Identity;
-using LetsTalk.Helpers;
-
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Security.Cryptography;
+#endregion
 namespace LetsTalk.Data;
 public class BackApiEf
 {
@@ -141,6 +143,60 @@ public class BackApiEf
         _db.MessagesPriver.Add(message);
         return _db.SaveChanges() > 0;
     }
+
+    // Créer une nouvelle conversation privée
+
+    public async Task<bool> SetNewConversationPriverAsync(List<int> membresIds)
+    {
+        if (membresIds == null || membresIds.Count < 2)
+            return false;
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+
+        try
+        {
+            //SS Récupération des usernames
+            var usernames = await _db.Utilisateurs
+                .Where(u => u.UtilisateurId.HasValue && membresIds.Contains(u.UtilisateurId.Value))
+                .OrderBy(u => u.Username)
+                .Select(u => u.Username)
+                .ToListAsync();
+
+            if (usernames.Count < 2)
+                return false;
+
+            // Génération du nom : user1-user2
+            var conversationNom = string.Join("-", usernames);
+
+            var conversation = new ConversationPriver
+            {
+                CreatedAt = DateTime.UtcNow,
+                ConversationNom = conversationNom
+            };
+
+            _db.ConversationPrivers.Add(conversation);
+            await _db.SaveChangesAsync();
+
+            var membres = membresIds.Select(membreId => new MembreMP
+            {
+                UtilisateurId = membreId,
+                ConversationPriverId = conversation.ConversationPriverId
+            });
+
+            _db.MembreMPs.AddRange(membres);
+            await _db.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
+    }
+
+
 
     // Créer un nouveau salon + canal
     public bool SetNewServer(string token, string nomSalon, int idOwner)

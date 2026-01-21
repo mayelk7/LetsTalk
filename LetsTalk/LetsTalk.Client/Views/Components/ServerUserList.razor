@@ -4,9 +4,13 @@
 <MudStack AlignItems="AlignItems.Start" Class="pl-2 pt-2" Spacing="2">
     @foreach (var user in Users)
     {
-        <MudText>@user.Username</MudText>
+        <MudButton Variant="Variant.Filled"
+                   EndIcon="@Icons.Material.Filled.AccountCircle"
+                   Style="background-color: #9225A6; color: white;"
+                   OnClick="@(() => OpenCardProfil(user))">
+            @user.Username
+        </MudButton>
     }
-
 </MudStack>
 
 @code {
@@ -14,4 +18,24 @@
     [Parameter]
     public required List<UserDto> Users { get; set; }
 
+    [Inject]
+    IDialogService DialogService { get; set; } = default!;
+
+    void OpenCardProfil(UserDto user)
+    {
+        var parameters = new DialogParameters
+        {
+            ["User"] = user
+        };
+
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true,
+            Position = DialogPosition.Center
+        };
+
+        DialogService.Show<CarteProfilUser>($"Profil de {user.Username}", parameters, options);
+    }
 }
