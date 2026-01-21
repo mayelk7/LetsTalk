@@ -116,7 +116,7 @@ namespace LetsTalk.Migrations
 
                     b.HasIndex("ServerId");
 
-                    b.ToTable("Membre", (string)null);
+                    b.ToTable("membre", (string)null);
                 });
 
             modelBuilder.Entity("LetsTalk.Models.MembreMP", b =>
@@ -336,7 +336,6 @@ namespace LetsTalk.Migrations
                         .HasColumnType("varbinary(255)");
 
                     b.Property<string>("Type2Fa")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
@@ -346,6 +345,12 @@ namespace LetsTalk.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("UtilisateurId");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
+                        .IsUnique();
 
                     b.ToTable("utilisateur", (string)null);
                 });

@@ -34,6 +34,7 @@ public partial class ServerViewModel : ObservableObject
         );
         
         SelectedChannel?.Messages.Add(message);
+        
         CurrentMessage = string.Empty;
     }
     

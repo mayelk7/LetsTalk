@@ -10,7 +10,7 @@ public partial class MainLayoutViewModel : ObservableObject
 {
     [ObservableProperty]
     private List<MenuItem> _menuItems = [
-        new() { Title = "Home", Icon = Icons.Material.Rounded.Home, Href = "" }
+        new() { Title = "Home", Icon = Icons.Material.Rounded.Chat, Href = "" }
     ];
 
     [ObservableProperty]
