@@ -123,7 +123,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<ConversationPriver>()
             .HasMany(c => c.MembreMPs)
-            .WithOne(mp => mp.ConversationPriver)
+            .WithOne(mp => mp.ConversationPrivers)
             .HasForeignKey(mp => mp.ConversationId)
             .OnDelete(DeleteBehavior.Cascade);
 

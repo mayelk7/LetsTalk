@@ -124,8 +124,8 @@ namespace LetsTalk.Data
 
                 var convMembers = new List<MembreMP>
                 {
-                    new MembreMP { UtilisateurId = allUsers[0].UtilisateurId, ConversationId = conv.ConversationPriverId },
-                    new MembreMP { UtilisateurId = allUsers[1].UtilisateurId, ConversationId = conv.ConversationPriverId }
+                    new MembreMP { UtilisateurId = allUsers[0].UtilisateurId, ConversationId  = conv.ConversationPriverId },
+                    new MembreMP { UtilisateurId = allUsers[1].UtilisateurId, ConversationId  = conv.ConversationPriverId }
                 };
                 context.MembreMPs.AddRange(convMembers);
                 context.SaveChanges();
