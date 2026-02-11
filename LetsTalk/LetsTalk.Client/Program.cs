@@ -8,6 +8,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.Services.AddMudServices();
 
 builder.Services.AddScoped<MainLayoutViewModel>();
+builder.Services.AddScoped<LoginLayoutViewModel>();
+
 builder.Services.AddScoped<CounterViewModel>();
 builder.Services.AddTransient<ServerViewModel>();
 builder.Services.AddScoped<ServerViewModel>();

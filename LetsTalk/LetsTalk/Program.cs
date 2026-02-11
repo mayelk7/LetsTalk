@@ -28,6 +28,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.Configure<LivekitSettings>(
     builder.Configuration.GetSection("LivekitSettings"));
 builder.Services.AddScoped<MainLayoutViewModel>();
+builder.Services.AddScoped<LoginLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
 builder.Services.AddTransient<ServerViewModel>();
 
