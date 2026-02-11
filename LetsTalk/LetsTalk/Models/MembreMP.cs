@@ -10,6 +10,6 @@ public class MembreMP
     public Utilisateur Utilisateur { get; set; }
 
     [Required]
-    public int ConversationId { get; set; }
-    public ConversationPriver ConversationPriver { get; set; }
+    public int ConversationId { get; set; }          //  FK unique (une seule conversation)
+    public ConversationPriver ConversationPrivers { get; set; } //  objet unique, pas ICollection
 }

@@ -59,10 +59,11 @@ builder.Services.AddHostedService<LivekitInitializer>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
+    .AddInteractiveServerComponents(options =>
+    {
+        options.DetailedErrors = builder.Environment.IsDevelopment();
+    })
     .AddInteractiveWebAssemblyComponents();
-
-
 
 var app = builder.Build();
 
