@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
-using LetsTalk.Shared.Enum;
-using LetsTalk.Shared.ModelsDto;
+using LetsTalk.Shared.Api;
 
 namespace LetsTalk.Client.Services;
 
@@ -30,14 +29,14 @@ public static class ApiManagerService
     /// <returns>
     ///     The deserialized response of type T, or null if the response content is empty.
     /// </returns>
-    public static async Task<T?> MakeGetRequest<T>(string endpoint)
+    public static async Task<ApiResponse<T>?> MakeGetRequest<T>(string endpoint)
     {
         HttpClient.DefaultRequestHeaders.Add("X-ApiManager", endpoint);
         var response = await HttpClient.GetAsync(endpoint);
         
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        return responseContent == string.Empty ? default : JsonSerializer.Deserialize<T>(responseContent, JsonSerializerOptions.Web);
+        return responseContent == string.Empty ? null : JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, JsonSerializerOptions.Web);
     }
 
     /// <summary>
@@ -53,14 +52,14 @@ public static class ApiManagerService
     /// <typeparam name="T">
     ///     The type to deserialize the response into.
     /// </typeparam>
-    /// <typeparam name="TD">
+    /// <typeparam name="TValue">
     ///     The type of the data transfer object to be sent in the POST request.
     /// </typeparam>
     /// 
     /// <returns>
     ///     The deserialized response of type T, or null if the response content is empty.
     /// </returns>
-    public static async Task<T?> MakePostRequest<T, TD>(string endpoint, TD dto)
+    public static async Task<ApiResponse<T>?> MakePostRequest<T, TValue>(string endpoint, TValue dto)
     {
         var json = JsonSerializer.Serialize(dto);
         
@@ -71,7 +70,7 @@ public static class ApiManagerService
         
         var responseContent = await response.Content.ReadAsStringAsync();
         
-        return responseContent == string.Empty ? default : JsonSerializer.Deserialize<T>(responseContent, JsonSerializerOptions.Web);
+        return responseContent == string.Empty ? null : JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, JsonSerializerOptions.Web);
     }
     
     /// <summary>
@@ -88,14 +87,14 @@ public static class ApiManagerService
     /// <returns>
     ///     The deserialized response of type T, or null if the response content is empty.
     /// </returns>
-    public static async Task<T?> MakeDeleteRequest<T>(string endpoint)
+    public static async Task<ApiResponse<T>?> MakeDeleteRequest<T>(string endpoint)
     {
         HttpClient.DefaultRequestHeaders.Add("X-ApiManager", endpoint);
         var response = await HttpClient.DeleteAsync(endpoint);
         
         var responseContent = await response.Content.ReadAsStringAsync();
         
-        return responseContent == string.Empty ? default : JsonSerializer.Deserialize<T>(responseContent, JsonSerializerOptions.Web);
+        return responseContent == string.Empty ? null : JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, JsonSerializerOptions.Web);
     }
     
     /// <summary>
@@ -118,7 +117,7 @@ public static class ApiManagerService
     /// <returns>
     ///     The deserialized response of type T, or null if the response content is empty.
     /// </returns>
-    public static async Task<T?> MakePutRequest<T, TD>(string endpoint, TD dto)
+    public static async Task<ApiResponse<T>?> MakePutRequest<T, TD>(string endpoint, TD dto)
     {
         var json = JsonSerializer.Serialize(dto);
         
@@ -129,7 +128,7 @@ public static class ApiManagerService
         
         var responseContent = await response.Content.ReadAsStringAsync();
         
-        return responseContent == string.Empty ? default : JsonSerializer.Deserialize<T>(responseContent, JsonSerializerOptions.Web);
+        return responseContent == string.Empty ? null : JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, JsonSerializerOptions.Web);
     }
     
     /// <summary>
@@ -152,7 +151,7 @@ public static class ApiManagerService
     /// <returns>
     ///     The deserialized response of type T, or null if the response content is empty.
     /// </returns>
-    public static async Task<T?> MakePatchRequest<T, TD>(string endpoint, TD dto)
+    public static async Task<ApiResponse<T>?> MakePatchRequest<T, TD>(string endpoint, TD dto)
     {
         var json = JsonSerializer.Serialize(dto);
         
@@ -163,6 +162,8 @@ public static class ApiManagerService
         
         var responseContent = await response.Content.ReadAsStringAsync();
         
-        return responseContent == string.Empty ? default : JsonSerializer.Deserialize<T>(responseContent, JsonSerializerOptions.Web);
+        return responseContent == string.Empty ? null : JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, JsonSerializerOptions.Web);
     }
 }
+
+

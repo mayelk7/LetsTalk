@@ -1,5 +1,10 @@
 // Membre.cs
+
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace LetsTalk.Models;
+
+[Table("membre")]
 public class Membre
 {
     // Composite PK (UtilisateurId, ServerId, RoleId)

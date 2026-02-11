@@ -63,16 +63,16 @@ public class BackApiEf
         return _db.MessagesCanal
             .Include(m => m.Utilisateur)
             .Include(m => m.Canal)
-            .Select(m => new MessageCanalDto
-            {
-                MessageId = m.MessageId,
-                Contenu = m.Contenu,
-                DateEnvoi = m.DateEnvoi,
-                UtilisateurId = m.UtilisateurId,
-                Username = m.Utilisateur.Username,
-                CanalId = m.CanalId,
-                NomCanal = m.Canal.Nom
-            })
+            .Select(m => new MessageCanalDto(
+            
+                m.MessageId,
+                m.Contenu,
+                m.DateEnvoi,
+                m.UtilisateurId,
+                m.Utilisateur.Username,
+                m.CanalId,
+                m.Canal.Nom
+            ))
             .ToList();
     }
 

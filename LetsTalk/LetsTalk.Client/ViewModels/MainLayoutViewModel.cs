@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Text.Json;
+using CommunityToolkit.Mvvm.ComponentModel;
 using LetsTalk.Client.Services;
 using LetsTalk.Shared.ModelsDto;
 using MudBlazor;
@@ -9,7 +10,7 @@ public partial class MainLayoutViewModel : ObservableObject
 {
     [ObservableProperty]
     private List<MenuItem> _menuItems = [
-        new() { Title = "Home", Icon = Icons.Material.Rounded.Home, Href = "" }
+        new() { Title = "Home", Icon = Icons.Material.Rounded.Chat, Href = "" }
     ];
 
     [ObservableProperty]
@@ -24,9 +25,16 @@ public partial class MainLayoutViewModel : ObservableObject
     
     public async Task InitAsync()
     {
-        
-        var userServerDtos = await ApiManagerService.MakeGetRequest<List<UserServerDto>>("letstalk/GetUserServers/1");
-        
+        var response = await ApiManagerService.MakeGetRequest<List<UserServerDto>>("/api/user/1/servers");
+
+        if (response is { Success: false })
+        {
+            Console.WriteLine("Error fetching user servers: " + response?.Message);
+            return;
+        }
+
+        var userServerDtos = response?.Data;
+
         foreach (var userServerDto in userServerDtos ?? Enumerable.Empty<UserServerDto>())
         {
             MenuItems.Add(new MenuItem(
