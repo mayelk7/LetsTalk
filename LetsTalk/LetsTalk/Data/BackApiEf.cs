@@ -142,6 +142,110 @@ public class BackApiEf
         return _db.SaveChanges() > 0;
     }
 
+    // Créer une nouvelle conversation privée
+
+    public async Task<bool> SetNewConversationPriverAsync(List<int> membresIds)
+    {
+        if (membresIds == null || membresIds.Count < 2)
+            return false;
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+
+        try
+        {
+            //SS Récupération des usernames
+            var usernames = await _db.Utilisateurs
+                .Where(u => u.UtilisateurId.HasValue && membresIds.Contains(u.UtilisateurId.Value))
+                .OrderBy(u => u.Username)
+                .Select(u => u.Username)
+                .ToListAsync();
+
+            if (usernames.Count < 2)
+                return false;
+
+            // Génération du nom : user1-user2
+            var conversationNom = string.Join("-", usernames);
+
+            var conversation = new ConversationPriver
+            {
+                CreatedAt = DateTime.UtcNow,
+                ConversationNom = conversationNom
+            };
+
+            _db.ConversationPrivers.Add(conversation);
+            await _db.SaveChangesAsync();
+
+            var membres = membresIds.Select(membreId => new MembreMP
+            {
+                UtilisateurId = membreId,
+                ConversationId = conversation.ConversationPriverId  
+            });
+
+            _db.MembreMPs.AddRange(membres);
+            await _db.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
+    }
+
+
+    public async Task<ConversationPriverDto> CreateNouvelleConversationPrive(NouvelleConversationPriveDto dto)
+    {
+        if (dto.MembresIds == null || dto.MembresIds.Count < 2)
+            throw new ArgumentException("Il faut au moins 2 membres.");
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+
+        try
+        {
+            var usernames = await _db.Utilisateurs
+                .Where(u => u.UtilisateurId.HasValue && dto.MembresIds.Contains(u.UtilisateurId.Value))
+                .OrderBy(u => u.Username)
+                .Select(u => u.Username)
+                .ToListAsync();
+
+            if (usernames.Count < 2)
+                throw new ArgumentException("Utilisateurs introuvables.");
+
+            var conversation = new ConversationPriver
+            {
+                CreatedAt = DateTime.UtcNow,
+                ConversationNom = string.Join("-", usernames)
+            };
+
+            _db.ConversationPrivers.Add(conversation);
+            await _db.SaveChangesAsync();
+
+            var membres = dto.MembresIds.Select(membreId => new MembreMP
+            {
+                UtilisateurId = membreId,
+                ConversationId = conversation.ConversationPriverId
+            });
+
+            _db.MembreMPs.AddRange(membres);
+            await _db.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            return new ConversationPriverDto(
+                conversation.ConversationPriverId,
+                conversation.ConversationNom,
+                conversation.CreatedAt!.Value
+            );
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
     // Créer un nouveau salon + canal
     public bool SetNewServer(string token, string nomSalon, int idOwner)
     {
@@ -227,3 +331,4 @@ public class BackApiEf
     }
     
 }
+

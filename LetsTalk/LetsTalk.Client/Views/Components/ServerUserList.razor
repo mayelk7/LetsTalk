@@ -10,8 +10,27 @@
 </MudStack>
 
 @code {
-
     [Parameter]
     public required List<UserDto> Users { get; set; }
+    [Parameter]
+    public required int CurrentUserId { get; set; }
+    [Inject]
+    IDialogService DialogService { get; set; } = default!;
 
+    void OpenCardProfil(UserDto user)
+    {
+        var parameters = new DialogParameters
+        {
+            ["User"] = user,
+            ["CurrentUserId"] = CurrentUserId
+        };
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true,
+            Position = DialogPosition.Center
+        };
+        DialogService.Show<CarteProfilUser>($"Profil de {user.Username}", parameters, options);
+    }
 }
