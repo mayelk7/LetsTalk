@@ -4,7 +4,12 @@
 <MudStack AlignItems="AlignItems.Start" Class="pl-2 pt-2" Spacing="2">
     @foreach (var user in Users)
     {
-        <MudText>@user.Username</MudText>
+        <MudButton Variant="Variant.Filled"
+                   EndIcon="@Icons.Material.Filled.AccountCircle"
+                   Style="background-color: #9225A6; color: white;"
+                   OnClick="@(() => OpenCardProfil(user))">
+            @user.Username
+        </MudButton>
     }
 
 </MudStack>
