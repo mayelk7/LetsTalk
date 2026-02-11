@@ -11,5 +11,5 @@ public class MembreMP
 
     [Required]
     public int ConversationId { get; set; }
-    public int ConversationPriverId { get; set; }
+    public ConversationPriver ConversationPriver { get; set; }
 }

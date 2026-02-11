@@ -13,26 +13,19 @@ public class MessageCanauxApiController(AppDbContext appDbContext) : BaseApiCont
     [HttpPost("")]
     public ApiResponse<object> Create([FromBody] MessageDto messageDto)
     {
-        try
+        var message = new MessageCanal()
         {
-            var message = new MessageCanal()
-            {
-                Contenu = messageDto.Content,
-                DateEnvoi = messageDto.Timestamp,
-
-            };
-
-            // appDbContext.MessagesCanal.Add()
-
-            return new ApiResponse<object>(
-                true,
-                "Message created successfully",
-                null
-            );
-        }
-        catch (Exception ex)
-        {
-            return ResponseError($"Error creating message: {ex.Message + " " + ex.StackTrace}");
-        }
+            Contenu = messageDto.Content,
+            DateEnvoi = messageDto.Timestamp,
+            
+        };
+        
+        // appDbContext.MessagesCanal.Add()
+        
+        return new ApiResponse<object>(
+            true,
+            "Message created successfully",
+            null
+        );
     }
 }
