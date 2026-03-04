@@ -24,7 +24,7 @@ public class Utilisateur
     public string Phone { get; set; }
 
     [Required, MaxLength(255)]
-    public string Password { get; set; }
+    public string Password { get; private set; }
     
     public string? ProfilPicture { get; set; }
 
@@ -38,7 +38,7 @@ public class Utilisateur
     public string? Type2Fa { get; set; }
 
     // Navigations
-    
+
     public ICollection<Membre> Membres { get; set; }
     public ICollection<MessageCanal> MessagesCanal { get; set; }
     public ICollection<MessagePriver> MessagesPriver { get; set; }
@@ -46,6 +46,29 @@ public class Utilisateur
     public ICollection<Notification> Notifications { get; set; }
     public ICollection<MessageLu> MessageLus { get; set; }
 
+
     // Owned servers (if user is owner referenced by Server.OwnerId)
     public ICollection<Server> OwnedServers { get; set; }
+
+    //Constructors
+
+    public Utilisateur()
+    {
+        CreatedAt = DateTime.UtcNow;
+        Membres = new List<Membre>();
+        MessagesCanal = new List<MessageCanal>();
+        MessagesPriver = new List<MessagePriver>();
+        MembreMPs = new List<MembreMP>();
+        Notifications = new List<Notification>();
+        MessageLus = new List<MessageLu>();
+    }
+    public Utilisateur(string username, string email, string phone, string hashedPassword) : this()
+    {
+        Username = username;
+        Email = email;
+        Phone = phone;
+        Password = hashedPassword;
+        Actif = true;
+    }
+
 }
