@@ -1,61 +1,64 @@
 ﻿using LetsTalk.Services.Authentification;
 using LetsTalk.Shared.Api;
 using LetsTalk.Shared.ModelsDto;
-using LetsTalk.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LetsTalk.Controllers;
 
-
-    [ApiController]
-    [Route("api/auth")]
-    public class AuthController(AuthService authService) : BaseApiController
+[ApiController]
+[Route("api/auth")]
+public class AuthController(AuthService authService) : BaseApiController
+{
+    // Register
+    [HttpPost("register")]
+    public ApiResponse<UserAuthDto> Register([FromBody] RegisterDto dto)
     {
-        [HttpPost("register")]
-        public ApiResponse<UserAuthDto> Register([FromBody] RegisterDto dto)
+        var result = authService.Register(
+            dto.Username,
+            dto.Email,
+            dto.Phone,
+            dto.Password
+        );
+
+        if (!result.Success)
         {
-            var resultReg = authService.Register(
-                    dto.Username,
-                    dto.Email,
-                    dto.Phone,
-                    dto.Password
-            );
-        if (!resultReg.Success)
-        {
-            return Response<UserAuthDto>(resultReg.ErrorMessage, null);
+            return Response<UserAuthDto>(result.ErrorMessage, null);
         }
-        var userDtoReg = new UserAuthDto(
-            resultReg.User.UtilisateurId ?? 0,
-            resultReg.User.Username,
-            resultReg.User.Email,
-            resultReg.User.Phone,
-            resultReg.User.ProfilPicture,
-            resultReg.User.Actif,
-            resultReg.User.CreatedAt
+
+        var userDto = new UserAuthDto(
+            result.User!.UtilisateurId ?? 0,
+            result.User.Username,
+            result.User.Email,
+            result.User.Phone,
+            result.User.ProfilPicture,
+            result.User.Actif,
+            result.User.CreatedAt
         );
-        return Response("Inscription réussie", userDtoReg);
+
+        return Response("Inscription réussie", userDto);
     }
-        [HttpPost("login")]
-        public ApiResponse<UserAuthDto> Login([FromBody] LoginDto dto)
+
+    // Login
+    [HttpPost("login")]
+    public ApiResponse<UserAuthDto> Login([FromBody] LoginDto dto)
+    {
+        var result = authService.Login(dto.Username, dto.Password);
+
+        if (!result.Success)
         {
-            var resultLog = authService.Login(
-                dto.Username,
-                dto.Password
-            );
-            if (!resultLog.Success)
-            {
-                return Response<UserAuthDto>(resultLog.ErrorMessage, null);
-            }
-        var userDtoLog = new UserAuthDto(
-            resultLog.User!.UtilisateurId ?? 0,
-            resultLog.User.Username,
-            resultLog.User.Email,
-            resultLog.User.Phone,
-            resultLog.User.ProfilPicture,
-            resultLog.User.Actif,
-            resultLog.User.CreatedAt
+            return Response<UserAuthDto>(result.ErrorMessage, null);
+        }
+
+        var userDto = new UserAuthDto(
+            result.User!.UtilisateurId ?? 0,
+            result.User.Username,
+            result.User.Email,
+            result.User.Phone,
+            result.User.ProfilPicture,
+            result.User.Actif,
+            result.User.CreatedAt
         );
-        return Response("Connexion réussie", userDtoLog);
+
+        return Response("Connexion réussie", userDto);
     }
 }
-

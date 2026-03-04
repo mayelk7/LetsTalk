@@ -31,32 +31,6 @@ public class BackApiEf
                   .FirstOrDefault(u => u.UtilisateurId == id);
     }
 
-    // Créer un nouvel utilisateur
-    public bool SetNewUser(string token, string username, string email, string phone, string password, string type2fa)
-    {
-        if (!IsAdmin(token))
-            throw new UnauthorizedAccessException("Seul un administrateur peut créer un nouvel utilisateur.");
-
-        byte[] salt = RandomNumberGenerator.GetBytes(16);
-        var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100_000, HashAlgorithmName.SHA256);
-
-        var user = new Utilisateur
-        {
-            Username = username,
-            Email = email,
-            Phone = phone,
-            Password = PasswordHelper.Hash(password),
-            ProfilPicture = null,
-            Actif = true,
-            Salt = salt,
-            CreatedAt = DateTime.UtcNow,
-            Type2Fa = type2fa
-        };
-
-        _db.Utilisateurs.Add(user);
-        return _db.SaveChanges() > 0;
-    }
-
     // Récupérer tous les messages
     public List<MessageCanalDto> GetAllMessagesCanal()
     {

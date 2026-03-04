@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using LetsTalk.Data;
+﻿using LetsTalk.Data;
 using LetsTalk.Shared.Api;
 using LetsTalk.Shared.ModelsDto;
 using Microsoft.AspNetCore.Mvc;
@@ -37,12 +36,6 @@ public class UserApiController(BackApiEf _db) : BaseApiController
                 user.ProfilPicture,
                 user.CreatedAt
             );
-    }
-    
-    [HttpPost("")]
-    public bool SetNewUser(string token, string username, string email, string phone, string password, string type2fa)
-    {
-        return _db.SetNewUser(token, username, email, phone, password, type2fa);
     }
     
     /// <summary>

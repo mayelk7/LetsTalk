@@ -23,7 +23,6 @@ namespace LetsTalk.Data
                     .RuleFor(u => u.Password, f => "password123")
                     .RuleFor(u => u.ProfilPicture, f => f.Internet.Avatar())
                     .RuleFor(u => u.Actif, f => true)
-                    .RuleFor(u => u.Salt, f => BitConverter.GetBytes(f.Random.Int()))
                     .RuleFor(u => u.CreatedAt, f => f.Date.Past())
                     .RuleFor(u => u.Type2Fa, f => "None");
 
