@@ -13,7 +13,7 @@ public class UserApiController(BackApiEf _db) : BaseApiController
     [HttpGet("")]
     public ApiResponse<List<UserDto>> GetAllUser()
     {
-        return this.Response("Liste des utilisateurs récupérée avec succès", _db.GetAllUsers().Select(user => new UserDto(
+        return Response("Liste des utilisateurs récupérée avec succès", _db.GetAllUsers().Select(user => new UserDto(
             user.UtilisateurId,
             user.Username,
             user.Email,
@@ -57,7 +57,7 @@ public class UserApiController(BackApiEf _db) : BaseApiController
     {
         var servers = _db.GetUserServers(userid);
 
-        return this.Response("Liste des serveurs de l'utilisateur récupérée avec succès",
+        return Response("Liste des serveurs de l'utilisateur récupérée avec succès",
             servers.Select(
                 server => new UserServerDto(userid, server.ServerId, server.Nom)
                 ).ToList()

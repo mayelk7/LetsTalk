@@ -1,0 +1,60 @@
+﻿@using LetsTalk.Shared.ModelsDto
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<MudCard Elevation="6" Class="pa-4">
+    <MudCardContent>
+        <MudText Typo="Typo.h6">@User.Username</MudText>
+        <MudText Typo="Typo.body2">
+            Email : @User.Email
+        </MudText>
+        <MudText>
+            Création de l'utilisateur : @User.CreatedAt.ToString("dd/MM/yyyy")
+        </MudText>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Message"
+                   OnClick="HandleSendMessage"
+                   Disabled="_loading">
+            @if (_loading)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+            }
+            Message privé
+        </MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter]
+    public required UserDto User { get; set; }
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+    [Parameter]
+    public required int CurrentUserId { get; set; }
+
+    private bool _loading = false;
+
+    private async Task HandleSendMessage()
+    {
+        _loading = true;
+
+        var dto = new NouvelleConversationPriveDto(
+            new List<int> { CurrentUserId,(int)User.Id }
+        );
+
+        var response = await Http.PostAsJsonAsync("api/nouvelleConversationPrive", dto);
+
+        Snackbar.Add(
+            response.IsSuccessStatusCode
+                ? $"Conversation avec {User.Username} créée !"
+                : "Erreur lors de la création.",
+            response.IsSuccessStatusCode ? Severity.Success : Severity.Error
+        );
+
+        _loading = false;
+        await OnClose.InvokeAsync();
+    }
+}

@@ -333,11 +333,6 @@ namespace LetsTalk.Migrations
                     b.Property<string>("ProfilPicture")
                         .HasColumnType("longtext");
 
-                    b.Property<byte[]>("Salt")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varbinary(255)");
-
                     b.Property<string>("Type2Fa")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");

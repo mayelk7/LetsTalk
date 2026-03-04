@@ -23,7 +23,7 @@ public class ServerApiController(AppDbContext appDbContext) : BaseApiController
             .FirstOrDefault(s => s.ServerId == id);
 
         if (server == null)
-            return this.Response<FullServerDto>("Serveur non trouvé.", null);
+            return Response<FullServerDto>("Serveur non trouvé.", null);
             
         var channels = server.Canaux.Select(canal => new ChannelDto(
             canal.CanauxId,
@@ -39,7 +39,9 @@ public class ServerApiController(AppDbContext appDbContext) : BaseApiController
                     msg.Utilisateur.CreatedAt
                 ),
                 msg.Contenu,
-                msg.DateEnvoi
+                msg.DateEnvoi,
+                msg.CanalId,
+                msg.Epingle
             )).ToList(),
             canal.Type
         )).ToList();
@@ -53,7 +55,7 @@ public class ServerApiController(AppDbContext appDbContext) : BaseApiController
             user.Utilisateur.CreatedAt
         )).ToList();
             
-        return this.Response<FullServerDto>("Server retrouvé.", new FullServerDto(
+        return Response<FullServerDto>("Server retrouvé.", new FullServerDto(
             server.ServerId,
             server.Nom,
             channels,

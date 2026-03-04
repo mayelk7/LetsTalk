@@ -10,22 +10,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88ba99b6-afb7-456e-8247-62c505dc6bc0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/Api/ApiResponse.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Services/ApiManagerService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Services/ApiManagerService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/MainLayoutViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/MainLayoutViewModel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/FullUser.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/UserDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/UserDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/BaseApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/BaseApiController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/LetsTalkController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/LetsTalkController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageCanalDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageCanalDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageDto.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/MessageCanauxApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/MessageCanauxApiController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/ServerApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/ServerApiController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/UserApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/UserApiController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Data/BackApiEf.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Data/BackApiEf.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_C:/Users/fcari/source/repos/LetsTalk" value="350xasaxdTb8Q8tOoeVs8XDIpBk" />
+    </persistenceIdMap>
   </component>
   <component name="DpaMonitoringSettings">
     <option name="firstShow" value="false" />
@@ -52,8 +54,11 @@
 }</component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Temp/SourceGeneratedDocuments/2E930CDD0A818B43944FD034/CommunityToolkit.Mvvm.SourceGenerators/CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator/LetsTalk.Client.ViewModels.ServerViewModel.g.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1c35e24bed73d11e6b193e6b5c424d7a5b59a38954494bec5046c1a736/JsonSerializer.Helpers.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/27c4858128168eda568c1334d70d5241efb9461e2a3209258a04deee5d9c367/JsonSerializer.Read.String.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5ef7f3c9db445621211faddebc3c1c9bb48a942f1b8cba4caa2501466f85f/JsonSerializerOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/6fa05d7dbf2e454ce78b261b422234da1f1ccedee678fd997e5ef4afe6df6e/ControllerBase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/fddd663f895f1deb84b596bca944836d74f3422b3dd46a5085b2f46b981de9/Queryable.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Services/ApiManagerService.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/CounterViewModel.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/MainLayoutViewModel.cs" root0="FORCE_HIGHLIGHTING" />
@@ -69,12 +74,13 @@
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Context/AppDbContext.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/BaseApiController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/CanauxApiController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/MessageCanauxApiController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/ServerApiController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/UserApiController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="https://www.schemastore.org/appsettings.json" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="HttpClientEndpointsTabState">
-    <option name="cachedRequestData" value="&lt;CachedHttpClientTabRequests&gt;&#10;  &lt;entry key=&quot;2a487995b2b4cb3525ad7d054f4ab9eb72071621&quot; value=&quot;###&amp;#10;GET http://localhost:5278/api/Test&quot; /&gt;&#10;&lt;/CachedHttpClientTabRequests&gt;" />
+    <option name="cachedRequestData" value="&lt;CachedHttpClientTabRequests /&gt;" />
   </component>
   <component name="HttpClientOnboardingState">{
   &quot;isOnboardingCommentShown&quot;: true
@@ -110,7 +116,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.smartKeys_rider&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;HotReloadSettingsPage&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -196,7 +202,11 @@
       <workItem from="1764745579485" duration="23410000" />
       <workItem from="1768374808019" duration="12128000" />
       <workItem from="1768395996516" duration="10145000" />
-      <workItem from="1768482858516" duration="2616000" />
+      <workItem from="1768482858516" duration="8186000" />
+      <workItem from="1768578476048" duration="838000" />
+      <workItem from="1768981022757" duration="5361000" />
+      <workItem from="1768990540275" duration="6730000" />
+      <workItem from="1769026990537" duration="703000" />
     </task>
     <task id="LOCAL-00001" summary="init MVVM + EFCore&#10;README">
       <option name="closed" value="true" />
@@ -286,7 +296,31 @@
       <option name="project" value="LOCAL" />
       <updated>1768400395144</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Refactor API request methods to return ApiResponse&lt;T&gt;; add ApiResponse class for standardized responses">
+      <option name="closed" value="true" />
+      <created>1768486708275</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1768486708275</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Rename Membre table to membre; update foreign keys and primary key constraints in migration">
+      <option name="closed" value="true" />
+      <created>1768490980922</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1768490980922</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Update table names to lowercase; refactor API response methods for consistency">
+      <option name="closed" value="true" />
+      <created>1768989930002</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1768989930002</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -307,7 +341,10 @@
     <MESSAGE value="Update AppDbContext and DTOs; refactor message handling in channels and improve layout components" />
     <MESSAGE value="Add DTOs and enums for channels and messages; update related components" />
     <MESSAGE value="Add API controllers for channels, private messages, and users; update connection string and refactor server retrieval logic" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add API controllers for channels, private messages, and users; update connection string and refactor server retrieval logic" />
+    <MESSAGE value="Refactor API request methods to return ApiResponse&lt;T&gt;; add ApiResponse class for standardized responses" />
+    <MESSAGE value="Rename Membre table to membre; update foreign keys and primary key constraints in migration" />
+    <MESSAGE value="Update table names to lowercase; refactor API response methods for consistency" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update table names to lowercase; refactor API response methods for consistency" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

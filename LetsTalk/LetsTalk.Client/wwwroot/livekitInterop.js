@@ -2,7 +2,7 @@
 let currentUserId = null;
 
 window.livekitInterop = {
-    // ✅ Join avec l'userId en paramètre
+
     join: async (url, token, userId) => {
         currentUserId = userId;
         room = new LivekitClient.Room();
@@ -10,7 +10,6 @@ window.livekitInterop = {
         await room.connect(url, token);
         console.log(`✅ Connecté en tant que ${userId}`);
 
-        // Activer le micro
         await room.localParticipant.setMicrophoneEnabled(true);
 
         // Participants déjà présents
@@ -18,40 +17,58 @@ window.livekitInterop = {
             subscribeToParticipant(participant);
         });
 
-        // Nouvelles pistes
+        // Nouvelles pistes (remote uniquement)
         room.on("trackSubscribed", (track, publication, participant) => {
             console.log("🔔 TRACK REÇU:");
             console.log("  Participant:", participant.identity);
-            console.log("  Kind:", track.kind); // "audio" ou "video"
-            console.log("  Source:", track.source); // "microphone", "screen_share", etc.
-            console.log("  Track complet:", track);
+            console.log("  Kind:", track.kind);
+            console.log("  Source:", track.source);
             handleTrack(track, participant);
         });
 
-        // Nouveau participant
+        // ✅ Piste locale publiée (pour voir son propre screen share)
+        room.localParticipant.on("localTrackPublished", (publication) => {
+            const track = publication.track;
+            if (track && track.kind === "video") {
+                console.log("🖥️ Mon propre screen share publié");
+                handleVideoTrack(track, room.localParticipant);
+            }
+        });
+
+        // ✅ Piste locale dépubliée (on arrête le screen share)
+        room.localParticipant.on("localTrackUnpublished", (publication) => {
+            if (publication.kind === "video") {
+                console.log("🛑 Mon screen share arrêté");
+                removeVideoTrack(room.localParticipant.identity);
+            }
+        });
+
         room.on("participantConnected", (participant) => {
             console.log(`👋 ${participant.identity} a rejoint`);
             subscribeToParticipant(participant);
         });
 
-        // Participant parti
         room.on("participantDisconnected", (participant) => {
             console.log(`👋 ${participant.identity} est parti`);
             removeParticipantAudio(participant);
+            removeVideoTrack(participant.identity);
             updateParticipantSpeaking(participant.identity, false);
         });
 
-        // ✅ DÉTECTION DE QUI PARLE
+        // ✅ Quand un remote arrête son screen share
+        room.on("trackUnsubscribed", (track, publication, participant) => {
+            if (track.kind === "video") {
+                console.log(`🛑 Screen share de ${participant.identity} terminé`);
+                removeVideoTrack(participant.identity);
+            }
+        });
+
         room.on("activeSpeakersChanged", (speakers) => {
-            // Retirer tous les styles "speaking"
             document.querySelectorAll('.participant-card.speaking').forEach(card => {
                 card.classList.remove('speaking');
             });
-
-            // Ajouter le style pour ceux qui parlent
             speakers.forEach(speaker => {
                 updateParticipantSpeaking(speaker.identity, true);
-                console.log(`🗣️ ${speaker.identity} parle`);
             });
         });
     },
@@ -67,39 +84,31 @@ window.livekitInterop = {
         document.querySelectorAll('.participant-card-wrapper.speaking').forEach(wrapper => {
             wrapper.classList.remove('speaking');
         });
-        console.log("🧹 Tous les styles speaking retirés");
     },
 
-    // ✅ NOUVELLE FONCTION : Partage d'écran
+    // ✅ Screen share corrigé
     toggleScreenShare: async (enable) => {
         if (!room) return;
-
         try {
             await room.localParticipant.setScreenShareEnabled(enable);
-            console.log(enable
-                ? "✅ Screen share activé"
-                : "🛑 Screen share désactivé");
-        }
-        catch (error) {
+            console.log(enable ? "✅ Screen share activé" : "🛑 Screen share désactivé");
+        } catch (error) {
             console.error("❌ Erreur screen share:", error);
+            // L'utilisateur a peut-être refusé la permission navigateur
+            // On notifie Blazor pour remettre le bouton dans le bon état
+            if (window.blazorInterop && window.blazorInterop.onScreenShareError) {
+                window.blazorInterop.onScreenShareError(error.message);
+            }
         }
     },
-
 
     leave: () => {
         if (room) {
-            // ✅ Arrêter le partage d'écran si actif
-            if (screenShareTrack) {
-                screenShareTrack[0].stop();
-                screenShareTrack = null;
-            }
-            // Nettoyer les styles
             document.querySelectorAll('.participant-card.speaking').forEach(card => {
                 card.classList.remove('speaking');
             });
-
-            document.querySelectorAll('audio[data-livekit]').forEach(el => el.remove()); // Nettoyer les audio
-            document.querySelectorAll('video[data-livekit]').forEach(el => el.remove()); // Nettoyer les vidéos
+            document.querySelectorAll('audio[data-livekit]').forEach(el => el.remove());
+            document.querySelectorAll('video[data-livekit]').forEach(el => el.remove());
 
             room.disconnect();
             room = null;
@@ -108,32 +117,32 @@ window.livekitInterop = {
         }
     },
 
-    // ✅ Fonction pour synchroniser avec la liste Blazor
     updateParticipantsList: (participants) => {
         console.log("📋 Liste mise à jour:", participants);
+    },
+
+    setParticipantVolume: (identity, volume) => {
+        // volume entre 0 et 1
+        const audio = document.querySelector(`audio[data-participant="${identity}"]`);
+        if (audio) {
+            audio.volume = volume;
+            console.log(`🔊 Volume de ${identity} : ${volume}`);
+        }
     }
 };
 
-// ✅ Mettre à jour le style de la carte du participant qui parle
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
 function updateParticipantSpeaking(identity, isSpeaking) {
     const wrapper = document.getElementById(`participant-card-${identity}`);
-    console.log(`Mise à jour de ${identity} : speaking = ${isSpeaking}`);
     if (wrapper) {
-        console.log("j'ai le wrapper");
-        if (isSpeaking) {
-            wrapper.classList.add('speaking');
-            console.log("ajoute de speaking");
-        } else {
-            wrapper.classList.remove('speaking');
-            console.log("retirer de speaking");
-        }
+        wrapper.classList.toggle('speaking', isSpeaking);
     }
-    console.log("j'ai le pas le wrapper"); 
-
 }
 
+// ✅ subscribeToParticipant gère maintenant AUDIO + VIDEO
 function subscribeToParticipant(participant) {
-    participant.audioTrackPublications.forEach((publication) => {
+    participant.trackPublications.forEach((publication) => {
         if (publication.track) {
             handleTrack(publication.track, participant);
         }
@@ -141,46 +150,76 @@ function subscribeToParticipant(participant) {
 }
 
 function handleTrack(track, participant) {
-    console.log(track)
     if (track.kind === "audio") {
-        console.log(`🎧 Audio de ${participant.identity}`);
-
-        const audioElement = track.attach();
-        audioElement.setAttribute('data-livekit', 'true');
-        audioElement.setAttribute('data-participant', participant.identity);
-        document.body.appendChild(audioElement);
-
-        audioElement.play()
-            .catch(err => console.warn(`Autoplay bloqué pour ${participant.identity}:`, err));
+        handleAudioTrack(track, participant);
+    } else if (track.kind === "video") {
+        handleVideoTrack(track, participant);
     }
-    // ✅ NOUVEAU : Gérer la vidéo (partage d'écran)
-    if (track.kind === "video") {
-        console.log(`🖥️ Partage d'écran de ${participant.identity}`);
-        const preview = document.getElementById(`screen-preview-${participant.identity}`);
-        if (preview) {
-            const videoElement = track.attach();
-            videoElement.style.cssText = `
+}
+
+function handleAudioTrack(track, participant) {
+    console.log(`🎧 Audio de ${participant.identity}`);
+
+    // Éviter les doublons
+    const existing = document.querySelector(`audio[data-participant="${participant.identity}"]`);
+    if (existing) return;
+
+    const audioElement = track.attach();
+    audioElement.setAttribute('data-livekit', 'true');
+    audioElement.setAttribute('data-participant', participant.identity);
+    document.body.appendChild(audioElement);
+
+    audioElement.play().catch(err =>
+        console.warn(`Autoplay bloqué pour ${participant.identity}:`, err)
+    );
+}
+
+function handleVideoTrack(track, participant) {
+    console.log(`🖥️ Vidéo/Screen share de ${participant.identity}`);
+
+    // ✅ On cherche le conteneur dans le DOM Blazor
+    const preview = document.getElementById(`screen-preview-${participant.identity}`);
+
+    if (!preview) {
+        console.warn(`⚠️ Pas de conteneur #screen-preview-${participant.identity} dans le DOM.`);
+        console.warn("Assure-toi que ton composant Blazor rend un <div id='screen-preview-@identity'></div>");
+        return;
+    }
+
+    // Éviter les doublons
+    const existing = preview.querySelector('video[data-livekit]');
+    if (existing) existing.remove();
+
+    const videoElement = track.attach();
+    videoElement.setAttribute('data-livekit', 'true');
+    videoElement.setAttribute('data-participant', participant.identity);
+    videoElement.style.cssText = `
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         border-radius: 4px;
+        background: #000;
     `;
-            preview.appendChild(videoElement);
-            preview.style.display = 'block';
-        }
-    } else {
-        console.log("pas un cannaux video")
-    }
+    preview.appendChild(videoElement);
+    preview.style.display = 'block';
 
-    // Quand la piste se termine
+    // ✅ Nettoyage quand la track se termine (ex: l'utilisateur clique "Arrêter le partage" dans le navigateur)
     track.on('ended', () => {
-        console.log(`🛑 Partage d'écran de ${participant.identity} terminé`);
-        videoContainer.style.display = 'none';
+        console.log(`🛑 Track ended pour ${participant.identity}`);
+        removeVideoTrack(participant.identity);
     });
-    
+}
+
+function removeVideoTrack(identity) {
+    const preview = document.getElementById(`screen-preview-${identity}`);
+    if (preview) {
+        preview.innerHTML = '';
+        preview.style.display = 'none';
+    }
+    // Nettoyer aussi les éventuels éléments video orphelins
+    document.querySelectorAll(`video[data-participant="${identity}"]`).forEach(el => el.remove());
 }
 
 function removeParticipantAudio(participant) {
-    const audioElements = document.querySelectorAll(`audio[data-participant="${participant.identity}"]`);
-    audioElements.forEach(el => el.remove());
+    document.querySelectorAll(`audio[data-participant="${participant.identity}"]`).forEach(el => el.remove());
 }

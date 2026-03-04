@@ -31,9 +31,6 @@ public class Utilisateur
     [Required,DefaultValue(true)]
     public bool Actif { get; set; }
 
-    [Required, MaxLength(255)]
-    public byte[] Salt { get; set; }
-
     [Required]
     public DateTime CreatedAt { get; set; }
 

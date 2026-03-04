@@ -1,4 +1,5 @@
-﻿using Bogus.Extensions.Italy;
+﻿using Bogus.DataSets;
+using Bogus.Extensions.Italy;
 using LetsTalk.Context;
 using LetsTalk.Helpers;
 using LetsTalk.Models;
@@ -51,9 +52,6 @@ public class BackApiEf
         if (!IsAdmin(token))
             throw new UnauthorizedAccessException("Seul un administrateur peut créer un nouvel utilisateur.");
 
-        byte[] salt = RandomNumberGenerator.GetBytes(16);
-        var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100_000, HashAlgorithmName.SHA256);
-
         var user = new Utilisateur
         {
             Username = username,
@@ -62,7 +60,6 @@ public class BackApiEf
             Password = PasswordHelper.Hash(password),
             ProfilPicture = null,
             Actif = true,
-            Salt = salt,
             CreatedAt = DateTime.UtcNow,
             Type2Fa = type2fa
         };
@@ -77,16 +74,16 @@ public class BackApiEf
         return _db.MessagesCanal
             .Include(m => m.Utilisateur)
             .Include(m => m.Canal)
-            .Select(m => new MessageCanalDto
-            {
-                MessageId = m.MessageId,
-                Contenu = m.Contenu,
-                DateEnvoi = m.DateEnvoi,
-                UtilisateurId = m.UtilisateurId,
-                Username = m.Utilisateur.Username,
-                CanalId = m.CanalId,
-                NomCanal = m.Canal.Nom
-            })
+            .Select(m => new MessageCanalDto(
+            
+                m.MessageId,
+                m.Contenu,
+                m.DateEnvoi,
+                m.UtilisateurId,
+                m.Utilisateur.Username,
+                m.CanalId,
+                m.Canal.Nom
+            ))
             .ToList();
     }
 
@@ -154,6 +151,110 @@ public class BackApiEf
 
         _db.MessagesPriver.Add(message);
         return _db.SaveChanges() > 0;
+    }
+
+    // Créer une nouvelle conversation privée
+
+    public async Task<bool> SetNewConversationPriverAsync(List<int> membresIds)
+    {
+        if (membresIds == null || membresIds.Count < 2)
+            return false;
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+
+        try
+        {
+            //SS Récupération des usernames
+            var usernames = await _db.Utilisateurs
+                .Where(u => u.UtilisateurId.HasValue && membresIds.Contains(u.UtilisateurId.Value))
+                .OrderBy(u => u.Username)
+                .Select(u => u.Username)
+                .ToListAsync();
+
+            if (usernames.Count < 2)
+                return false;
+
+            // Génération du nom : user1-user2
+            var conversationNom = string.Join("-", usernames);
+
+            var conversation = new ConversationPriver
+            {
+                CreatedAt = DateTime.UtcNow,
+                ConversationNom = conversationNom
+            };
+
+            _db.ConversationPrivers.Add(conversation);
+            await _db.SaveChangesAsync();
+
+            var membres = membresIds.Select(membreId => new MembreMP
+            {
+                UtilisateurId = membreId,
+                ConversationId = conversation.ConversationPriverId  
+            });
+
+            _db.MembreMPs.AddRange(membres);
+            await _db.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            return false;
+        }
+    }
+
+
+    public async Task<ConversationPriverDto> CreateNouvelleConversationPrive(NouvelleConversationPriveDto dto)
+    {
+        if (dto.MembresIds == null || dto.MembresIds.Count < 2)
+            throw new ArgumentException("Il faut au moins 2 membres.");
+
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+
+        try
+        {
+            var usernames = await _db.Utilisateurs
+                .Where(u => u.UtilisateurId.HasValue && dto.MembresIds.Contains(u.UtilisateurId.Value))
+                .OrderBy(u => u.Username)
+                .Select(u => u.Username)
+                .ToListAsync();
+
+            if (usernames.Count < 2)
+                throw new ArgumentException("Utilisateurs introuvables.");
+
+            var conversation = new ConversationPriver
+            {
+                CreatedAt = DateTime.UtcNow,
+                ConversationNom = string.Join("-", usernames)
+            };
+
+            _db.ConversationPrivers.Add(conversation);
+            await _db.SaveChangesAsync();
+
+            var membres = dto.MembresIds.Select(membreId => new MembreMP
+            {
+                UtilisateurId = membreId,
+                ConversationId = conversation.ConversationPriverId
+            });
+
+            _db.MembreMPs.AddRange(membres);
+            await _db.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            return new ConversationPriverDto(
+                conversation.ConversationPriverId,
+                conversation.ConversationNom,
+                conversation.CreatedAt!.Value
+            );
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     // Créer un nouveau salon + canal
@@ -267,17 +368,17 @@ public class BackApiEf
 
             // 4️⃣ Créer ton objet final
             var utilisateur = new ParticipantLiveKit
-                (
-                    identityId,
-                    p.Name,
-                    p.State.ToString(),
-                    p.Permission?.CanPublish ?? false,
-                    p.Permission?.CanSubscribe ?? false,
-                    // Ajouter les infos D
-                    userFromDb.ProfilPicture,
-                    userFromDb.Username
-
-            );
+            {
+                Identity = identityId,
+                Name = p.Name,
+                State = p.State.ToString(),
+                CanPublish = p.Permission?.CanPublish ?? false,
+                CanSubscribe = p.Permission?.CanSubscribe ?? false,
+                // ✅ LiveKit stocke les tracks actives sur chaque participant
+                IsSharingScreen = p.Tracks.Any(t => t.Source == TrackSource.ScreenShare && !t.Muted),
+                AvatarUrl = userFromDb.ProfilPicture,
+                Username = userFromDb.Username
+            };
 
             allParticipants.Add(utilisateur);
         }

@@ -52,14 +52,14 @@ public static class ApiManagerService
     /// <typeparam name="T">
     ///     The type to deserialize the response into.
     /// </typeparam>
-    /// <typeparam name="TD">
+    /// <typeparam name="TValue">
     ///     The type of the data transfer object to be sent in the POST request.
     /// </typeparam>
     /// 
     /// <returns>
     ///     The deserialized response of type T, or null if the response content is empty.
     /// </returns>
-    public static async Task<ApiResponse<T>?> MakePostRequest<T, TD>(string endpoint, TD dto)
+    public static async Task<ApiResponse<T>?> MakePostRequest<T, TValue>(string endpoint, TValue dto)
     {
         var json = JsonSerializer.Serialize(dto);
         
