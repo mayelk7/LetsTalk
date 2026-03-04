@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using LetsTalk.Client.Context;
 using LetsTalk.Client.Services;
 using LetsTalk.Shared.ModelsDto;
 
 namespace LetsTalk.Client.ViewModels;
 
-public partial class ServerViewModel : ObservableObject
+public partial class ServerViewModel(UserContext userContext) : ObservableObject
 {
+    [ObservableProperty]
+    private UserContext _userContext = userContext;
     private int ServerId { get; set; }
 
     [ObservableProperty]
@@ -19,23 +22,28 @@ public partial class ServerViewModel : ObservableObject
     
     public void OnMessageInput()
     {
+        if (CurrentMessage == null || SelectedChannel == null)
+        {
+            return;
+        }
+        
+        CurrentMessage = CurrentMessage.Trim();
+        
+        if (CurrentMessage.Length == 0)
+        {
+            return;
+        }
+        
         MessageDto message = new(
             0,
-            new UserDto(
-                1,
-                "CurrentUser", // TODO: Replace with actual current user
-                "john.doe@exemple.com",
-                "1234567890",
-                null,
-                DateTime.Now
-            ),
+            this._userContext.CurrentUser,
             CurrentMessage ?? string.Empty,
             DateTime.Now,
-            SelectedChannel?.Id ?? 0,
+            SelectedChannel.Id ?? 0,
             false
         );
         
-        SelectedChannel?.Messages.Add(message);
+        SelectedChannel.Messages.Add(message);
         
         CurrentMessage = string.Empty;
         

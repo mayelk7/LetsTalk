@@ -4,6 +4,7 @@ using LetsTalk.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetsTalk.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260115145735_Migration1")]
+    partial class Migration1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,9 +59,6 @@ namespace LetsTalk.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ConversationPriverId"));
-
-                    b.Property<string>("ConversationNom")
-                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
@@ -344,7 +344,10 @@ namespace LetsTalk.Migrations
 
                     b.HasKey("UtilisateurId");
 
-                    b.HasIndex("Username", "Email")
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("utilisateur", (string)null);
@@ -390,7 +393,7 @@ namespace LetsTalk.Migrations
 
             modelBuilder.Entity("LetsTalk.Models.MembreMP", b =>
                 {
-                    b.HasOne("LetsTalk.Models.ConversationPriver", "ConversationPrivers")
+                    b.HasOne("LetsTalk.Models.ConversationPriver", "ConversationPriver")
                         .WithMany("MembreMPs")
                         .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -451,7 +454,7 @@ namespace LetsTalk.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ConversationPrivers");
+                    b.Navigation("ConversationPriver");
 
                     b.Navigation("Utilisateur");
                 });

@@ -5,8 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LetsTalk.Models;
 
-[Index(nameof(Username), IsUnique = true)]
-[Index(nameof(Email), IsUnique = true)]
+[Index(nameof(Username), [nameof(Email)], IsUnique = true)]
 [PrimaryKey("UtilisateurId")]
 public class Utilisateur
 {
@@ -23,7 +22,7 @@ public class Utilisateur
     public string Phone { get; set; }
 
     [Required, MaxLength(255)]
-    public string Password { get; private set; }
+    public string Password { get; set; }
     
     public string? ProfilPicture { get; set; }
 

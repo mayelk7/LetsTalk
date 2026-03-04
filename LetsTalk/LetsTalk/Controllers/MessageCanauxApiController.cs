@@ -20,7 +20,7 @@ public class MessageCanauxApiController(AppDbContext appDbContext) : BaseApiCont
             Contenu = messageDto.Content,
             DateEnvoi = messageDto.Timestamp,
             UtilisateurId = messageDto.Sender.Id,
-            CanalId = messageDto.Id ?? 0
+            CanalId = messageDto.CanalId
         };
         
         Console.WriteLine(JsonSerializer.Serialize(message));

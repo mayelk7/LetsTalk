@@ -1,28 +1,347 @@
-﻿@using LetsTalk.Shared.ModelsDto
-@namespace LetsTalk.Client.Views.Components
-
-@if (Channel.Messages.Count != 0)
-{
-    @foreach(var message in Channel.Messages)
-    {
-        <MudChat Class="pa-2 mb-2" ChatPosition="ChatBubblePosition.Start">
-            <MudChatHeader Name="@message.Sender.Username" Time="@message.Timestamp.ToString()"></MudChatHeader>
-            <MudChatBubble>
-                @message.Content
-            </MudChatBubble>
-        </MudChat>
-    }
-}
-else
-{
-    <MudText>
-        Aucun message !
-    </MudText>
-}
+﻿@namespace LetsTalk.Client.Views.Components
+@using LetsTalk.Client.Services
+@using LetsTalk.Shared.ModelsDto
+@using LetsTalk.Shared.Api
+@using LetsTalk.Shared.Service
+@inject LiveKitServiceClient LiveKit
+@inject IJSRuntime JS
+@implements IDisposable
+@using System.Timers
 
 @code {
-
     [Parameter]
     public required ChannelDto Channel { get; set; }
 
+    private List<ParticipantLiveKit> _participants = new();
+    private Timer? _timer;
+    private bool _isFirstLoad = true;
+    private bool _isConnected = false;
+    private bool _isMuted = false;
+
+    // ✅ Input temporaire pour l'identité utilisateur
+    private string _tempUserId = "";
+
+    public async Task getParticipant()
+    {
+        var response = await ApiManagerService.MakeGetRequest<List<ParticipantLiveKit>>("/api/voice/" + Channel.Name + "/members");
+
+        if (response != null && response.Success)
+        {
+            _participants = response.Data ?? new List<ParticipantLiveKit>();
+            // ✅ Plus besoin de boucle pour conserver IsSharingScreen, l'API le donne directement
+
+            if (_isConnected)
+                await JS.InvokeVoidAsync("livekitInterop.updateParticipantsList", _participants);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Premier chargement immédiat
+        await getParticipant();
+        _isFirstLoad = false;
+        // Configuration d'un timer pour rafraîchir toutes les 5 secondes
+        _timer = new Timer(2000);
+        _timer.Elapsed += async (sender, e) => await InvokeAsync(RefreshData);
+        _timer.AutoReset = true;
+        _timer.Enabled = true;
+    }
+
+    private async Task RefreshData()
+    {
+        await getParticipant();
+        if (_isConnected)
+        {
+            await JS.InvokeVoidAsync("livekitInterop.clearAllSpeaking");
+        }
+        StateHasChanged();
+    }
+    private string _currentUserId = "";
+    // ✅ Rejoindre l'appel
+    private async Task JoinCall()
+    {
+        if (string.IsNullOrWhiteSpace(_tempUserId))
+        {
+            Console.WriteLine("⚠️ Entrez un nom d'utilisateur");
+            return;
+        }
+
+        var token = LiveKit.GenerateAccessToken(Channel.Name, _tempUserId);
+
+        await JS.InvokeVoidAsync(
+            "livekitInterop.join",
+            "ws://172.20.11.16:7880",
+            token,
+            _tempUserId
+        );
+        _currentUserId = _tempUserId; // ✅
+        _isConnected = true;
+        StateHasChanged();
+    }
+
+    // ✅ Quitter l'appel
+    private async Task LeaveCall()
+    {
+        await JS.InvokeVoidAsync("livekitInterop.leave");
+        _isConnected = false;
+        _isMuted = false;
+        StateHasChanged();
+    }
+
+    // ✅ Toggle Mute
+    private async Task ToggleMute()
+    {
+        _isMuted = !_isMuted;
+        await JS.InvokeVoidAsync("livekitInterop.toggleMute", _isMuted);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+
+    private bool _isSharingScreen = false;
+
+    private async Task ToggleScreenShare()
+    {
+        try
+        {
+            var newState = !_isSharingScreen;
+            await JS.InvokeVoidAsync("livekitInterop.toggleScreenShare", newState);
+            _isSharingScreen = newState;
+            // ✅ Plus besoin de chercher le participant manuellement
+            // Le timer refresh va sync IsSharingScreen depuis l'API dans max 10s
+        }
+        catch (JSException ex)
+        {
+            Console.WriteLine($"Erreur screen share: {ex.Message}");
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+    private bool _contextMenuOpen = false;
+    private double _menuX = 0;
+    private double _menuY = 0;
+    private ParticipantLiveKit? _contextParticipant;
+    private double _contextVolume = 100;
+
+    private void OpenContextMenu(MouseEventArgs e, ParticipantLiveKit participant)
+    {
+        _menuX = e.ClientX;
+        _menuY = e.ClientY;
+        _contextParticipant = participant;
+        _contextMenuOpen = true;
+        StateHasChanged();
+    }
+
+    private void CloseContextMenu()
+    {
+        _contextMenuOpen = false;
+        StateHasChanged();
+    }
+
+    private async Task SetVolume(int identity, double volume)
+    {
+        _contextVolume = volume;
+        await JS.InvokeVoidAsync("livekitInterop.setParticipantVolume",
+            identity.ToString(), volume / 100.0);
+    }
 }
+
+@* ✅ Contrôles VOIP en bas de page *@
+<MudPaper Elevation="3" Class="pa-3 mb-4" Style="position: sticky; top: 0; z-index: 100;">
+    @if (!_isConnected)
+    {
+        <MudGrid Spacing="2" Justify="Justify.Center">
+            <MudItem xs="12" sm="6" md="4">
+                <MudTextField @bind-Value="_tempUserId" 
+                              Label="Votre nom (temporaire)" 
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Person" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4" Class="d-flex align-center">
+                <MudButton Color="Color.Success" 
+                           Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.Call"
+                           OnClick="JoinCall"
+                           FullWidth>
+                    Rejoindre l'appel vocal
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    }
+    else
+    {
+        <MudGrid Spacing="2" Justify="Justify.Center">
+            <MudItem xs="6">
+                <MudIconButton 
+                    Icon="@(_isMuted ? Icons.Material.Filled.MicOff : Icons.Material.Filled.Mic)"
+                    Color="@(_isMuted ? Color.Error : Color.Success)"
+                    Variant="Variant.Filled"
+                    Size="Size.Large"
+                    OnClick="ToggleMute"
+                    Title="@(_isMuted ? "Activer le micro" : "Couper le micro")" />
+            </MudItem>
+            @* ✅ NOUVEAU : Bouton partage d'écran *@
+            <MudItem xs="6">
+                <MudIconButton Icon="@(_isSharingScreen? Icons.Material.Filled.StopScreenShare : Icons.Material.Filled.ScreenShare)"
+                               Color="@(_isSharingScreen ? Color.Warning : Color.Primary)"
+                               Variant="Variant.Filled"
+                               Size="Size.Large"
+                               OnClick="ToggleScreenShare"
+                               Title="@(_isSharingScreen ? "Arrêter le partage" : "Partager l'écran")" />
+            </MudItem>
+            <MudItem xs="6">
+                <MudButton Color="Color.Error" 
+                           Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.CallEnd"
+                           OnClick="LeaveCall">
+                    Quitter
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    }
+</MudPaper>
+
+@* ✅ Grille des participants *@
+<MudBox Class="ma-4">
+
+    <MudGrid Spacing="3" Justify="Justify.FlexStart">
+
+        @foreach (var participant in _participants)
+        {
+            
+            
+            <MudItem xs="@(participant.IsSharingScreen ? 12 : 6)"
+                     sm="@(participant.IsSharingScreen ? 12 : 4)"
+                     md="@(participant.IsSharingScreen ? 8 : 3)"
+                     lg="@(participant.IsSharingScreen ? 6 : 2)">
+
+                <div id="participant-card-@participant.Identity" class="participant-card-wrapper" @oncontextmenu="@((e) => OpenContextMenu(e, participant))" @oncontextmenu:preventDefault="true">
+                    <MudPaper Elevation="2"
+                              Class="pa-4 d-flex flex-column align-center participant-card"
+                              Style="height: 100%; transition: all 0.3s; border: 2px solid transparent; position: relative;">
+
+                        @if (!participant.IsSharingScreen)
+                        {
+                            <div class="mb-3 position-relative">
+                                <MudAvatar Size="Size.Large"
+                                           Image="@participant.AvatarUrl"
+                                           Alt="@participant.Username"
+                                           Class="participant-avatar" />
+                                <div class="voice-indicator"></div>
+                            </div>
+                        }
+
+                        <div id="screen-preview-@participant.Identity"
+                             style="display:@(participant.IsSharingScreen ? "block" : "none");
+                                width:100%;
+                                height:@(participant.IsSharingScreen ? "400px" : "0");
+                                border-radius:6px;
+                                overflow:hidden;
+                                background:#000;
+                                transition: height 0.3s;">
+                        </div>
+
+                        <MudText Typo="Typo.subtitle2"
+                                 Align="Align.Center"
+                                 Class="@($"mud-text-secondary font-weight-bold {(participant.IsSharingScreen ? "mt-2" : "")}")">
+                            @participant.Username
+                            @if (participant.IsSharingScreen)
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.ScreenShare"
+                                         Size="Size.Small"
+                                         Class="ml-1"
+                                         Color="Color.Success" />
+                            }
+                        </MudText>
+
+                    </MudPaper>
+                </div>
+            </MudItem>
+        }
+
+    </MudGrid>
+
+</MudBox>
+@if (_contextMenuOpen)
+
+{
+    <div style="position:fixed; inset:0; z-index:9998;" @onclick="CloseContextMenu"></div>
+    <div style="position:fixed; left:@(_menuX)px; top:@(_menuY)px; z-index:9999;">
+        <MudPaper Elevation="4" Class="pa-2" Style="min-width:200px;">
+            <MudText Typo="Typo.caption" Class="px-2 pb-1 mud-text-secondary">
+                @_contextParticipant?.Username
+            </MudText>
+            <MudDivider />
+            <div Class="pa-2">
+                <MudText Typo="Typo.caption">Volume</MudText>
+                <MudSlider Min="0" Max="100" Step="5"
+                         ValueChanged="@(async (double v) => await SetVolume(_contextParticipant!.Identity, v))" />
+            </div>
+            <MudButton OnClick="CloseContextMenu" Size="Size.Small" FullWidth>Fermer</MudButton>
+        </MudPaper>
+    </div>
+}
+
+<style>
+    .participant-card-wrapper {
+        height: 100%;
+    }
+
+    .participant-card {
+        position: relative;
+        height: 100%;
+    }
+
+    /* ✅ Carte quand la personne parle */
+    .participant-card-wrapper.speaking .participant-card,
+    .participant-card.speaking {
+        border-color: #23a559 !important;
+        box-shadow: 0 0 15px rgba(35, 165, 89, 0.6) !important;
+        background: rgba(35, 165, 89, 0.05) !important;
+    }
+
+    .participant-card-wrapper.speaking .participant-avatar,
+    .participant-card.speaking .participant-avatar {
+        box-shadow: 0 0 20px rgba(35, 165, 89, 0.8);
+    }
+
+    .voice-indicator {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #949ba4;
+        border: 2px solid white;
+        transition: all 0.2s;
+    }
+
+    .participant-card-wrapper.speaking .voice-indicator,
+    .participant-card.speaking .voice-indicator {
+        background-color: #23a559;
+        animation: pulse 1s infinite;
+    }
+
+    
+    @@keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.6;
+            transform: scale(1.4);
+        }
+    }
+    
+    .mute-icon {
+        margin-top: 4px;
+    }
+</style>

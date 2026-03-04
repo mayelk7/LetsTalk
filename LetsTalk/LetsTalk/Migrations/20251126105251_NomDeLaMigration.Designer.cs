@@ -334,11 +334,6 @@ namespace LetsTalk.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<byte[]>("Salt")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("varbinary(32)");
-
                     b.Property<string>("Type2Fa")
                         .IsRequired()
                         .HasMaxLength(50)

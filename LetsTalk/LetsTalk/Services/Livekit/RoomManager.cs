@@ -1,12 +1,13 @@
 ﻿using LetsTalk.Context;
+using LetsTalk.Shared.Enum;
 using Livekit.Server.Sdk;
 using Livekit.Server.Sdk.Dotnet;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
-using LetsTalk.Shared.Enum;
 
 namespace LetsTalk.Services.Livekit
 {
@@ -133,6 +134,14 @@ namespace LetsTalk.Services.Livekit
                 Console.WriteLine($"Salon {nomDuSalon} fermé avec succès.");
             }
 
-        
+        public async Task<List<ParticipantInfo>> GetVoiceMembersr(string roomName)
+        {
+            Debug.WriteLine("recuperation des membre");
+            // Correction : utiliser la bonne méthode ListParticipants (et non ListeParticipantAsync)
+            var response = await _roomClient.ListParticipants(new ListParticipantsRequest { Room = roomName });
+            Debug.WriteLine(response.Participants.ToList());
+            return response.Participants.ToList();
         }
+
+     }
     }

@@ -68,7 +68,6 @@ namespace LetsTalk.Migrations
                     ProfilPicture = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Actif = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Salt = table.Column<byte[]>(type: "varbinary(32)", maxLength: 32, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Type2Fa = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")

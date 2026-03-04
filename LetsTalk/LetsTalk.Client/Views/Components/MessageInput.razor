@@ -1,9 +1,10 @@
 ﻿
 
-<MudInput @bind-value="Value" Placeholder="Écrire un message..." MaxLines="32" Lines="2"
+<MudInput T="string" @bind-value="Value" Placeholder="Écrire un message..." MaxLines="32" Lines="2"
           Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send" 
           OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
-          Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;">
+          Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;"
+          @onkeydown="OnKeyDown">
 </MudInput>
 
 @code {
@@ -12,4 +13,15 @@
 
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
+    
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e is { Key: "Enter", ShiftKey: false })
+        {
+            Console.WriteLine("Key Pressed: " + e.Key);
+
+
+            await ValueChanged.InvokeAsync(Value);
+        }
+    }
 }
