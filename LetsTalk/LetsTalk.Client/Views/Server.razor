@@ -29,13 +29,15 @@
                 @switch (ServerVm.SelectedChannel?.ChannelType)
                 {
                     case ChannelType.Text:
-                        <TextChannel Channel="ServerVm.SelectedChannel"/>
+                        <TextChannel Channel="ServerVm.SelectedChannel" UserContext="ServerVm.UserContext"/>
                         break;
                     case ChannelType.Voice:
                         <VoiceChannel Channel="ServerVm.SelectedChannel"/>
                         break;
-                    default:
+                    case null:
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             </MudStack>
             

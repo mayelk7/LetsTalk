@@ -1,3 +1,4 @@
+using LetsTalk.Client.Context;
 using LetsTalk.Client.Services.Voice;
 using LetsTalk.Shared.Service;
 using LetsTalk.Client.ViewModels;
@@ -44,10 +45,10 @@ builder.Services.AddScoped<UserApiController>();
 builder.Services.AddScoped<VoiceServer>();
 // Voice services
 // 1. Enregistrer VoiceServer avec AddTransient/AddSingleton. 
-// Étant un service unique, AddSingleton est le plus approprié.
+// ï¿½tant un service unique, AddSingleton est le plus appropriï¿½.
 builder.Services.AddSingleton<VoiceServer>();
 
-// 2. Enregistrer VoiceServer comme Service Hébergé pour qu'il démarre et s'arrête 
+// 2. Enregistrer VoiceServer comme Service Hï¿½bergï¿½ pour qu'il dï¿½marre et s'arrï¿½te 
 // automatiquement avec l'application web.
 builder.Services.AddHostedService<VoiceServerHost>();
 
@@ -56,8 +57,10 @@ builder.Services.AddHostedService<VoiceServerHost>();
 builder.Services.AddSingleton<LivekitService>();
 builder.Services.AddSingleton<LiveKitServiceClient>();
 
-// 3. Enregistrement du service hébergé pour l'exécution au démarrage
+// 3. Enregistrement du service hï¿½bergï¿½ pour l'exï¿½cution au dï¿½marrage
 builder.Services.AddHostedService<LivekitInitializer>();
+
+builder.Services.AddSingleton<UserContext>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

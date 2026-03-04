@@ -57,6 +57,9 @@ namespace LetsTalk.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ConversationPriverId"));
 
+                    b.Property<string>("ConversationNom")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -341,10 +344,7 @@ namespace LetsTalk.Migrations
 
                     b.HasKey("UtilisateurId");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("Username")
+                    b.HasIndex("Username", "Email")
                         .IsUnique();
 
                     b.ToTable("utilisateur", (string)null);
@@ -390,7 +390,7 @@ namespace LetsTalk.Migrations
 
             modelBuilder.Entity("LetsTalk.Models.MembreMP", b =>
                 {
-                    b.HasOne("LetsTalk.Models.ConversationPriver", "ConversationPriver")
+                    b.HasOne("LetsTalk.Models.ConversationPriver", "ConversationPrivers")
                         .WithMany("MembreMPs")
                         .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -451,7 +451,7 @@ namespace LetsTalk.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ConversationPriver");
+                    b.Navigation("ConversationPrivers");
 
                     b.Navigation("Utilisateur");
                 });

@@ -1,11 +1,12 @@
-﻿@using LetsTalk.Shared.ModelsDto
+﻿@using LetsTalk.Client.Context
+@using LetsTalk.Shared.ModelsDto
 @namespace LetsTalk.Client.Views.Components
 
 @if (Channel.Messages.Count != 0)
 {
     foreach(var message in Channel.Messages)
     {
-        <MudChat Class="pa-2 mb-2" ChatPosition="@(message.Sender.Username == "CurrentUser" ? ChatBubblePosition.End : ChatBubblePosition.Start)">
+        <MudChat Class="pa-2 mb-2" ChatPosition="@(message.Sender.Username == UserContext.CurrentUser?.Username ? ChatBubblePosition.End : ChatBubblePosition.Start)">
             <MudChatHeader Name="@message.Sender.Username" Time="@message.Timestamp.ToString()"></MudChatHeader>
             <MudChatBubble>
                 @message.Content
@@ -24,5 +25,7 @@ else
 
     [Parameter]
     public required ChannelDto Channel { get; set; }
-
+    
+    [Parameter]
+    public required UserContext UserContext { get; set; }
 }
