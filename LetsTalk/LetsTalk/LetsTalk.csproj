@@ -15,6 +15,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Bogus" Version="35.6.5" />
     <PackageReference Include="Livekit.Client" Version="0.1.2" />
     <PackageReference Include="Livekit.Server.Sdk.Dotnet" Version="1.1.0" />

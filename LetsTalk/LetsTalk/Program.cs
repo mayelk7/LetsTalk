@@ -10,6 +10,7 @@ using LetsTalk.Controllers;
 using LetsTalk.Data;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+using LetsTalk.Services.Authentification;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
         )
     );
+builder.Services.AddScoped<AuthService>();
 builder.Services.Configure<LivekitSettings>(
     builder.Configuration.GetSection("LivekitSettings"));
 builder.Services.AddScoped<MainLayoutViewModel>();
