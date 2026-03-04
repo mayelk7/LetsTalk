@@ -1,4 +1,4 @@
-﻿using LetsTalk.Data;
+﻿using LetsTalk.Context;
 using LetsTalk.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
@@ -7,10 +7,10 @@ namespace LetsTalk.Services.Authentification
 {
     public class AuthService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly AppDbContext _context;
 
         // 2. Constructeur avec injection de dépendances
-        public AuthService(ApplicationDbContext context)
+        public AuthService(AppDbContext context) // ← Et ici
         {
             _context = context;
         }

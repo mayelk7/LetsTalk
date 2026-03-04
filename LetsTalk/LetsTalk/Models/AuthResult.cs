@@ -5,8 +5,6 @@
         public bool Success { get; set; }
         public string? ErrorMessage { get; set; }
         public Utilisateur? User { get; set; }
-
-        // Méthodes helper
         public static AuthResult Succeeded(Utilisateur user)
         {
             return new AuthResult { Success = true, User = user };
