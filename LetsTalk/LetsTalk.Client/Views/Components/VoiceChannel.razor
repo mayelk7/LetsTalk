@@ -221,7 +221,7 @@
                      md="@(participant.IsSharingScreen ? 8 : 3)"
                      lg="@(participant.IsSharingScreen ? 6 : 2)">
 
-                <div id="participant-card-@participant.Identity" class="participant-card-wrapper" @oncontextmenu="@((e) => OpenContextMenu(e, participant))" @oncontextmenu:preventDefault="true">
+                <div id="participant-card-@participant.Identity" class="participant-card-wrapper" @oncontextmenu="@((MouseEventArgs e) => OpenContextMenu(e, participant))" @oncontextmenu:preventDefault="true">
                     <MudPaper Elevation="2"
                               Class="pa-4 d-flex flex-column align-center participant-card"
                               Style="height: 100%; transition: all 0.3s; border: 2px solid transparent; position: relative;">
@@ -280,7 +280,7 @@
             <MudDivider />
             <div Class="pa-2">
                 <MudText Typo="Typo.caption">Volume</MudText>
-                <MudSlider Min="0" Max="100" Step="5"
+                <MudSlider Min="0" Max="100" Step="5.0"
                          ValueChanged="@(async (double v) => await SetVolume(_contextParticipant!.Identity, v))" />
             </div>
             <MudButton OnClick="CloseContextMenu" Size="Size.Small" FullWidth>Fermer</MudButton>
