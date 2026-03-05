@@ -10,10 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88ba99b6-afb7-456e-8247-62c505dc6bc0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/VoiceChannel.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/VoiceChannel.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/LivekitApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/LivekitApiController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/MessageInput.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/TextChannel.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/TextChannel.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,7 +214,7 @@
       <workItem from="1770793809770" duration="12647000" />
       <workItem from="1772610096825" duration="8915000" />
       <workItem from="1772644578975" duration="1156000" />
-      <workItem from="1772703983846" duration="530000" />
+      <workItem from="1772703983846" duration="4301000" />
     </task>
     <task id="LOCAL-00001" summary="init MVVM + EFCore&#10;README">
       <option name="closed" value="true" />
@@ -344,7 +344,15 @@
       <option name="project" value="LOCAL" />
       <updated>1772633595957</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Refactor LivekitApiController and VoiceChannel; update context menu handling and API response structure">
+      <option name="closed" value="true" />
+      <created>1772704543850</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1772704543850</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -370,7 +378,8 @@
     <MESSAGE value="Update table names to lowercase; refactor API response methods for consistency" />
     <MESSAGE value="Refactor MessageCanalDto to use record syntax; update API methods for message creation and retrieval" />
     <MESSAGE value="Add UserContext for managing current user state; refactor view models to utilize UserContext" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add UserContext for managing current user state; refactor view models to utilize UserContext" />
+    <MESSAGE value="Refactor LivekitApiController and VoiceChannel; update context menu handling and API response structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor LivekitApiController and VoiceChannel; update context menu handling and API response structure" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

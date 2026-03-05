@@ -29,7 +29,7 @@
                 @switch (ServerVm.SelectedChannel?.ChannelType)
                 {
                     case ChannelType.Text:
-                        <TextChannel Channel="ServerVm.SelectedChannel" UserContext="ServerVm.UserContext"/>
+                        <TextChannel Channel="ServerVm.SelectedChannel" UserContext="ServerVm.UserContext" @bind-Value="ServerVm.CurrentMessage" @bind-Value:after="ServerVm.OnMessageInput"/>
                         break;
                     case ChannelType.Voice:
                         <VoiceChannel Channel="ServerVm.SelectedChannel"/>
@@ -41,7 +41,6 @@
                 }
             </MudStack>
             
-            @* <MessageInput @bind-value="ServerVm.CurrentMessage" @bind-value:after="ServerVm.OnMessageInput"/> *@
         </MudItem>
         <MudItem Xs="2" Class="mud-border-right">
             <MudCard Style="border-radius: 0;">
