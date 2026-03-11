@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using LetsTalk.Shared.Service;
 using UserContext = LetsTalk.Client.Context.UserContext;
+using LetsTalk.Client.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddMudServices();
-
+builder.Services.AddScoped<AuthStateService>();
 builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<LoginLayoutViewModel>();
 

@@ -21,6 +21,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMudServices();
 
+builder.Services.AddScoped<HttpClient>(sp =>
+{
+    return new HttpClient
+    {
+        BaseAddress = new Uri("https://localhost:7235/") // ← IMPORTANT : Vérifiez votre port !
+    };
+});
+
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseMySql(
             connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -29,7 +37,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     );
 builder.Services.AddScoped<AuthService>();
 builder.Services.Configure<LivekitSettings>(
-    builder.Configuration.GetSection("LivekitSettings"));
+builder.Configuration.GetSection("LivekitSettings"));
 builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<LoginLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
