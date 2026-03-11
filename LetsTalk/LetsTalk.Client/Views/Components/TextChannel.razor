@@ -1,5 +1,7 @@
 ﻿@using LetsTalk.Client.Context
 @using LetsTalk.Shared.ModelsDto
+@inject IJSRuntime JS
+@implements IDisposable
 @namespace LetsTalk.Client.Views.Components
 
 <div style="display: flex; flex-direction: column-reverse; overflow-y: auto;">
@@ -14,13 +16,14 @@
                 </MudChatBubble>
             </MudChat>
         }
-    
-        <MudInput T="string" @bind-value="Value" Placeholder="Écrire un message..." MaxLines="32" Lines="2"
-                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send" 
-                  OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
-                  Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;"
-                  @onkeydown="OnKeyDown">
-        </MudInput>
+
+        <div id="chat-input-wrapper">
+            <MudTextField T="string" @bind-Value="Value" Placeholder="Écrire un message..." MaxLines="32"
+                          Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
+                          OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
+                          Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;">
+            </MudTextField>
+        </div>
 
     }
     else
@@ -36,24 +39,37 @@
 
     [Parameter]
     public required ChannelDto Channel { get; set; }
-    
+
     [Parameter]
     public required UserContext UserContext { get; set; }
 
     [Parameter]
     public required string Value { get; set; } = string.Empty;
-    
+
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
-    
-    private async Task OnKeyDown(KeyboardEventArgs e)
+
+    private DotNetObjectReference<TextChannel>? _dotNetRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (e is { Key: "Enter", ShiftKey: false })
+        if (firstRender)
         {
-            Console.WriteLine("Key Pressed: " + e.Key);
-
-
-            await ValueChanged.InvokeAsync(Value);
+            _dotNetRef = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("registerChatInput", _dotNetRef, "chat-input-wrapper");
         }
+    }
+
+    [JSInvokable]
+    public async Task SendMessage()
+    {
+        await ValueChanged.InvokeAsync(Value);
+        Value = string.Empty;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _dotNetRef?.Dispose();
     }
 }
