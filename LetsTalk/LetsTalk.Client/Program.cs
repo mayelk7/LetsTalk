@@ -12,6 +12,7 @@ builder.Services.AddMudServices();
 builder.Services.AddScoped<AuthStateService>();
 builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<LoginLayoutViewModel>();
+builder.Services.AddTransient<TextChannelViewModel>();
 
 builder.Services.AddScoped<CounterViewModel>();
 builder.Services.AddTransient<ServerViewModel>();

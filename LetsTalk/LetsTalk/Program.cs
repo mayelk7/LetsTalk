@@ -42,6 +42,7 @@ builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<LoginLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
 builder.Services.AddTransient<ServerViewModel>();
+builder.Services.AddTransient<TextChannelViewModel>();
 
 // Api controllers
 builder.Services.AddScoped<BackApiEf>();
