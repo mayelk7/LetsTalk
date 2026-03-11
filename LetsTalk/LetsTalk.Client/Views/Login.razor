@@ -2,23 +2,19 @@
 @layout LetsTalk.Client.Views.Layout.LoginLayout
 @using MudBlazor
 
-<PageTitle>Connexion</PageTitle>
+<div>
+    <PageTitle>Connexion</PageTitle>
 
+    <MudThemeProvider Theme="@Theme" IsDarkMode="true" />
 
+    <MudContainer MaxWidth="MaxWidth.False" Class="mud-width-full mud-height-full d-flex flex-column pa-6">
+        <MudSpacer />
 
-    <!-- “Fond” full page (couleur via thème, pas de gradient sans CSS) -->
-    <MudContainer Square="true" Elevation="0" Class="mud-height-full mud-width-full d-flex align-center justify-center pa-6" style="height: 80vh;">
-
-        <!-- “Shell” -->
         <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex align-center justify-center">
-            <MudPaper Outlined="true" Elevation="12" Class="pa-8">
-
+            <MudPaper Outlined="true" Elevation="12" Class="pa-10">
                 <MudGrid Spacing="0">
-
-                    <!-- Gauche : branding -->
                     <MudItem xs="12" md="6" Class="d-flex align-center justify-center pa-8">
-                        <MudStack Spacing="2" AlignItems="AlignItems.Center">
-
+                        <MudStack AlignItems="AlignItems.Center" Spacing="2">
                             <MudAvatar Size="Size.Large" Color="Color.Primary" Variant="Variant.Filled">
                                 <MudIcon Icon="@Icons.Material.Filled.ChatBubble" />
                             </MudAvatar>
@@ -28,14 +24,11 @@
                             <MudText Typo="Typo.subtitle1" Color="Color.Secondary">
                                 Connectez. Discutez. Collaborez.
                             </MudText>
-
                         </MudStack>
                     </MudItem>
 
-                    <!-- Droite : carte login -->
-                    <MudItem xs="12" md="6" Class="d-flex align-center justify-center">
-
-                        <MudPaper Elevation="10" Class="pa-8" Width="420px">
+                    <MudItem xs="12" md="6" Class="d-flex align-center justify-center pa-8">
+                        <MudPaper Elevation="8" Class="pa-8" Width="420px">
                             <MudText Typo="Typo.h4" Class="mb-6">Connexion</MudText>
 
                             <MudForm @ref="_form">
@@ -45,6 +38,7 @@
                                               Margin="Margin.Dense"
                                               FullWidth="true"
                                               Required="true"
+                                              Immediate="true"
                                               Adornment="Adornment.Start"
                                               AdornmentIcon="@Icons.Material.Filled.Email"
                                               Class="mb-4" />
@@ -55,6 +49,7 @@
                                               Margin="Margin.Dense"
                                               FullWidth="true"
                                               Required="true"
+                                              Immediate="true"
                                               InputType="@(_showPassword? InputType.Text: InputType.Password)"
                                               Adornment="Adornment.End"
                                               AdornmentIcon="@(_showPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
@@ -75,19 +70,19 @@
                                 </MudStack>
                             </MudForm>
                         </MudPaper>
-
                     </MudItem>
-
                 </MudGrid>
-
             </MudPaper>
         </MudContainer>
 
+        <MudSpacer />
     </MudContainer>
+</div>
+
+
 
 @code {
     private MudForm? _form;
-
     private string? _email;
     private string? _password;
     private bool _showPassword;
@@ -99,8 +94,18 @@
         if (_form is null) return;
         await _form.Validate();
         if (!_form.IsValid) return;
-
-        // TODO: authentification + navigation
     }
 
+    private MudTheme Theme = new()
+    {
+        PaletteDark = new PaletteDark
+        {
+            Primary = "#7b2ff7",
+            Secondary = "#f107a3",
+            Background = "#0f0f1a",
+            Surface = "#1a1a2e",
+            TextPrimary = "#ffffff",
+            TextSecondary = "rgba(255,255,255,0.70)"
+        }
+    };
 }

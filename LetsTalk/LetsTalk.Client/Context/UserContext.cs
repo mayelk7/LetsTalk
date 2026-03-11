@@ -2,7 +2,7 @@
 
 namespace LetsTalk.Client.Context;
 
-public sealed class UserContext
+public class UserContext
 {
     public UserDto? CurrentUser { get; set; }
     

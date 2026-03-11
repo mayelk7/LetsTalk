@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\Login.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Concentus" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.*" />
@@ -31,6 +35,12 @@
 
   <ItemGroup>
     <AdditionalFiles Include="Views\Layout\MainLayout.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Views\Login.razor.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
