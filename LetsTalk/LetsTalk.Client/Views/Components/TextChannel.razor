@@ -1,13 +1,11 @@
 ﻿@using LetsTalk.Client.Context
 @using LetsTalk.Shared.ModelsDto
 @inject IJSRuntime JS
-@implements IDisposable
 @namespace LetsTalk.Client.Views.Components
-
 <div style="display: flex; flex-direction: column-reverse; overflow-y: auto;">
     @if (Channel.Messages.Count != 0)
     {
-        foreach(var message in Channel.Messages.AsEnumerable().Reverse())
+        foreach (var message in Channel.Messages.AsEnumerable().Reverse())
         {
             <MudChat Class="pa-2 mb-2" ChatPosition="@(message.Sender.Username == UserContext.CurrentUser?.Username ? ChatBubblePosition.End : ChatBubblePosition.Start)">
                 <MudChatHeader Name="@message.Sender.Username" Time="@message.Timestamp.ToString()"></MudChatHeader>
@@ -16,15 +14,14 @@
                 </MudChatBubble>
             </MudChat>
         }
-
-        <div id="chat-input-wrapper">
-            <MudTextField T="string" @bind-Value="Value" Placeholder="Écrire un message..." MaxLines="32"
+        <div @onkeydown="OnKeyDown" @onkeydown:stopPropagation="true" @onkeydown:preventDefault="@_preventDefault">
+            <MudTextField T="string" @ref="_mudTextField" Value="@Value" ValueChanged="OnValueChanged"
+                          Placeholder="Écrire un message..." MaxLines="32"
                           Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
                           OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
                           Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;">
             </MudTextField>
         </div>
-
     }
     else
     {
@@ -33,43 +30,39 @@
         </MudText>
     }
 </div>
-
-
 @code {
-
     [Parameter]
     public required ChannelDto Channel { get; set; }
-
     [Parameter]
     public required UserContext UserContext { get; set; }
-
     [Parameter]
     public required string Value { get; set; } = string.Empty;
-
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
 
-    private DotNetObjectReference<TextChannel>? _dotNetRef;
+    private MudTextField<string>? _mudTextField;
+    private bool _preventDefault = false;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task OnValueChanged(string newValue)
     {
-        if (firstRender)
+        Value = newValue;
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !e.ShiftKey)
         {
-            _dotNetRef = DotNetObjectReference.Create(this);
-            await JS.InvokeVoidAsync("registerChatInput", _dotNetRef, "chat-input-wrapper");
+            _preventDefault = true;
+            await ValueChanged.InvokeAsync(Value);
+            Value = string.Empty;
+            if (_mudTextField != null)
+                await _mudTextField.SetText(string.Empty);
+            StateHasChanged();
+            _preventDefault = false;
         }
-    }
-
-    [JSInvokable]
-    public async Task SendMessage()
-    {
-        await ValueChanged.InvokeAsync(Value);
-        Value = string.Empty;
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        _dotNetRef?.Dispose();
+        else
+        {
+            _preventDefault = false;
+        }
     }
 }

@@ -1,10 +1,7 @@
-﻿window.registerChatInput = (dotnetRef, elementId) => {
-    const el = document.getElementById(elementId)?.querySelector('textarea');
-    if (!el) return;
-    el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            dotnetRef.invokeMethodAsync('SendMessage');
-        }
-    });
+﻿window.preventDefaultOnActiveElement = () => {
+    const el = document.activeElement;
+    if (el && el.tagName === 'TEXTAREA') {
+        el.value = '';
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+    }
 };
