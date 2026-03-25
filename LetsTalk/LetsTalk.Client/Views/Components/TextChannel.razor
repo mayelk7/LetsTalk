@@ -14,12 +14,12 @@
                 </MudChatBubble>
             </MudChat>
         }
-        <div @ref="_inputWrapper" @onkeydown="OnKeyDown" @onkeydown:stopPropagation="true">
+        <div @ref="_inputWrapper" >
             <MudTextField T="string" @ref="_mudTextField" Value="@Value" ValueChanged="OnValueChanged"
                           Placeholder="Écrire un message..." MaxLines="32"
                           Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
                           OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
-                          Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;">
+                          Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;" @onkeydown="OnKeyDown" Immediate="true">
             </MudTextField>
         </div>
     }
@@ -57,7 +57,7 @@
 
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter" && !e.ShiftKey)
+        if (e.Key == "Enter")
         {
             await ValueChanged.InvokeAsync(Value);
             Value = string.Empty;
