@@ -1,21 +1,37 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
+﻿using Bogus.DataSets;
+using Bogus.Extensions.Italy;
 using LetsTalk.Context;
+using LetsTalk.Helpers;
 using LetsTalk.Models;
+using LetsTalk.Services.Livekit;
 using LetsTalk.Shared;
 using LetsTalk.Shared.Enum;
 using LetsTalk.Shared.ModelsDto;
+using Livekit.Client;
+using Livekit.Server.Sdk;
+using Livekit.Server.Sdk.Dotnet;
 using Microsoft.AspNetCore.Identity;
-using LetsTalk.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Diagnostics;
+using System.Numerics;
+using System.Security;
+using System.Security.Cryptography;
+using System.Security.Principal;
+using static Livekit.Server.Sdk.Dotnet.ParticipantInfo.Types;
 
 namespace LetsTalk.Data;
+
 public class BackApiEf
 {
     private readonly AppDbContext _db;
+    private readonly LivekitService _livekit;
 
-    public BackApiEf(AppDbContext db)
+    public BackApiEf(AppDbContext db, LivekitService livekit)
     {
         _db = db;
+        _livekit = livekit;
     }
 
     // Récupérer tous les utilisateurs
@@ -31,6 +47,28 @@ public class BackApiEf
                   .FirstOrDefault(u => u.UtilisateurId == id);
     }
 
+    // Créer un nouvel utilisateur
+    public bool SetNewUser(string token, string username, string email, string phone, string password, string type2fa)
+    {
+        if (!IsAdmin(token))
+            throw new UnauthorizedAccessException("Seul un administrateur peut créer un nouvel utilisateur.");
+
+        var user = new Utilisateur
+        {
+            Username = username,
+            Email = email,
+            Phone = phone,
+            Password = password != null ? PasswordHelper.Hash(password) : null,
+            ProfilPicture = null,
+            Actif = true,
+            CreatedAt = DateTime.UtcNow,
+            Type2Fa = type2fa
+        };
+
+        _db.Utilisateurs.Add(user);
+        return _db.SaveChanges() > 0;
+    }
+
     // Récupérer tous les messages
     public List<MessageCanalDto> GetAllMessagesCanal()
     {
@@ -38,7 +76,7 @@ public class BackApiEf
             .Include(m => m.Utilisateur)
             .Include(m => m.Canal)
             .Select(m => new MessageCanalDto(
-            
+
                 m.MessageId,
                 m.Contenu,
                 m.DateEnvoi,
@@ -117,7 +155,6 @@ public class BackApiEf
     }
 
     // Créer une nouvelle conversation privée
-
     public async Task<bool> SetNewConversationPriverAsync(List<int> membresIds)
     {
         if (membresIds == null || membresIds.Count < 2)
@@ -127,7 +164,7 @@ public class BackApiEf
 
         try
         {
-            //SS Récupération des usernames
+            // Récupération des usernames
             var usernames = await _db.Utilisateurs
                 .Where(u => u.UtilisateurId.HasValue && membresIds.Contains(u.UtilisateurId.Value))
                 .OrderBy(u => u.Username)
@@ -152,7 +189,7 @@ public class BackApiEf
             var membres = membresIds.Select(membreId => new MembreMP
             {
                 UtilisateurId = membreId,
-                ConversationId = conversation.ConversationPriverId  
+                ConversationId = conversation.ConversationPriverId
             });
 
             _db.MembreMPs.AddRange(membres);
@@ -167,7 +204,6 @@ public class BackApiEf
             return false;
         }
     }
-
 
     public async Task<ConversationPriverDto> CreateNouvelleConversationPrive(NouvelleConversationPriveDto dto)
     {
@@ -226,7 +262,7 @@ public class BackApiEf
         if (!IsAdmin(token))
             throw new UnauthorizedAccessException("Seul un administrateur peut créer un nouveau salon.");
 
-        var server = new Server { Nom = nomSalon,OwnerId = idOwner};
+        var server = new Server { Nom = nomSalon, OwnerId = idOwner };
         _db.Servers.Add(server);
         if (_db.SaveChanges() == 0)
         {
@@ -250,34 +286,33 @@ public class BackApiEf
                   .Where(m => !_db.MessageLus.Any(ml => ml.MessageId == m.MessagePriverId && ml.UtilisateurId == idUser))
                   .ToList();
     }
+
     public List<MessageCanal> GetAllMessagesCanalNonLus(int idUser)
     {
         return _db.MessagesCanal
                   .Where(m => !_db.MessageLus.Any(ml => ml.MessageId == m.MessageId && ml.UtilisateurId == idUser))
                   .ToList();
     }
+
     // Vérification administrateur
     public bool IsAdmin(string token)
     {
         return token == "serveradmin";
     }
-    
+
     /// <summary>
     ///     Get all servers record
     /// </summary>
-    ///
     /// <returns> List of <c>Server</c>  </returns>
     public List<Server> GetAllServers()
     {
         return _db.Servers.ToList();
     }
-    
+
     /// <summary>
     ///     Retrieve a server by its ID
     /// </summary>
-    /// 
     /// <param name="serverId"></param>
-    ///
     /// <returns> The <c>Server</c> corresponding to the Id or null </returns>
     public Server? GetServerById(int serverId)
     {
@@ -288,8 +323,7 @@ public class BackApiEf
                 .ThenInclude(m => m.Utilisateur)
             .FirstOrDefault(s => s.ServerId == serverId);
     }
-    
-    
+
     /// <summary>
     ///    Retrieve all servers linked to a user
     /// </summary>
@@ -303,6 +337,51 @@ public class BackApiEf
             .Where(s => s.Membres.Any(m => m.UtilisateurId == userId))
             .ToList();
     }
-    
-}
 
+    public async Task<List<ParticipantLiveKit>> GetMembersWithDbInfo(string roomName)
+    {
+        // 1️⃣ Récupérer les participants LiveKit
+        var participants = await _livekit.GetVoiceMembersr(roomName);
+        Debug.WriteLine("participant recupere");
+        // 2️⃣ Créer la liste finale avec infos DB
+        var allParticipants = new List<ParticipantLiveKit>();
+        foreach (var p in participants)
+        {
+            Debug.WriteLine("premier menbre :", p.Identity);
+
+            var success = int.TryParse(p.Identity, out var identityId);
+
+            if (!success)
+            {
+                throw new InvalidOperationException($"Impossible de récupérer ou caster en id l'ID pour le participant LiveKit : {p.Identity}");
+            }
+
+            // Si on arrive ici, identityId est valide
+            var userFromDb = GetUserById(identityId); // ou await si async
+                                                      // 3️⃣ Récupérer les infos de ton serveur / BDD
+            if (userFromDb == null)
+                throw new InvalidOperationException($"Aucun utilisateur trouvé en base pour l'ID {identityId}");
+
+
+            // 4️⃣ Créer ton objet final
+            var utilisateur = new ParticipantLiveKit
+            {
+                Identity = identityId,
+                Name = p.Name,
+                State = p.State.ToString(),
+                CanPublish = p.Permission?.CanPublish ?? false,
+                CanSubscribe = p.Permission?.CanSubscribe ?? false,
+                // ✅ LiveKit stocke les tracks actives sur chaque participant
+                IsSharingScreen = p.Tracks.Any(t => t.Source == TrackSource.ScreenShare && !t.Muted),
+                AvatarUrl = userFromDb.ProfilPicture,
+                Username = userFromDb.Username
+            };
+
+            allParticipants.Add(utilisateur);
+        }
+
+        return allParticipants;
+    }
+
+
+}

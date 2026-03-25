@@ -1,11 +1,11 @@
 ﻿@using LetsTalk.Client.Context
 @using LetsTalk.Shared.ModelsDto
+@inject IJSRuntime JS
 @namespace LetsTalk.Client.Views.Components
-
 <div style="display: flex; flex-direction: column-reverse; overflow-y: auto;">
     @if (Channel.Messages.Count != 0)
     {
-        foreach(var message in Channel.Messages.AsEnumerable().Reverse())
+        foreach (var message in Channel.Messages.AsEnumerable().Reverse())
         {
             <MudChat Class="pa-2 mb-2" ChatPosition="@(message.Sender.Username == UserContext.CurrentUser?.Username ? ChatBubblePosition.End : ChatBubblePosition.Start)">
                 <MudChatHeader Name="@message.Sender.Username" Time="@message.Timestamp.ToString()"></MudChatHeader>
@@ -14,14 +14,14 @@
                 </MudChatBubble>
             </MudChat>
         }
-    
-        <MudInput T="string" @bind-value="Value" Placeholder="Écrire un message..." MaxLines="32" Lines="2"
-                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send" 
-                  OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
-                  Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;"
-                  @onkeydown="OnKeyDown">
-        </MudInput>
-
+        <div @ref="_inputWrapper" >
+            <MudTextField T="string" @ref="_mudTextField" Value="@Value" ValueChanged="OnValueChanged"
+                          Placeholder="Écrire un message..." MaxLines="32"
+                          Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
+                          OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
+                          Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;" @onkeydown="OnKeyDown" Immediate="true">
+            </MudTextField>
+        </div>
     }
     else
     {
@@ -30,30 +30,40 @@
         </MudText>
     }
 </div>
-
-
 @code {
-
     [Parameter]
     public required ChannelDto Channel { get; set; }
-    
     [Parameter]
     public required UserContext UserContext { get; set; }
-
     [Parameter]
     public required string Value { get; set; } = string.Empty;
-    
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
-    
+    private MudTextField<string>? _mudTextField;
+    private ElementReference _inputWrapper;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("preventEnterDefault", _inputWrapper);
+        }
+    }
+
+    private async Task OnValueChanged(string newValue)
+    {
+        Value = newValue;
+    }
+
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
-        if (e is { Key: "Enter", ShiftKey: false })
+        if (e.Key == "Enter")
         {
-            Console.WriteLine("Key Pressed: " + e.Key);
-
-
             await ValueChanged.InvokeAsync(Value);
+            Value = string.Empty;
+            if (_mudTextField != null)
+                await _mudTextField.SetText(string.Empty);
+            StateHasChanged();
         }
     }
 }

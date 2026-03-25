@@ -13,10 +13,12 @@
     public required ChannelDto Channel { get; set; }
 
     private List<ParticipantLiveKit> _participants = new();
+    private List<RoomLiveKit> _room = new();
     private Timer? _timer;
     private bool _isFirstLoad = true;
     private bool _isConnected = false;
     private bool _isMuted = false;
+    private bool Mute { get; set; } = true;
 
     // ✅ Input temporaire pour l'identité utilisateur
     private string _tempUserId = "";
@@ -66,7 +68,18 @@
             return;
         }
 
-        var token = LiveKit.GenerateAccessToken(Channel.Name, _tempUserId);
+        /* var existroom = await ApiManagerService.MakeGetRequest<List<RoomLiveKit>>("/api/voice/room");
+        Console.WriteLine(existroom.Message);
+        if (existroom.Message(r => r.Name == Channel.Name))
+        {
+            Console.WriteLine("La room existe déjà");
+            }
+        else
+        {
+            Console.WriteLine("La room n'existe pas");
+            }
+        */
+                        var token = LiveKit.GenerateAccessToken(Channel.Name, _tempUserId);
 
         await JS.InvokeVoidAsync(
             "livekitInterop.join",
@@ -126,7 +139,7 @@
     private double _menuX = 0;
     private double _menuY = 0;
     private ParticipantLiveKit? _contextParticipant;
-    private double _contextVolume = 100;
+    private Dictionary<int, double> _participantVolumes = new();
 
     private void OpenContextMenu(MouseEventArgs e, ParticipantLiveKit participant)
     {
@@ -134,6 +147,9 @@
         _menuY = e.ClientY;
         _contextParticipant = participant;
         _contextMenuOpen = true;
+        // Initialise à 100 si pas encore de valeur pour ce participant
+        if (!_participantVolumes.ContainsKey(participant.Identity))
+            _participantVolumes[participant.Identity] = 100;
         StateHasChanged();
     }
 
@@ -145,9 +161,8 @@
 
     private async Task SetVolume(int identity, double volume)
     {
-        _contextVolume = volume;
-        await JS.InvokeVoidAsync("livekitInterop.setParticipantVolume",
-            identity.ToString(), volume / 100.0);
+        _participantVolumes[identity] = volume;
+        await JS.InvokeVoidAsync("livekitInterop.setParticipantVolume", identity, volume / 100.0);
     }
 }
 
@@ -281,7 +296,14 @@
             <div Class="pa-2">
                 <MudText Typo="Typo.caption">Volume</MudText>
                 <MudSlider Min="0" Max="100" Step="5.0"
-                         ValueChanged="@(async (double v) => await SetVolume(_contextParticipant!.Identity, v))" />
+                           Value="@(_participantVolumes.GetValueOrDefault(_contextParticipant!.Identity, 100))"
+                           ValueChanged="@(async (double v) => await SetVolume(_contextParticipant!.Identity, v))" />
+            </div>
+            <div Class="pa-2">
+                <MudCheckBox T="bool"
+                             Label="Mute"
+                             Value="@(_participantVolumes.GetValueOrDefault(_contextParticipant!.Identity, 100) == 0)"
+                             ValueChanged="@(async (bool muted) => await SetVolume(_contextParticipant!.Identity, muted ? 0 : 100))" />
             </div>
             <MudButton OnClick="CloseContextMenu" Size="Size.Small" FullWidth>Fermer</MudButton>
         </MudPaper>

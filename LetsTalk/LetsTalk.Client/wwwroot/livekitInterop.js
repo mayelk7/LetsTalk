@@ -122,12 +122,20 @@ window.livekitInterop = {
     },
 
     setParticipantVolume: (identity, volume) => {
-        // volume entre 0 et 1
-        const audio = document.querySelector(`audio[data-participant="${identity}"]`);
-        if (audio) {
-            audio.volume = volume;
-            console.log(`🔊 Volume de ${identity} : ${volume}`);
+        // Cherche d'abord par data-participant
+        let audio = document.querySelector(`audio[data-participant="${identity}"]`);
+
+        if (!audio) {
+            // Fallback: cherche tous les audios et log pour débug
+            const allAudios = document.querySelectorAll('audio[data-livekit]');
+            console.warn(`⚠️ Pas d'audio trouvé pour "${identity}". Audios présents:`,
+                [...allAudios].map(a => a.getAttribute('data-participant'))
+            );
+            return;
         }
+
+        audio.volume = Math.max(0, Math.min(1, volume)); // sécurise entre 0 et 1
+        console.log(`🔊 Volume de ${identity} : ${Math.round(volume * 100)}%`);
     }
 };
 

@@ -23,8 +23,8 @@ public class LivekitApiController : BaseApiController
     [HttpGet("{roomName}/members")]
     public async Task<ApiResponse<List<ParticipantLiveKit>>> GetMembers(string roomName)
     {
-        // var members = await _backapi.GetMembersWithDbInfo(roomName);
-        return BaseApiController.Response<List<ParticipantLiveKit>>("Members retrieved successfully", []);
+        var members = await _backapi.GetMembersWithDbInfo(roomName);
+        return BaseApiController.Response<List<ParticipantLiveKit>>("Members retrieved successfully", members);
     }
 
     // GET api/voice/rooms

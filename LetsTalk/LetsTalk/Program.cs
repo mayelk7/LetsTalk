@@ -1,4 +1,5 @@
 using LetsTalk.Client.Context;
+using LetsTalk.Client.Services;
 using LetsTalk.Client.Services.Voice;
 using LetsTalk.Client.ViewModels;
 using LetsTalk.Components;
@@ -21,7 +22,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMudServices();
-builder.Services.AddSingleton<TwoFactorService>();
+builder.Services.AddScoped<AuthStateService>();
+
+
+builder.Services.AddScoped<HttpClient>(sp =>
+{
+    return new HttpClient
+    {
+        BaseAddress = new Uri("https://localhost:7235/") 
+    };
+});
 
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseMySql(
@@ -31,11 +41,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     );
 builder.Services.AddScoped<AuthService>();
 builder.Services.Configure<LivekitSettings>(
-    builder.Configuration.GetSection("LivekitSettings"));
+builder.Configuration.GetSection("LivekitSettings"));
 builder.Services.AddScoped<MainLayoutViewModel>();
 builder.Services.AddScoped<LoginLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
 builder.Services.AddTransient<ServerViewModel>();
+builder.Services.AddTransient<TextChannelViewModel>();
 
 // Api controllers
 builder.Services.AddScoped<BackApiEf>();
