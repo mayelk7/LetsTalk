@@ -1,6 +1,11 @@
 ﻿@page "/register"
 @layout LetsTalk.Client.Views.Layout.LoginLayout
 @using MudBlazor
+@using LetsTalk.Shared.ModelsDto
+@using System.Net.Http.Json
+@using LetsTalk.Client.Services
+@inject HttpClient Http
+@inject NavigationManager Navigation
 
 <PageTitle>Créer un compte</PageTitle>
 
@@ -170,6 +175,23 @@
         {
             _errorMessage = "Le mot de passe doit contenir au moins 6 caractères.";
             return;
+        }
+        CreateUserDto dto = new CreateUserDto
+        {
+            Username = _username ?? "",
+            Email = _email ?? "",
+            Password = _password ?? ""
+        };
+
+        var response = await ApiManagerService.MakePostRequest<CreateUserDto, CreateUserDto>("/api/users/register", dto);
+
+        if (response is {Success: true})
+        {
+            Navigation.NavigateTo("/login");
+        }
+        else
+        {
+            _errorMessage = "Impossible de créer le compte.";
         }
 
         // TODO :

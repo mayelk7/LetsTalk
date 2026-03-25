@@ -13,7 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<Membre> Membres { get; set; }
     public DbSet<MessageCanal> MessagesCanal { get; set; }
-    public DbSet<ConversationPriver> ConversationPrivers { get; set; }
+    public DbSet<ConversationPriver> ConversationPriver { get; set; }
     public DbSet<MembreMP> MembreMPs { get; set; }
     public DbSet<MessagePriver> MessagesPriver { get; set; }
     public DbSet<Fichier> Fichiers { get; set; }
@@ -123,7 +123,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<ConversationPriver>()
             .HasMany(c => c.MembreMPs)
-            .WithOne(mp => mp.ConversationPrivers)
+            .WithOne(mp => mp.ConversationPriver)
             .HasForeignKey(mp => mp.ConversationId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -137,6 +137,12 @@ public class AppDbContext : DbContext
             .HasMany(u => u.MessagesPriver)
             .WithOne(m => m.Utilisateur)
             .HasForeignKey(m => m.UtilisateurId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Utilisateur>()
+            .HasMany(u => u.MembreMPs)
+            .WithOne(mp => mp.Utilisateur)
+            .HasForeignKey(mp => mp.UtilisateurId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Notification: link to user

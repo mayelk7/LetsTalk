@@ -35,6 +35,10 @@ public class Utilisateur
     [MaxLength(50)]
     public string? Type2Fa { get; set; }
 
+    // 2FA TOTP
+    public bool TwoFactorEnabled { get; set; } = false;
+    public string? TwoFactorSecret { get; set; }
+    public DateTime? TwoFactorEnabledAt { get; set; }
     // Navigations
 
     public ICollection<Membre> Membres { get; set; }
