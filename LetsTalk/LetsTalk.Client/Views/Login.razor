@@ -7,7 +7,7 @@
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
-
+@inject AuthStateService AuthState
 
 <PageTitle>Connexion</PageTitle>
 
@@ -130,7 +130,7 @@
                     // Connexion réussie
                     Snackbar.Add($"Bienvenue {result.Data.Username} !", Severity.Success);
 
-                    //AuthState.Login(result.Data);
+                    await AuthState.LoginAsync(result.Data);
 
                     // Redirection vers la page d'accueil
                     Navigation.NavigateTo("/");

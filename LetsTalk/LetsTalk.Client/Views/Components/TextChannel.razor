@@ -1,16 +1,14 @@
 ﻿@inject TextChannelViewModel TextChannelVm
-
+@inject IJSRuntime JS
 @using LetsTalk.Client.Context
 @using LetsTalk.Shared.ModelsDto
-
-@implements IDisposable;
-
+@implements IDisposable
 @namespace LetsTalk.Client.Views.Components
 
 <div style="display: flex; flex-direction: column-reverse; overflow-y: auto;">
     @if (TextChannelVm.Messages?.Count != 0)
     {
-        foreach(var message in TextChannelVm?.Messages?.AsEnumerable().Reverse()!)
+        foreach (var message in TextChannelVm?.Messages?.AsEnumerable().Reverse()!)
         {
             <MudChat Class="pa-2 mb-2" ChatPosition="@(message.Username == UserContext.CurrentUser?.Username ? ChatBubblePosition.End : ChatBubblePosition.Start)">
                 <MudChatHeader Name="@message.Username" Time="@message.DateEnvoi.ToString()"></MudChatHeader>
@@ -19,13 +17,15 @@
                 </MudChatBubble>
             </MudChat>
         }
-    
-        <MudInput T="string" @bind-value="Value" Placeholder="Écrire un message..." MaxLines="32" Lines="2"
-                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
-                  OnAdornmentClick="async () => await SendMessage(Value)" FullWidth="true"
-                  Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;"
-                  @onkeydown="OnKeyDown">
-        </MudInput>
+
+        <div @ref="_inputWrapper">
+            <MudInput T="string" @bind-Value="Value" Placeholder="Écrire un message..." MaxLines="32" Lines="2"
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
+                      OnAdornmentClick="async () => await SendMessage(Value)" FullWidth="true"
+                      Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;"
+                      @onkeydown="OnKeyDown">
+            </MudInput>
+        </div>
     }
     else
     {
@@ -35,37 +35,39 @@
     }
 </div>
 
-
 @code {
-
     [Parameter]
     public required ChannelDto Channel { get; set; }
-    
     [Parameter]
     public required UserContext UserContext { get; set; }
-
     [Parameter]
     public required string Value { get; set; } = string.Empty;
-    
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
+
+    private ElementReference _inputWrapper;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("preventEnterDefault", _inputWrapper);
+        }
+    }
 
     private async Task SendMessage(string value)
     {
         await ValueChanged.InvokeAsync(value);
-        
-        Thread.Sleep(100);
+        Value = string.Empty;
+        await InvokeAsync(StateHasChanged);
         TextChannelVm.RefreshMessages();
     }
-    
+
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
-        if (e is { Key: "Enter", ShiftKey: false })
+        if (e.Key == "Enter" && !e.ShiftKey)
         {
-            Console.WriteLine("Key Pressed: " + e.Key);
-
-
-            await ValueChanged.InvokeAsync(Value);
+            await SendMessage(Value);
         }
     }
 
@@ -73,14 +75,12 @@
     {
         TextChannelVm.Id = Channel.Id ?? 0;
         TextChannelVm.InitAsync();
-        
         return base.OnInitializedAsync();
     }
 
     protected override void OnInitialized()
     {
         TextChannelVm.PropertyChanged += (_, __) => StateHasChanged();
-        
         base.OnInitialized();
     }
 

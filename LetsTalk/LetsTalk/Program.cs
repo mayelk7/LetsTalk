@@ -12,6 +12,7 @@ using LetsTalk.Data;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using LetsTalk.Services.Authentification;
+using LetsTalk.Client.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMudServices();
+builder.Services.AddScoped<AuthStateService>();
+
 
 builder.Services.AddScoped<HttpClient>(sp =>
 {
