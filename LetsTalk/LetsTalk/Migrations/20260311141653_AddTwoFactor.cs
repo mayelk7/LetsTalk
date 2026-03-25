@@ -39,13 +39,6 @@ namespace LetsTalk.Migrations
                 nullable: true)
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.AddColumn<string>(
-                name: "ConversationNom",
-                table: "ConversationPriver",
-                type: "longtext",
-                nullable: true)
-                .Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder.CreateIndex(
                 name: "IX_utilisateur_Username_Email",
                 table: "utilisateur",
