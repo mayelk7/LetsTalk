@@ -1,27 +1,30 @@
-﻿@using LetsTalk.Client.Context
+﻿@inject TextChannelViewModel TextChannelVm
+
+@using LetsTalk.Client.Context
 @using LetsTalk.Shared.ModelsDto
-@inject IJSRuntime JS
+
+@implements IDisposable;
+
 @namespace LetsTalk.Client.Views.Components
 <div style="display: flex; flex-direction: column-reverse; overflow-y: auto;">
-    @if (Channel.Messages.Count != 0)
+    @if (TextChannelVm.Messages?.Count != 0)
     {
-        foreach (var message in Channel.Messages.AsEnumerable().Reverse())
+        foreach(var message in TextChannelVm?.Messages?.AsEnumerable().Reverse()!)
         {
-            <MudChat Class="pa-2 mb-2" ChatPosition="@(message.Sender.Username == UserContext.CurrentUser?.Username ? ChatBubblePosition.End : ChatBubblePosition.Start)">
-                <MudChatHeader Name="@message.Sender.Username" Time="@message.Timestamp.ToString()"></MudChatHeader>
+            <MudChat Class="pa-2 mb-2" ChatPosition="@(message.Username == UserContext.CurrentUser?.Username ? ChatBubblePosition.End : ChatBubblePosition.Start)">
+                <MudChatHeader Name="@message.Username" Time="@message.DateEnvoi.ToString()"></MudChatHeader>
                 <MudChatBubble>
-                    @message.Content
+                    @message.Contenu
                 </MudChatBubble>
             </MudChat>
         }
-        <div @onkeydown="OnKeyDown" @onkeydown:stopPropagation="true" @onkeydown:preventDefault="@_preventDefault">
-            <MudTextField T="string" @ref="_mudTextField" Value="@Value" ValueChanged="OnValueChanged"
-                          Placeholder="Écrire un message..." MaxLines="32"
-                          Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
-                          OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
-                          Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;">
-            </MudTextField>
-        </div>
+    
+        <MudInput T="string" @bind-value="Value" Placeholder="Écrire un message..." MaxLines="32" Lines="2"
+                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
+                  OnAdornmentClick="async () => await SendMessage(Value)" FullWidth="true"
+                  Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;"
+                  @onkeydown="OnKeyDown">
+        </MudInput>
     }
     else
     {
@@ -40,14 +43,14 @@
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
 
-    private MudTextField<string>? _mudTextField;
-    private bool _preventDefault = false;
-
-    private async Task OnValueChanged(string newValue)
+    private async Task SendMessage(string value)
     {
-        Value = newValue;
+        await ValueChanged.InvokeAsync(value);
+        
+        Thread.Sleep(100);
+        TextChannelVm.RefreshMessages();
     }
-
+    
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter" && !e.ShiftKey)
@@ -64,5 +67,25 @@
         {
             _preventDefault = false;
         }
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        TextChannelVm.Id = Channel.Id ?? 0;
+        TextChannelVm.InitAsync();
+        
+        return base.OnInitializedAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        TextChannelVm.PropertyChanged += (_, __) => StateHasChanged();
+        
+        base.OnInitialized();
+    }
+
+    public void Dispose()
+    {
+        TextChannelVm.StopRefreshMessages();
     }
 }

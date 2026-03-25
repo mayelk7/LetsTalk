@@ -1,0 +1,194 @@
+﻿/* Outer full-height helper */
+::deep .mud-height-full {
+    min-height: 85vh;
+}
+
+/* ====== MAIN SHELL (your outer MudPaper: Outlined + Elevation=12 + Class="pa-10") ====== */
+::deep .mud-paper.pa-10 {
+    width: min(1120px, 92vw);
+    height: min(640px, 74vh);
+    border-radius: 26px;
+    overflow: hidden;
+    position: relative;
+    background: rgba(16, 14, 28, 0.35);
+    border: 1px solid rgba(180, 130, 255, 0.22) !important;
+    box-shadow: 0 40px 110px rgba(0,0,0,0.70), inset 0 0 0 1px rgba(255,255,255,0.04);
+    backdrop-filter: blur(10px);
+}
+
+/* Top glow band (like the reference) */
+::deep .mud-paper.pa-10::before {
+    content: "";
+    position: absolute;
+    left: -25%;
+    right: -25%;
+    top: -45%;
+    height: 85%;
+    background: radial-gradient(circle at 55% 85%, rgba(186, 90, 255, 0.28), transparent 55%), radial-gradient(circle at 30% 70%, rgba(123, 47, 247, 0.18), transparent 60%);
+    pointer-events: none;
+    filter: blur(2px);
+}
+
+/* Star dust + subtle wave + vignette */
+::deep .mud-paper.pa-10::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+    /* vignette */
+    radial-gradient(circle at 50% 50%, rgba(0,0,0,0.00) 0%, rgba(0,0,0,0.45) 72%, rgba(0,0,0,0.70) 100%),
+    /* wave diagonal */
+    linear-gradient(135deg, rgba(123,47,247,0.00) 0%, rgba(123,47,247,0.15) 45%, rgba(241,7,163,0.08) 65%, rgba(0,0,0,0.00) 100%),
+    /* fine star dust */
+    radial-gradient(rgba(255,255,255,0.16) 1px, transparent 1px);
+    background-size: auto, auto, 140px 140px;
+    background-position: center, center, center;
+    opacity: 1;
+    pointer-events: none;
+}
+
+/* Keep content above overlays */
+::deep .mud-paper.pa-10 > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Thin neon outline like the ref */
+::deep .mud-paper.pa-10 .mud-paper-outlined {
+    border-color: rgba(180, 130, 255, 0.22) !important;
+}
+
+/* ====== "GHOST" CHAT BUBBLES (phantom effects) ======
+Uses pseudo-elements on the LEFT column item (first MudItem md=6) */
+::deep .mud-paper.pa-10 .mud-grid > .mud-grid-item:nth-child(1) {
+    position: relative;
+}
+
+::deep .mud-paper.pa-10 .mud-grid > .mud-grid-item:nth-child(1)::before {
+    content: "";
+    position: absolute;
+    left: -120px;
+    bottom: -40px;
+    width: 380px;
+    height: 260px;
+    background: radial-gradient(circle at 30% 60%, rgba(186, 90, 255, 0.20), transparent 60%), radial-gradient(circle at 60% 40%, rgba(123, 47, 247, 0.14), transparent 55%);
+    filter: blur(8px);
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+::deep .mud-paper.pa-10 .mud-grid > .mud-grid-item:nth-child(1)::after {
+    content: "";
+    position: absolute;
+    left: 60px;
+    bottom: -80px;
+    width: 520px;
+    height: 360px;
+    background: radial-gradient(circle at 35% 55%, rgba(241,7,163,0.10), transparent 60%), radial-gradient(circle at 55% 35%, rgba(123,47,247,0.18), transparent 58%);
+    filter: blur(14px);
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+/* ====== LEFT BRAND TYPO ====== */
+::deep .mud-paper.pa-10 .mud-typography-h3 {
+    font-weight: 900;
+    letter-spacing: 0.2px;
+}
+
+::deep .mud-paper.pa-10 .mud-typography-subtitle1 {
+    opacity: 0.72;
+}
+
+/* Glow behind the logo avatar */
+::deep .mud-paper.pa-10 .mud-avatar {
+    box-shadow: 0 0 0 6px rgba(123,47,247,0.15), 0 0 36px rgba(186, 90, 255, 0.40);
+}
+
+/* ====== RIGHT CARD (your inner MudPaper Elevation=8 Class="pa-8") ====== */
+::deep .mud-paper.pa-8 {
+    border-radius: 24px;
+    background: rgba(22, 18, 38, 0.70);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 26px 70px rgba(0,0,0,0.60), inset 0 0 0 1px rgba(255,255,255,0.03);
+    backdrop-filter: blur(14px);
+}
+
+/* Right card top “ghost” soft highlight */
+::deep .mud-paper.pa-8::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    background: radial-gradient(circle at 70% 10%, rgba(255,255,255,0.10), transparent 55%);
+    pointer-events: none;
+}
+
+/* Ensure inner card children above */
+::deep .mud-paper.pa-8 > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* ====== INPUTS (boxed, ghost) ====== */
+::deep .mud-paper.pa-8 .mud-input-control {
+    background: transparent;
+}
+
+::deep .mud-paper.pa-8 .mud-input-control-root {
+    background: rgba(30, 28, 54, 0.72);
+    border-radius: 12px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+::deep .mud-paper.pa-8 .mud-input-input {
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+::deep .mud-paper.pa-8 .mud-input-underline:before {
+    display: none;
+}
+
+::deep .mud-paper.pa-8 .mud-input-underline:after {
+    display: none;
+}
+
+/* Labels a bit softer */
+::deep .mud-paper.pa-8 .mud-input-label {
+    opacity: 0.85;
+}
+
+/* ====== BUTTON (bright gradient + glow like ref) ====== */
+::deep .mud-paper.pa-8 .mud-button-root.mud-button-filled.mud-button-filled-primary {
+    border-radius: 16px;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, #5b1fe8 0%, #7b2ff7 40%, #f107a3 120%);
+    color: #fff;
+    font-weight: 800;
+    text-transform: none;
+    box-shadow: 0 14px 40px rgba(123,47,247,0.30), 0 0 0 1px rgba(255,255,255,0.06) inset;
+    transition: transform .15s ease, filter .15s ease;
+}
+
+::deep .mud-paper.pa-8 .mud-button-root.mud-button-filled.mud-button-filled-primary:hover {
+    transform: translateY(-1px) scale(1.02);
+    filter: brightness(1.08);
+}
+
+/* ====== LINKS ====== */
+::deep .mud-paper.pa-8 .mud-link {
+    opacity: 0.90;
+    font-size: 14px;
+}
+
+/* ====== MOBILE ====== */
+@media (max-width: 960px) {
+    ::deep .mud-paper.pa-10 {
+        height: auto;
+    }
+
+    body {
+        overflow: auto;
+    }
+}
