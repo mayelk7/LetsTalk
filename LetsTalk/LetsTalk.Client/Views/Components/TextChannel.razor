@@ -6,7 +6,6 @@
 @implements IDisposable;
 
 @namespace LetsTalk.Client.Views.Components
-
 <div style="display: flex; flex-direction: column-reverse; overflow-y: auto;">
     @if (TextChannelVm.Messages?.Count != 0)
     {
@@ -34,19 +33,13 @@
         </MudText>
     }
 </div>
-
-
 @code {
-
     [Parameter]
     public required ChannelDto Channel { get; set; }
-    
     [Parameter]
     public required UserContext UserContext { get; set; }
-
     [Parameter]
     public required string Value { get; set; } = string.Empty;
-    
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
 
@@ -60,12 +53,19 @@
     
     private async Task OnKeyDown(KeyboardEventArgs e)
     {
-        if (e is { Key: "Enter", ShiftKey: false })
+        if (e.Key == "Enter" && !e.ShiftKey)
         {
-            Console.WriteLine("Key Pressed: " + e.Key);
-
-
+            _preventDefault = true;
             await ValueChanged.InvokeAsync(Value);
+            Value = string.Empty;
+            if (_mudTextField != null)
+                await _mudTextField.SetText(string.Empty);
+            StateHasChanged();
+            _preventDefault = false;
+        }
+        else
+        {
+            _preventDefault = false;
         }
     }
 
