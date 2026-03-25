@@ -9,7 +9,9 @@ public partial class ServerViewModel(UserContext userContext) : ObservableObject
 {
     [ObservableProperty]
     private UserContext _userContext = userContext;
-    private int ServerId { get; set; }
+
+    [ObservableProperty] 
+    private int _serverId;
 
     [ObservableProperty]
     private FullServerDto? _server;
