@@ -7,6 +7,7 @@
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject AuthStateService AuthState
 
 
 <PageTitle>Créer un compte</PageTitle>
@@ -221,8 +222,7 @@
                 {
                     Snackbar.Add($"Compte créé avec succès ! Bienvenue {result.Data.Username} !", Severity.Success);
 
-                    // TODO: Connexion automatique avec AuthState
-                    //AuthState.Login(result.Data);
+                    await AuthState.LoginAsync(result.Data);
 
                     Navigation.NavigateTo("/");
                 }
