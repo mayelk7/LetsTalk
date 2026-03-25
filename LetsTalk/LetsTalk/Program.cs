@@ -28,7 +28,7 @@ builder.Services.AddScoped<HttpClient>(sp =>
 {
     return new HttpClient
     {
-        BaseAddress = new Uri("https://localhost:7235/") // ← IMPORTANT : Vérifiez votre port !
+        BaseAddress = new Uri("https://localhost:7235/") 
     };
 });
 
