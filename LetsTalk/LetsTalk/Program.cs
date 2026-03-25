@@ -1,18 +1,19 @@
 using LetsTalk.Client.Context;
+using LetsTalk.Client.Services;
 using LetsTalk.Client.Services.Voice;
-using LetsTalk.Shared.Service;
 using LetsTalk.Client.ViewModels;
 using LetsTalk.Components;
 using LetsTalk.Context;
-using LetsTalk.Services.Livekit;
-using LetsTalk.Shared.Service;
-using Microsoft.AspNetCore.Mvc;
 using LetsTalk.Controllers;
 using LetsTalk.Data;
+using LetsTalk.Services.Authentication;
+using LetsTalk.Services.Authentification;
+using LetsTalk.Services.Livekit;
+using LetsTalk.Shared.Service;
+using LetsTalk.Shared.Service;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
-using LetsTalk.Services.Authentification;
-using LetsTalk.Client.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +29,7 @@ builder.Services.AddScoped<HttpClient>(sp =>
 {
     return new HttpClient
     {
-        BaseAddress = new Uri("https://localhost:7235/") // ← IMPORTANT : Vérifiez votre port !
+        BaseAddress = new Uri("https://localhost:7235/") 
     };
 });
 

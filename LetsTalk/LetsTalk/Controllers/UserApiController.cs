@@ -1,14 +1,19 @@
 ﻿using LetsTalk.Data;
+using LetsTalk.Models;
 using LetsTalk.Shared.Api;
 using LetsTalk.Shared.ModelsDto;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using LetsTalk.Context;
 
 namespace LetsTalk.Controllers;
 
 [ApiController]
 [Route("api/user")]
-public class UserApiController(BackApiEf _db) : BaseApiController
+public class UserApiController(BackApiEf _db, AppDbContext context) : BaseApiController
 {
+    private readonly AppDbContext _context = context;
+
     [HttpGet("")]
     public ApiResponse<List<UserDto>> GetAllUser()
     {
@@ -21,13 +26,13 @@ public class UserApiController(BackApiEf _db) : BaseApiController
             user.CreatedAt
         )).ToList());
     }
-    
+
     [HttpGet("{id:int}")]
     public UserDto? GetUser(int id)
     {
         var user = _db.GetUserById(id);
-        return  user == null 
-            ? null 
+        return user == null
+            ? null
             : new UserDto(
                 user.UtilisateurId,
                 user.Username,
@@ -37,7 +42,7 @@ public class UserApiController(BackApiEf _db) : BaseApiController
                 user.CreatedAt
             );
     }
-    
+
     /// <summary>
     ///     Retrieve all servers linked to a user
     /// </summary>
@@ -56,4 +61,5 @@ public class UserApiController(BackApiEf _db) : BaseApiController
                 ).ToList()
             );
     }
+    
 }
