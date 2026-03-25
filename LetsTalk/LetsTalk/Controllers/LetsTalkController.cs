@@ -28,11 +28,7 @@ namespace LetsTalk.Controllers
         }
         */
        
-        [HttpPost("SetNewGroupe")]
-        public bool SetNewGroupe(string token, string nomsalon, int idOwner)
-        {
-            return _db.SetNewServer(token, nomsalon, idOwner);
-        }
+        
        
         [HttpPost("NewMessageCanal")]
         public bool NewMessageCanal(int iduser, string contenue, int canalId)

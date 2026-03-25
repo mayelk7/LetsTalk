@@ -57,6 +57,8 @@ public partial class MainLayoutViewModel(UserContext userContext) : ObservableOb
                 )
             );
         }
+        //ajouter le bouton add en dernier
+        MenuItems.Add(new MenuItem("Ajouter un Server", Icons.Material.Rounded.Add, "NewServer"));
     }
 }
 

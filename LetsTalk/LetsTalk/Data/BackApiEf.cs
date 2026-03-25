@@ -257,7 +257,7 @@ public class BackApiEf
     }
 
     // Créer un nouveau salon + canal
-    public bool SetNewServer(string token, string nomSalon, int idOwner)
+    /*public bool SetNewServer(string token, string nomSalon, int idOwner)
     {
         if (!IsAdmin(token))
             throw new UnauthorizedAccessException("Seul un administrateur peut créer un nouveau salon.");
@@ -278,7 +278,7 @@ public class BackApiEf
         _db.Canaux.Add(canal);
         return _db.SaveChanges() > 0;
     }
-
+    */
     // Messages non lus pour un utilisateur
     public List<MessagePriver> GetAllMessagesPriverNonLus(int idUser)
     {
