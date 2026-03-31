@@ -215,6 +215,12 @@
             _errorMessage = "Le mot de passe doit contenir au moins 8 caractères.";
             return;
         }
+        CreateUserDto dto = new CreateUserDto
+        {
+            Username = _username ?? "",
+            Email = _email ?? "",
+            Password = _password ?? ""
+        };
 
         try
         {

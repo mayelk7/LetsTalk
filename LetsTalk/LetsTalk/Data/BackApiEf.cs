@@ -183,7 +183,7 @@ public class BackApiEf
                 ConversationNom = conversationNom
             };
 
-            _db.ConversationPrivers.Add(conversation);
+            _db.ConversationPriver.Add(conversation);
             await _db.SaveChangesAsync();
 
             var membres = membresIds.Select(membreId => new MembreMP
@@ -229,7 +229,7 @@ public class BackApiEf
                 ConversationNom = string.Join("-", usernames)
             };
 
-            _db.ConversationPrivers.Add(conversation);
+            _db.ConversationPriver.Add(conversation);
             await _db.SaveChangesAsync();
 
             var membres = dto.MembresIds.Select(membreId => new MembreMP

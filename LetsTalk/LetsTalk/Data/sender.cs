@@ -115,10 +115,10 @@ namespace LetsTalk.Data
             // -------------------------
             // Conversations privées et membres
             // -------------------------
-            if (!context.ConversationPrivers.Any())
+            if (!context.ConversationPriver.Any())
             {
                 var conv = new ConversationPriver { CreatedAt = DateTime.Now };
-                context.ConversationPrivers.Add(conv);
+                context.ConversationPriver.Add(conv);
                 context.SaveChanges();
 
                 var convMembers = new List<MembreMP>
