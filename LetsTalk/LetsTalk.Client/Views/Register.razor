@@ -64,6 +64,7 @@
                                           Adornment="Adornment.Start"
                                           AdornmentIcon="@Icons.Material.Filled.Person"
                                           Class="mb-4"
+                                          onkeydown="HandleKeyDown"
                                           Disabled="_isLoading" />
 
                             <MudTextField @bind-Value="_email"
@@ -76,6 +77,7 @@
                                           Adornment="Adornment.Start"
                                           AdornmentIcon="@Icons.Material.Filled.Email"
                                           Class="mb-4"
+                                          onkeydown="HandleKeyDown"
                                           Disabled="_isLoading" />
 
                             <MudTextField @bind-Value="_phone"
@@ -87,6 +89,7 @@
                                           Immediate="true"
                                           Adornment="Adornment.Start"
                                           Class="mb-4"
+                                          onkeydown="HandleKeyDown"
                                           Disabled="_isLoading" />
 
                             <MudTextField @bind-Value="_password"
@@ -101,6 +104,7 @@
                                           AdornmentIcon="@(_showPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
                                           OnAdornmentClick="TogglePassword"
                                           Class="mb-4"
+                                          onkeydown="HandleKeyDown"
                                           Disabled="_isLoading" />
 
                             <MudTextField @bind-Value="_confirmPassword"
@@ -115,6 +119,7 @@
                                           AdornmentIcon="@(_showConfirmPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
                                           OnAdornmentClick="ToggleConfirmPassword"
                                           Class="mb-4"
+                                          onkeydown="HandleKeyDown"
                                           Disabled="_isLoading" />
 
                             @if (!string.IsNullOrWhiteSpace(_errorMessage))
@@ -164,17 +169,20 @@
     private string? _phone;
     private string? _password;
     private string? _confirmPassword;
-
     private bool _showPassword;
     private bool _showConfirmPassword;
     private bool _isLoading;
-
-
     private string? _errorMessage;
-
     private void TogglePassword() => _showPassword = !_showPassword;
-
     private void ToggleConfirmPassword() => _showConfirmPassword = !_showConfirmPassword;
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await Submit();
+        }
+    }
 
     private async Task Submit()
     {
