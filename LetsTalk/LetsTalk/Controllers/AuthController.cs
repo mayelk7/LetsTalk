@@ -3,6 +3,7 @@ using LetsTalk.Shared.Api;
 using LetsTalk.Shared.ModelsDto;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace LetsTalk.Controllers;
 
 [ApiController]
@@ -25,111 +26,67 @@ public class AuthController(AuthService authService) : BaseApiController
         }
 
         var userDto = new UserAuthDto(
-            result.User.UtilisateurId ?? 0,
+            result.User.UtilisateurId,
             result.User.Username,
             result.User.Email,
             result.User.Phone,
             result.User.ProfilPicture,
-            result.User.CreatedAt,
             result.User.Actif,
+            result.User.CreatedAt
 
-        )
+        );
 
         return Response("Inscription réussie", userDto);
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginDto dto)
+    public ApiResponse<UserAuthDto> Login([FromBody] LoginDto dto)
     {
         var result = authService.Login(dto.Username, dto.Password);
 
         if (!result.Success)
-        {
-            return BadRequest(new
-            {
-                success = false,
-                message = result.ErrorMessage
-            });
-        }
+            return Response<UserAuthDto>(result.ErrorMessage, null);
 
         if (result.User is null)
-        {
-            return BadRequest(new
-            {
-                success = false,
-                message = "Utilisateur introuvable"
-            });
-        }
+            return Response<UserAuthDto>("Utilisateur introuvable", null);
 
         if (result.Requires2FA)
-        {
-            return Ok(new
-            {
-                success = true,
-                requires2FA = true,
-                userId = result.User.UtilisateurId
-            });
-        }
+            return Response<UserAuthDto>("2FA requis", null, requires2FA: true); // ✅ pas de token ici
 
         var userDto = new UserAuthDto(
-            result.User.UtilisateurId ?? 0,
+            result.User.UtilisateurId,
             result.User.Username,
             result.User.Email,
             result.User.Phone,
             result.User.ProfilPicture,
-            result.User.CreatedAt,
             result.User.Actif,
-
+            result.User.CreatedAt
         );
 
-        return Ok(new
-        {
-            success = true,
-            requires2FA = false,
-            token = result.Token,
-            user = userDto
-        });
+        return Response("Connexion réussie", userDto, token: result.Token); // ✅ token inclus
     }
 
     [HttpPost("verify-2fa")]
-    public IActionResult Verify2FA([FromBody] VerifyTwoFactorDto dto)
+    public ApiResponse<UserAuthDto> Verify2FA([FromBody] VerifyTwoFactorDto dto)
     {
         var result = authService.VerifyTwoFactor(dto.UserId, dto.Code);
 
         if (!result.Success)
-        {
-            return BadRequest(new
-            {
-                success = false,
-                message = result.ErrorMessage
-            });
-        }
+            return Response<UserAuthDto>(result.ErrorMessage, null);
 
         if (result.User is null)
-        {
-            return BadRequest(new
-            {
-                success = false,
-                message = "Utilisateur introuvable"
-            });
-        }
+            return Response<UserAuthDto>("Utilisateur introuvable", null);
 
         var userDto = new UserAuthDto(
-            result.User.UtilisateurId ?? 0,
+            result.User.UtilisateurId,
             result.User.Username,
             result.User.Email,
             result.User.Phone,
             result.User.ProfilPicture,
-            result.User.CreatedAt,
             result.User.Actif,
-
+            result.User.CreatedAt
         );
 
-        return Ok(new
-        {
-            success = true,
-            token = result.Token,
-            user = userDto
-        });
+        return Response("Vérification réussie", userDto, token: result.Token); // ✅ token inclus
     }
 }

@@ -35,6 +35,12 @@ public class Utilisateur
     [MaxLength(50)]
     public string? Type2Fa { get; set; }
 
+    // Password reset
+
+    public string? PasswordResetToken { get; set; }
+    public DateTime? ResetTokenExpires { get; set; }
+
+
     // 2FA TOTP
     public bool TwoFactorEnabled { get; set; } = false;
     public string? TwoFactorSecret { get; set; }
@@ -63,6 +69,7 @@ public class Utilisateur
         MembreMPs = new List<MembreMP>();
         Notifications = new List<Notification>();
         MessageLus = new List<MessageLu>();
+        OwnedServers = new List<Server>();
     }
     public Utilisateur(string username, string email, string phone, string hashedPassword) : this()
     {

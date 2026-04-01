@@ -103,6 +103,11 @@ else
     app.UseHsts();
 }
 
+var props = typeof(LetsTalk.Models.Utilisateur)
+    .GetProperties()
+    .Select(p => p.Name);
+Console.WriteLine("🔍 Propriétés Utilisateur : " + string.Join(", ", props));
+
 app.UseHttpsRedirection();
 
 app.UseRouting();

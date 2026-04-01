@@ -20,6 +20,14 @@ public class AppDbContext : DbContext
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<MessageLu> MessageLus { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.LogTo(
+            sql => System.IO.File.AppendAllText("ef_query.log", sql + "\n"),
+            Microsoft.Extensions.Logging.LogLevel.Information
+        );
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -144,6 +152,32 @@ public class AppDbContext : DbContext
             .WithOne(mp => mp.Utilisateur)
             .HasForeignKey(mp => mp.UtilisateurId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Ajoute dans OnModelCreating, après les ToTable()
+        modelBuilder.Entity<Utilisateur>()
+            .Property(u => u.TwoFactorEnabled)
+            .HasColumnName("TwoFactorEnabled");
+
+        modelBuilder.Entity<Utilisateur>()
+            .Property(u => u.TwoFactorSecret)
+            .HasColumnName("TwoFactorSecret");
+
+        modelBuilder.Entity<Utilisateur>()
+            .Property(u => u.TwoFactorEnabledAt)
+            .HasColumnName("TwoFactorEnabledAt");
+
+        modelBuilder.Entity<Utilisateur>()
+            .Property(u => u.PasswordResetToken)
+            .HasColumnName("PasswordResetToken");
+
+        modelBuilder.Entity<Utilisateur>()
+            .Property(u => u.ResetTokenExpires)
+            .HasColumnName("ResetTokenExpires");
+
+        // Dans AppDbContext.OnModelCreating
+        modelBuilder.Entity<Membre>()
+            .Ignore("TwoFactorEnabled")
+            .Ignore("TwoFactorSecret");
 
         // Notification: link to user
         modelBuilder.Entity<Notification>()

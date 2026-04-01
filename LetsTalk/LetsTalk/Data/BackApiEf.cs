@@ -166,7 +166,7 @@ public class BackApiEf
         {
             // Récupération des usernames
             var usernames = await _db.Utilisateurs
-                .Where(u => u.UtilisateurId && membresIds.Contains(u.UtilisateurId.Value))
+                .Where(u => membresIds.Contains(u.UtilisateurId))
                 .OrderBy(u => u.Username)
                 .Select(u => u.Username)
                 .ToListAsync();
@@ -215,7 +215,7 @@ public class BackApiEf
         try
         {
             var usernames = await _db.Utilisateurs
-                .Where(u => u.UtilisateurId.HasValue && dto.MembresIds.Contains(u.UtilisateurId.Value))
+                .Where(u => dto.MembresIds.Contains(u.UtilisateurId))
                 .OrderBy(u => u.Username)
                 .Select(u => u.Username)
                 .ToListAsync();

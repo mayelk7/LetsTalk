@@ -16,7 +16,7 @@ public class Membre
 
     public int RoleId { get; set; }
     public Role Role { get; set; }
-    public string? TwoFactorSecret { get; set; }
-    public bool TwoFactorEnabled { get; set; } = false;
+    //public string? TwoFactorSecret { get; set; }
+    //public bool TwoFactorEnabled { get; set; } = false;
 
 }
