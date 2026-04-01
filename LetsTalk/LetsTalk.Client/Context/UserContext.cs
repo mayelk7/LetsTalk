@@ -9,5 +9,5 @@ public partial class UserContext : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsConnected))]
     private UserDto? _currentUser;
 
-    public bool IsConnected => CurrentUser != null;
+    public bool IsConnected => _currentUser != null;
 }

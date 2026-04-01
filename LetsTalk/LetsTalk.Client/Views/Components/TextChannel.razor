@@ -1,53 +1,63 @@
 ﻿@using LetsTalk.Client.Context
 @using LetsTalk.Shared.ModelsDto
+@inject UserContext UserCtx
 @inject IJSRuntime JS
 @namespace LetsTalk.Client.Views.Components
-<div style="display: flex; flex-direction: column-reverse; overflow-y: auto;">
-    @if (Channel.Messages.Count != 0)
-    {
-        foreach (var message in Channel.Messages.AsEnumerable().Reverse())
-        {
-            <MudChat Class="pa-2 mb-2" ChatPosition="@(message.Sender.Username == UserContext.CurrentUser?.Username ? ChatBubblePosition.End : ChatBubblePosition.Start)">
-                <MudChatHeader Name="@message.Sender.Username" Time="@message.Timestamp.ToString()"></MudChatHeader>
-                <MudChatBubble>
-                    @message.Content
-                </MudChatBubble>
-            </MudChat>
-        }
-        <div @ref="_inputWrapper" >
-            <MudTextField T="string" @ref="_mudTextField" Value="@Value" ValueChanged="OnValueChanged"
-                          Placeholder="Écrire un message..." MaxLines="32"
-                          Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
-                          OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
-                          Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;" @onkeydown="OnKeyDown" Immediate="true">
-            </MudTextField>
-        </div>
-    }
-    else
-    {
-        <MudText>
-            Aucun message !
-        </MudText>
 
-        <div @ref="_inputWrapper">
-            <MudTextField T="string" @ref="_mudTextField" Value="@Value" ValueChanged="OnValueChanged"
-                          Placeholder="Écrire un message..." MaxLines="32"
-                          Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
-                          OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
-                          Class="mt-2" Style="width: 55%;margin-left: calc(100% * 0.05);position: fixed; bottom:20px;" @onkeydown="OnKeyDown" Immediate="true">
-            </MudTextField>
-        </div>
-    }
+<div style="display: flex; flex-direction: column; height: 100%;">
+
+    @* Zone des messages (scrollable) *@
+    <div style="flex: 1; display: flex; flex-direction: column-reverse; overflow-y: auto;">
+        @if (Channel?.Messages?.Count > 0)
+        {
+            foreach (var message in Channel.Messages.AsEnumerable().Reverse())
+            {
+                var senderName = message.Sender?.Username ?? "Inconnu";
+                var isMe = UserContext?.CurrentUser?.Username != null
+                && senderName == UserContext.CurrentUser.Username;
+
+                <MudChat Class="pa-2 mb-2"
+                         ChatPosition="@(isMe ? ChatBubblePosition.End : ChatBubblePosition.Start)">
+                    <MudChatHeader Name="@senderName"
+                                   Time="@message.Timestamp.ToString()" />
+                    <MudChatBubble>
+                        @message.Content
+                    </MudChatBubble>
+                </MudChat>
+            }
+        }
+        else
+        {
+            <MudText Class="pa-4" Align="Align.Center" Color="Color.Secondary">
+                Aucun message — lancez la conversation !
+            </MudText>
+        }
+    </div>
+
+    @* Zone de saisie (TOUJOURS visible, même sans messages) *@
+    <div @ref="_inputWrapper">
+        <MudTextField T="string" @ref="_mudTextField" Value="@Value" ValueChanged="OnValueChanged"
+                      Placeholder="Écrire un message..." MaxLines="32"
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
+                      OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
+                      Class="mt-2" Style="width: 55%; margin-left: 5%; position: fixed; bottom: 20px;"
+                      @onkeydown="OnKeyDown" Immediate="true" />
+    </div>
 </div>
+
 @code {
     [Parameter]
     public required ChannelDto Channel { get; set; }
+
     [Parameter]
     public required UserContext UserContext { get; set; }
+
     [Parameter]
     public required string Value { get; set; } = string.Empty;
+
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
+
     private MudTextField<string>? _mudTextField;
     private ElementReference _inputWrapper;
 
