@@ -5,6 +5,7 @@
 @using LetsTalk.Shared.Service
 @inject LiveKitServiceClient LiveKit
 @inject IJSRuntime JS
+@inject AuthStateService AuthState
 @implements IDisposable
 @using System.Timers
 
@@ -20,8 +21,6 @@
     private bool _isMuted = false;
     private bool Mute { get; set; } = true;
 
-    // ✅ Input temporaire pour l'identité utilisateur
-    private string _tempUserId = "";
 
     public async Task getParticipant()
     {
@@ -62,9 +61,26 @@
     // ✅ Rejoindre l'appel
     private async Task JoinCall()
     {
-        if (string.IsNullOrWhiteSpace(_tempUserId))
+        if (AuthState.IsAuthenticated)
         {
-            Console.WriteLine("⚠️ Entrez un nom d'utilisateur");
+            int idcurrentuser = AuthState.CurrentUser.UtilisateurId;
+            string stringcurrentuser = idcurrentuser.ToString();
+            var token = LiveKit.GenerateAccessToken(Channel.Name, stringcurrentuser);
+
+            await JS.InvokeVoidAsync(
+                "livekitInterop.join",
+                "ws://172.20.11.16:7880",
+                token,
+                stringcurrentuser
+            );
+            _currentUserId = stringcurrentuser; // ✅
+            _isConnected = true;
+            StateHasChanged();
+
+        }
+        else
+        {
+            Console.WriteLine("⚠️ connecter vous avant ");
             return;
         }
 
@@ -79,17 +95,7 @@
             Console.WriteLine("La room n'existe pas");
             }
         */
-                        var token = LiveKit.GenerateAccessToken(Channel.Name, _tempUserId);
-
-        await JS.InvokeVoidAsync(
-            "livekitInterop.join",
-            "ws://172.20.11.16:7880",
-            token,
-            _tempUserId
-        );
-        _currentUserId = _tempUserId; // ✅
-        _isConnected = true;
-        StateHasChanged();
+        
     }
 
     // ✅ Quitter l'appel
@@ -170,14 +176,7 @@
 <MudPaper Elevation="3" Class="pa-3 mb-4" Style="position: sticky; top: 0; z-index: 100;">
     @if (!_isConnected)
     {
-        <MudGrid Spacing="2" Justify="Justify.Center">
-            <MudItem xs="12" sm="6" md="4">
-                <MudTextField @bind-Value="_tempUserId" 
-                              Label="Votre nom (temporaire)" 
-                              Variant="Variant.Outlined"
-                              Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Person" />
-            </MudItem>
+        <MudGrid Spacing="1" Justify="Justify.Center">
             <MudItem xs="12" sm="6" md="4" Class="d-flex align-center">
                 <MudButton Color="Color.Success" 
                            Variant="Variant.Filled"

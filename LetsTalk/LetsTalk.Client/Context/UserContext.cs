@@ -1,10 +1,13 @@
-﻿using LetsTalk.Shared.ModelsDto;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using LetsTalk.Shared.ModelsDto;
 
 namespace LetsTalk.Client.Context;
 
-public class UserContext
+public partial class UserContext : ObservableObject
 {
-    public UserDto? CurrentUser { get; set; }
-    
-    public bool IsConnected => CurrentUser != null;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsConnected))]
+    private UserDto? _currentUser;
+
+    public bool IsConnected => _currentUser != null;
 }

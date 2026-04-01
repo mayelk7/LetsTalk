@@ -3,61 +3,91 @@ using LetsTalk.Client.Context;
 using LetsTalk.Client.Services;
 using LetsTalk.Shared.ModelsDto;
 using MudBlazor;
+using System.Collections.ObjectModel;
 
 namespace LetsTalk.Client.ViewModels;
 
-public partial class MainLayoutViewModel(UserContext userContext) : ObservableObject
+public partial class MainLayoutViewModel(UserContext userContext, AuthStateService authState) : ObservableObject
 {
+
+    // Nécessaire pour afficher @(MainLayoutVm.UserContext.CurrentUser?.Username ?? "invité")
     [ObservableProperty]
-    private UserContext _userContext = userContext;
-    
-    [ObservableProperty]
-    private List<MenuItem> _menuItems = [
-        new() { Title = "Home", Icon = Icons.Material.Rounded.Chat, Href = "" }
-    ];
+    private AuthStateService authState = authState;
 
     [ObservableProperty]
     private string _search = string.Empty;
 
-    // TODO: Exemple of reacting to property changes
-    partial void OnSearchChanged(string value)
+    [ObservableProperty]
+    private bool _isLoading;
+
+    // Utilisation d'ObservableCollection pour que le menu MudBlazor se rafraîchisse seul
+    // On l'initialise directement avec l'item Home
+    [ObservableProperty]
+    private ObservableCollection<MenuItem> _menuItems = new()
     {
-        Console.WriteLine(value);
-        // Search = "test";
+        new MenuItem("Home", Icons.Material.Rounded.Home, "/home")
+    };
+
+    /// <summary>
+    /// Vide la liste et remet l'item Home (évite les accumulations d'icônes)
+    /// </summary>
+    private void ResetMenu()
+    {
+        MenuItems.Clear();
+        MenuItems.Add(new MenuItem("Home", Icons.Material.Rounded.Home, "/home"));
     }
-    
+
     public async Task InitAsync()
     {
-        //TODO: Temp user injection
-        this.UserContext.CurrentUser = new UserDto(
-            1,
-            "CurrentUser", // TODO: Replace with actual current user
-            "john.doe@exemple.com",
-            "1234567890",
-            null,
-            DateTime.Now
-        );
-        
-        var response = await ApiManagerService.MakeGetRequest<List<UserServerDto>>("/api/user/1/servers");
+        // 1. On récupère l'ID via l'Auth ou le Context
+        var userId = authState.CurrentUser?.UtilisateurId ?? 1;
 
-        if (response is { Success: false })
+        // 2. Si pas d'utilisateur, on s'assure que le menu est clean (juste Home)
+        if (userId == null)
         {
-            Console.WriteLine("Error fetching user servers: " + response?.Message);
+            ResetMenu();
             return;
         }
 
-        var userServerDtos = response?.Data;
-
-        foreach (var userServerDto in userServerDtos ?? Enumerable.Empty<UserServerDto>())
+        IsLoading = true;
+        try
         {
-            MenuItems.Add(new MenuItem(
-                    userServerDto.ServerName,
-                    Icons.Material.Rounded.Cloud,
-                    "server/" + userServerDto.ServerId
-                )
-            );
+            var response = await ApiManagerService.MakeGetRequest<List<UserServerDto>>($"/api/user/{userId}/servers");
+
+            if (response is { Success: true } && response.Data != null)
+            {
+                // 3. NETTOYAGE : On vide avant de remplir pour éviter les doublons au reco
+                ResetMenu();
+
+                // 4. Ajout des serveurs depuis l'API
+                foreach (var srv in response.Data)
+                {
+                    MenuItems.Add(new MenuItem(
+                        srv.ServerName,
+                        Icons.Material.Rounded.Cloud,
+                        $"server/{srv.ServerId}"
+                    ));
+                }
+
+                // 5. Ajout du bouton de création à la toute fin
+                MenuItems.Add(new MenuItem("Ajouter un Serveur", Icons.Material.Rounded.Add, "NewServer"));
+            }
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur chargement serveurs: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    // Se déclenche automatiquement quand la propriété Search change
+    partial void OnSearchChanged(string value)
+    {
+        Console.WriteLine($"Recherche : {value}");
     }
 }
 
-public record struct MenuItem (string Title, string Icon, string Href);
+public record struct MenuItem(string Title, string Icon, string Href);
