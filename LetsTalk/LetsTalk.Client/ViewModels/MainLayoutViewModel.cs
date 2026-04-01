@@ -25,7 +25,7 @@ public partial class MainLayoutViewModel(UserContext userContext, AuthStateServi
     [ObservableProperty]
     private ObservableCollection<MenuItem> _menuItems = new()
     {
-        new MenuItem("Home", Icons.Material.Rounded.Chat, "")
+        new MenuItem("Home", Icons.Material.Rounded.Home, "/home")
     };
 
     /// <summary>
@@ -34,7 +34,7 @@ public partial class MainLayoutViewModel(UserContext userContext, AuthStateServi
     private void ResetMenu()
     {
         MenuItems.Clear();
-        MenuItems.Add(new MenuItem("Home", Icons.Material.Rounded.Home, ""));
+        MenuItems.Add(new MenuItem("Home", Icons.Material.Rounded.Home, "/home"));
     }
 
     public async Task InitAsync()
