@@ -1,8 +1,13 @@
-﻿@inject ServerViewModel ServerVm
+﻿@inject IDialogService DialogService
+@inject ServerViewModel ServerVm
+@inject NavigationManager NavigationManager
+@inject AuthStateService AuthState
 @page "/server/{ServerId}"
 
 @using LetsTalk.Client.Views.Components
 @using LetsTalk.Shared.Enum
+@using LetsTalk.Client.Services
+@using LetsTalk.Shared.ModelsDto
 
 @if (ServerVm.Server is not null)
 {
@@ -10,7 +15,14 @@
         <MudItem Xs="2" Class="mud-border-left">
             <MudCard Style="border-radius: 0;">
                 <MudCardHeader>
-                    <h2>@ServerVm.Server.Name</h2>
+                    <CardHeaderActions>
+                        <h2> @ServerVm.Server.Name
+                        <MudMenu Icon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+                            <MudMenuItem Icon="@Icons.Material.Filled.Settings" OnClick="OpenServerSettings">Paramètres du serveur</MudMenuItem>
+                                <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="Disconnect" Color="Color.Error">Quitter le serveur</MudMenuItem>
+                        </MudMenu>
+                        </h2>
+                    </CardHeaderActions>
                 </MudCardHeader>
             </MudCard>
             
@@ -19,9 +31,13 @@
         <MudItem Xs="8" Class="mud-border-right mud-border-left border-x-2" 
                  Style="border-color: var(--mud-palette-divider);">
             
-            <MudCard Style="border-radius: 0;">
+                 <MudCard Style="border-radius: 0;" Elevation="0" Class="mud-border-bottom">
                 <MudCardHeader>
-                    <h2> @(ServerVm.SelectedChannel?.ChannelType == ChannelType.Text ? "TextChannel" : "VoiceChannel")  - @ServerVm.SelectedChannel?.Name</h2>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">
+                            @(ServerVm.SelectedChannel?.ChannelType == ChannelType.Text ? "TextChannel" : "VoiceChannel") - @ServerVm.SelectedChannel?.Name
+                        </MudText>
+                    </CardHeaderContent>
                 </MudCardHeader>
             </MudCard>
             
@@ -74,14 +90,54 @@ else
         {
             // TODO: Error handling for invalid ServerId
         }
-        
+
         await base.OnParametersSetAsync();
     }
 
     protected override void OnInitialized()
     {
         ServerVm.PropertyChanged += (_, __) => StateHasChanged();
-        
+
         base.OnInitialized();
+    }
+
+    private async Task OpenServerSettings()
+    {
+
+        // 1. Créer les paramètres
+        var parameters = new DialogParameters<ServerSettingsDialog>();
+
+        // 2. Ajouter les données (le nom doit correspondre exactement au [Parameter] dans le dialogue)
+        parameters.Add(x => x.serveur, ServerVm.Server);
+
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+
+        var dialog = await DialogService.ShowAsync<ServerSettingsDialog>("Paramètres du Serveur",parameters, options);
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+        }
+
+
+    }
+
+
+
+    private async Task Disconnect()
+    {
+        var userId = AuthState.CurrentUser.UtilisateurId;
+        string useridtostring = userId.ToString();
+        Console.WriteLine($"UserId envoyé: {useridtostring}");
+
+        var result = await ApiManagerService.MakePutRequest<bool, LeaveServerRequestdto>(
+            $"user/servers/{ServerId}/leave",
+            new LeaveServerRequestdto { UserId = useridtostring }
+    );
+
+        if (result != null && result.Success)
+            NavigationManager.NavigateTo("/home");
     }
 }

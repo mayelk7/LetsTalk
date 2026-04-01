@@ -7,6 +7,8 @@ using LetsTalk.Shared.ModelsDto;
 using Livekit.Server.Sdk.Dotnet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 
 namespace LetsTalk.Controllers;
 
@@ -99,5 +101,40 @@ public class ServerApiController(AppDbContext appDbContext) : BaseApiController
         appDbContext.SaveChanges();
         return Response<bool>("Serveur créé avec succès.", true);
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ApiResponse<bool>>> UpdateServer(int id, [FromBody] FullServerDto serverDto)
+    {
+        // 1. Vérification de sécurité
+        if (serverDto == null || id != serverDto.Id)
+        {
+            return BadRequest(new ApiResponse<bool> (false,"Données invalides.",false ));
+        }
+
+        try
+        {
+            // 2. On cherche le serveur en base de données
+            var serverEntity = await appDbContext.Servers.FirstOrDefaultAsync(s => s.ServerId == id);
+
+            if (serverEntity == null)
+            {
+                return NotFound(new ApiResponse<bool>(false, "Serveur introuvable.", false)); ;
+            }
+
+            // 3. Mise à jour des propriétés
+            // On change le nom par celui reçu du Blazor
+            serverEntity.Nom = serverDto.Name;
+
+            // 4. On sauvegarde les changements
+            await appDbContext.SaveChangesAsync();
+
+            return Ok(new ApiResponse<bool> (true,"Serveur mis à jour !",true ));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ApiResponse<bool> (false,ex.Message,false));
+        }
+    }
+
 };
 

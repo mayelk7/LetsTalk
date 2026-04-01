@@ -46,11 +46,11 @@
                               Class="pa-8"
                               Style="width: 100%; max-width: 420px; max-height: 80vh; overflow-y: auto; border-radius: 24px;">
 
-                        <MudText Typo="Typo.h4" Class="mb-6">Créer un compte</MudText>
+                        <MudText Typo="Typo.h4" Class="mb-6">Créer un Serveur</MudText>
 
                         <MudForm>
                             <MudTextField @bind-Value="_servername"
-                                          Label="ServerName"
+                                          Label="Nom du Serveur"
                                           Variant="Variant.Filled"
                                           Margin="Margin.Dense"
                                           FullWidth="true"
@@ -188,7 +188,7 @@
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("Serveur créé !", Severity.Success);
-            Navigation.NavigateTo("/");
+            Navigation.NavigateTo("/home");
         }
         else
         {
