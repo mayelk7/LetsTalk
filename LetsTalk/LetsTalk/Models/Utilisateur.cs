@@ -10,7 +10,7 @@ namespace LetsTalk.Models;
 public class Utilisateur
 {
     [Key]
-    public int? UtilisateurId { get; set; }
+    public int UtilisateurId { get; set; }
 
     [Required, MaxLength(255)]
     public string Username { get; set; }

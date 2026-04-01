@@ -40,6 +40,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         )
     );
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<TwoFactorService>();
 builder.Services.Configure<LivekitSettings>(
 builder.Configuration.GetSection("LivekitSettings"));
 builder.Services.AddScoped<MainLayoutViewModel>();

@@ -1,18 +1,21 @@
-﻿using LetsTalk.Models;
-using LetsTalk.Context;
+﻿using LetsTalk.Context;
 using LetsTalk.Helpers;
-using System.Text.RegularExpressions;
+using LetsTalk.Models;
+using LetsTalk.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace LetsTalk.Services.Authentification;
 
 public class AuthService
 {
     private readonly AppDbContext _context;
+    private readonly TwoFactorService _twoFactorService;
 
-    public AuthService(AppDbContext context)
+    public AuthService(AppDbContext context, TwoFactorService twoFactorService)
     {
         _context = context;
+        _twoFactorService = twoFactorService;
     }
 
     public string HashPassword(string password)
@@ -39,13 +42,13 @@ public class AuthService
             return AuthResult.Failed("Cet email est déjà utilisé");
 
         // Validation mot de passe
-        if (password.Contains(" "))
+        if (password.Contains(' '))
             return AuthResult.Failed("Le mot de passe ne doit pas contenir d'espace");
 
         if (!Regex.IsMatch(password, @"[A-Z]"))
             return AuthResult.Failed("Le mot de passe doit contenir au moins une majuscule");
 
-        if (!Regex.IsMatch(password, @"[!@#$%^&*()_+=\[{\]};:<>|./?,-]"))
+        if (!Regex.IsMatch(password, @"[!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?]"))
             return AuthResult.Failed("Le mot de passe doit contenir au moins un caractère spécial");
 
         if (password.Length < 8)
@@ -84,10 +87,53 @@ public class AuthService
 
         bool isMatch = PasswordHelper.Verify(password, user.Password);
         if (!isMatch)
-        {
             return AuthResult.Failed("Nom d'utilisateur ou mot de passe incorrect");
+
+        // Si la 2FA est activée
+        if (!string.IsNullOrWhiteSpace(user.Type2Fa))
+        {
+            return new AuthResult
+            {
+                Success = true,
+                User = user,
+                Requires2FA = true,
+                Token = null
+            };
         }
 
-        return AuthResult.Succeeded(user);
+        // Remplace ce token plus tard par un vrai JWT
+        return new AuthResult
+        {
+            Success = true,
+            User = user,
+            Requires2FA = false,
+            Token = "token-temporaire"
+        };
+    }
+
+    // Vérification du code 2FA
+    public AuthResult VerifyTwoFactor(int userId, string code)
+    {
+        var user = _context.Utilisateurs.FirstOrDefault(u => u.UtilisateurId == userId);
+
+        if (user == null)
+            return AuthResult.Failed("Utilisateur introuvable");
+
+        if (string.IsNullOrWhiteSpace(user.Type2Fa))
+            return AuthResult.Failed("La double authentification n'est pas activée");
+
+        bool isValid = _twoFactorService.ValidateCode(user.Type2Fa, code);
+
+        if (!isValid)
+            return AuthResult.Failed("Code 2FA invalide");
+
+        // Remplace ce token plus tard par un vrai JWT
+        return new AuthResult
+        {
+            Success = true,
+            User = user,
+            Requires2FA = false,
+            Token = "token-temporaire"
+        };
     }
 }

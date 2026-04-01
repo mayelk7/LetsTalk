@@ -8,7 +8,7 @@ namespace LetsTalk.Models;
 public class Membre
 {
     // Composite PK (UtilisateurId, ServerId, RoleId)
-    public int? UtilisateurId { get; set; }
+    public int UtilisateurId { get; set; }
     public Utilisateur Utilisateur { get; set; }
 
     public int ServerId { get; set; }
@@ -16,5 +16,7 @@ public class Membre
 
     public int RoleId { get; set; }
     public Role Role { get; set; }
+    public string? TwoFactorSecret { get; set; }
+    public bool TwoFactorEnabled { get; set; } = false;
 
 }
