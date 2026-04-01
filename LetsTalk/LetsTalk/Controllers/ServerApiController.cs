@@ -1,7 +1,10 @@
 ﻿using LetsTalk.Context;
 using LetsTalk.Data;
+using LetsTalk.Models;
 using LetsTalk.Shared.Api;
+using LetsTalk.Shared.Enum;
 using LetsTalk.Shared.ModelsDto;
+using Livekit.Server.Sdk.Dotnet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -62,4 +65,39 @@ public class ServerApiController(AppDbContext appDbContext) : BaseApiController
             users
         ));
     }
-}
+
+    [HttpPost]
+    public ApiResponse<bool> SetNewServer([FromBody] CreateServerDto dto)
+    {
+        var server = new Server { Nom = dto.Nom, OwnerId = dto.OwnerId };
+        appDbContext.Servers.Add(server);
+
+        if (appDbContext.SaveChanges() == 0)
+            return Response<bool>("Erreur lors de la création du serveur.", false);
+
+        var canal = new Canaux
+        {
+            Nom = "Général",
+            ServerId = server.ServerId,
+            Type = ChannelType.Text
+        };
+        appDbContext.Canaux.Add(canal);
+
+        if (dto.Membres != null && dto.Membres.Any())
+        {
+            foreach (var userId in dto.Membres)
+            {
+                appDbContext.Membres.Add(new Membre
+                {
+                    UtilisateurId = userId,
+                    ServerId = server.ServerId,
+                    RoleId = 1
+                });
+            }
+        }
+
+        appDbContext.SaveChanges();
+        return Response<bool>("Serveur créé avec succès.", true);
+    }
+};
+

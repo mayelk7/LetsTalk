@@ -2,24 +2,17 @@
 using LetsTalk.Client.Context;
 using LetsTalk.Client.Services;
 using LetsTalk.Shared.ModelsDto;
-using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using System.Collections.ObjectModel;
 
 namespace LetsTalk.Client.ViewModels;
 
-public partial class MainLayoutViewModel : ObservableObject
+public partial class MainLayoutViewModel(UserContext userContext, AuthStateService authState) : ObservableObject
 {
-    [ObservableProperty]
-    private UserContext _userContext;
 
-    // Utilisation d'ObservableCollection pour que l'UI (MudNavMenu) 
-    // se mette à jour dès qu'on ajoute un serveur
+    // Nécessaire pour afficher @(MainLayoutVm.UserContext.CurrentUser?.Username ?? "invité")
     [ObservableProperty]
-    private ObservableCollection<MenuItem> _menuItems = new()
-    {
-        new MenuItem("Accueil", Icons.Material.Rounded.Chat, "")
-    };
+    private AuthStateService authState = authState;
 
     [ObservableProperty]
     private string _search = string.Empty;
@@ -27,46 +20,46 @@ public partial class MainLayoutViewModel : ObservableObject
     [ObservableProperty]
     private bool _isLoading;
 
-    public MainLayoutViewModel(UserContext userContext)
+    // Utilisation d'ObservableCollection pour que le menu MudBlazor se rafraîchisse seul
+    // On l'initialise directement avec l'item Home
+    [ObservableProperty]
+    private ObservableCollection<MenuItem> _menuItems = new()
     {
-        _userContext = userContext;
-
-        // On écoute les changements internes du UserContext.
-        // Si CurrentUser change, on notifie l'UI que UserContext a été mis à jour.
-        _userContext.PropertyChanged += (s, e) =>
-        {
-            if (e.PropertyName == nameof(UserContext.CurrentUser))
-            {
-                OnPropertyChanged(nameof(UserContext));
-                // Optionnel : Recharger les serveurs automatiquement au login
-                if (_userContext.IsConnected) _ = InitAsync();
-            }
-        };
-    }
+        new MenuItem("Home", Icons.Material.Rounded.Home, "/home")
+    };
 
     /// <summary>
-    /// Initialise les données du Layout (Serveurs de l'utilisateur)
+    /// Vide la liste et remet l'item Home (évite les accumulations d'icônes)
     /// </summary>
+    private void ResetMenu()
+    {
+        MenuItems.Clear();
+        MenuItems.Add(new MenuItem("Home", Icons.Material.Rounded.Home, "/home"));
+    }
+
     public async Task InitAsync()
     {
-        // Ne pas charger si l'utilisateur n'est pas connecté 
-        // ou si les serveurs sont déjà là
-        if (!_userContext.IsConnected || MenuItems.Count > 1)
+        // 1. On récupère l'ID via l'Auth ou le Context
+        var userId = authState.CurrentUser?.UtilisateurId ?? 1;
+
+        // 2. Si pas d'utilisateur, on s'assure que le menu est clean (juste Home)
+        if (userId == null)
+        {
+            ResetMenu();
             return;
+        }
 
         IsLoading = true;
         try
         {
-            var userId = _userContext.CurrentUser!.Id;
             var response = await ApiManagerService.MakeGetRequest<List<UserServerDto>>($"/api/user/{userId}/servers");
 
             if (response is { Success: true } && response.Data != null)
             {
-                // On garde uniquement le premier item (Accueil)
-                var homeItem = MenuItems[0];
-                MenuItems.Clear();
-                MenuItems.Add(homeItem);
+                // 3. NETTOYAGE : On vide avant de remplir pour éviter les doublons au reco
+                ResetMenu();
 
+                // 4. Ajout des serveurs depuis l'API
                 foreach (var srv in response.Data)
                 {
                     MenuItems.Add(new MenuItem(
@@ -75,11 +68,14 @@ public partial class MainLayoutViewModel : ObservableObject
                         $"server/{srv.ServerId}"
                     ));
                 }
+
+                // 5. Ajout du bouton de création à la toute fin
+                MenuItems.Add(new MenuItem("Ajouter un Serveur", Icons.Material.Rounded.Add, "NewServer"));
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erreur lors du chargement des serveurs: {ex.Message}");
+            Console.WriteLine($"Erreur chargement serveurs: {ex.Message}");
         }
         finally
         {
@@ -87,25 +83,10 @@ public partial class MainLayoutViewModel : ObservableObject
         }
     }
 
-    /// <summary>
-    /// Logique de déconnexion appelée depuis la Navbar
-    /// </summary>
-    public async Task LogoutAsync(AuthStateService authService, NavigationManager navigation)
-    {
-        await authService.LogoutAsync();
-
-        // On réinitialise le menu pour le prochain utilisateur
-        var homeItem = MenuItems[0];
-        MenuItems.Clear();
-        MenuItems.Add(homeItem);
-
-        navigation.NavigateTo("/login");
-    }
-
+    // Se déclenche automatiquement quand la propriété Search change
     partial void OnSearchChanged(string value)
     {
-        // Logique de recherche globale ici
-        Console.WriteLine($"Recherche en cours : {value}");
+        Console.WriteLine($"Recherche : {value}");
     }
 }
 

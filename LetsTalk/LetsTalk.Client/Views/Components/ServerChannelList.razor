@@ -24,17 +24,30 @@
                     break;
             }
         }
+        <MudButton StartIcon="@Icons.Material.Rounded.Add"
+                   Href="@($"/NewCanal/{ServerId}")"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary">
+            Ajouter un nouveau canal
+        </MudButton>
     }
     else
     {
-        <MudText>
-            Aucun canal disponible.
-        </MudText>
+        <MudButton StartIcon="@Icons.Material.Rounded.Add"
+                   Href="@($"/NewCanal/{ServerId}")"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary">
+            Ajouter un nouveau canal
+        </MudButton>
+
     }
 
 </MudStack>
 
 @code {
+
+    [Parameter]
+    public required int? ServerId { get; set; }
     [Parameter]
     public required List<ChannelDto> Channels { get; set; }
     

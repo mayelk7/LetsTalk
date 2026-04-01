@@ -1,9 +1,124 @@
-﻿@page "/"
-@inject NavigationManager Nav
+﻿@page "/home"
+@inject ISnackbar Snackbar
+@using LetsTalk.Client.Views.Components
+@using LetsTalk.Shared.Enum
+@inject ServerViewModel ServerVm
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Style="background-color: #33ff33; height: 100vh; cursor: help;">
+
+    <marquee style="font-size: 50px; color: magenta; font-family: 'Comic Sans MS'; background: yellow;">
+        BIENVENUE SUR LETS TALK - LE MEILLEUR CHAT DU MONDE !!!
+    </marquee>
+  <MudGrid>
+    <MudItem Xs="12" Class="d-flex justify-center mt-10">
+        <div style="border: 10px dashed red; padding: 40px; background-color: white; transform: rotate(-5deg); display: flex; flex-direction: column; align-items: center; gap: 20px;">
+
+            <MudText Typo="Typo.h3" Style="font-family: 'Comic Sans MS'; color: red;">ZONE DE DANGER</MudText>
+
+            <div style="display: flex; gap: 50px;">
+                <div class="breathing-zone">
+                    <img src="./image/image.jpg" alt="GIF 1" />
+                </div>
+
+                <div class="breathing-zone">
+                        <img src="./image/image1.png" alt="GIF 2" />
+                </div>
+                                <div class="breathing-zone">
+                        <img src="./image/image2.jpg" alt="GIF 2" />
+                </div>
+            </div>
+
+            <MudProgressCircular Color="Color.Error" Indeterminate="true" Size="Size.Large" />
+
+            <MudText Style="font-family: 'Comic Sans MS';">Chargement du chaos en cours...</MudText>
+        </div>
+    </MudItem>
+    <style>
+        .breathing-zone {
+            /* On enlève position: fixed pour que ça reste dans le flux du parent */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: breathe 1.5s alternate infinite ease-in-out;
+        }
+
+        .breathing-zone img {
+            width: 150px; /* Taille réduite pour en mettre deux */
+            height: auto;
+            border: 5px double purple;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.7);
+        }
+        keyframe
+        0% {
+            transform: scale(0.9);
+            filter: hue-rotate(0deg); /* En bonus : la couleur change ! */
+        }
+
+        100% {
+            transform: scale(1.1);
+            filter: hue-rotate(90deg);
+        }
+    </style>
+
+        <MudItem Xs="6">
+            <MudCard Style="background: linear-gradient(to right, orange , yellow); border-radius: 50px;">
+                <MudCardContent>
+                    <MudText Style="color: purple; font-weight: bold;">Statistiques inutiles :</MudText>
+                    <ul style="list-style-type: '💀 ';">
+                        <li>Utilisateurs en ligne : Beaucoup trop</li>
+                        <li>Messages envoyés : 42 (probablement)</li>
+                        <li>Bugs trouvés : Oui</li>
+                    </ul>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="@(() => Snackbar.Add("Pourquoi as-tu cliqué là ?"))" FullWidth="true">
+                        NE PAS CLIQUER ICI
+                    </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+
+        <MudItem Xs="6">
+            <div style="background-color: black; color: #00FF00; font-family: 'Courier New'; padding: 20px; border: 5px double white;">
+                <p>> Initializing chat...</p>
+                <p>> Loading chaotic energy...</p>
+                <p>> Done.</p>
+                <MudTextField T="string" Label="Tape un truc pour voir" Variant="Variant.Outlined" Style="background: white;" />
+            </div>
+        </MudItem>
+
+        <MudItem Xs="12" Class="mt-10">
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Style="animation: blink 0.5s infinite;">
+                ATTENTION : Cette page pique les yeux. C'est normal.
+            </MudAlert>
+        </MudItem>
+    </MudGrid>
+
+    <style>
+        @@keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.2;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Pour vraiment casser le style propre de MudBlazor */
+        .mud-typography-h1 {
+            font-size: 150px !important;
+        }
+    </style>
+</MudContainer>
 
 @code {
     protected override void OnInitialized()
     {
-        Nav.NavigateTo("/login");
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
     }
 }

@@ -1,5 +1,6 @@
-﻿@page "/login"
+﻿@page "/"
 @layout LetsTalk.Client.Views.Layout.LoginLayout
+@using LetsTalk.Client.Context
 @using LetsTalk.Client.Services
 @using MudBlazor
 @using LetsTalk.Shared.ModelsDto
@@ -8,6 +9,8 @@
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 @inject AuthStateService AuthState
+@inject UserContext UserCtx
+
 
 <PageTitle>Connexion</PageTitle>
 
@@ -47,6 +50,7 @@
                                                   AdornmentIcon="@Icons.Material.Filled.Person"
                                                   Class="mb-4"
                                                   AutoFocus="true"
+                                                  Immediate="true"
                                                   onkeydown="HandleKeyDown"
                                                   Disabled="_isLoading" />
 
@@ -61,6 +65,7 @@
                                                   AdornmentIcon="@(_showPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
                                                   OnAdornmentClick="TogglePassword"
                                                   Class="mb-6"
+                                                  Immediate="true"
                                                   onkeydown="HandleKeyDown"
                                                   Disabled="_isLoading" />
 
@@ -141,6 +146,15 @@
                     Snackbar.Add($"Bienvenue {result.Data.Username} !", Severity.Success);
 
                     await AuthState.LoginAsync(result.Data);
+
+                    UserCtx.CurrentUser = new UserDto(
+                        result.Data.UtilisateurId,
+                        result.Data.Username,
+                        result.Data.Email,
+                        result.Data.Phone,
+                        result.Data.ProfilPicture,
+                        result.Data.CreatedAt
+                    );
 
                     // Redirection vers la page d'accueil
                     Navigation.NavigateTo("/server/1");
