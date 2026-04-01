@@ -14,7 +14,7 @@
                 </MudCardHeader>
             </MudCard>
             
-            <ServerChannelList Channels="ServerVm.Server.Channels" @bind-SelectedChannel="ServerVm.SelectedChannel"/>
+            <ServerChannelList Serverid="ServerVm.Server.Id" Channels="ServerVm.Server.Channels" @bind-SelectedChannel="ServerVm.SelectedChannel"/>
         </MudItem>
         <MudItem Xs="8" Class="mud-border-right mud-border-left border-x-2" 
                  Style="border-color: var(--mud-palette-divider);">

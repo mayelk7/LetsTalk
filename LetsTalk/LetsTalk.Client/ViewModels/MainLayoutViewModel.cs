@@ -3,11 +3,10 @@ using LetsTalk.Client.Context;
 using LetsTalk.Client.Services;
 using LetsTalk.Shared.ModelsDto;
 using MudBlazor;
-
 namespace LetsTalk.Client.ViewModels;
 
-public partial class MainLayoutViewModel(UserContext userContext) : ObservableObject
-{
+public partial class MainLayoutViewModel(UserContext userContext, AuthStateService authState) : ObservableObject
+{   
     [ObservableProperty]
     private UserContext _userContext = userContext;
     
@@ -29,7 +28,7 @@ public partial class MainLayoutViewModel(UserContext userContext) : ObservableOb
     public async Task InitAsync()
     {
         //TODO: Temp user injection
-        this.UserContext.CurrentUser = new UserDto(
+        /*this.UserContext.CurrentUser = new UserDto(
             1,
             "CurrentUser", // TODO: Replace with actual current user
             "john.doe@exemple.com",
@@ -37,8 +36,9 @@ public partial class MainLayoutViewModel(UserContext userContext) : ObservableOb
             null,
             DateTime.Now
         );
-        
-        var response = await ApiManagerService.MakeGetRequest<List<UserServerDto>>("/api/user/1/servers");
+        */
+        var userId = authState.CurrentUser?.UtilisateurId ?? 1;
+        var response = await ApiManagerService.MakeGetRequest<List<UserServerDto>>($"/api/user/{userId}/servers");
 
         if (response is { Success: false })
         {
