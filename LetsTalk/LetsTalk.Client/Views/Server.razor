@@ -49,7 +49,7 @@
                 </MudCardHeader>
             </MudCard>
 
-            <ServerUserList Users="@ServerVm.Server.Users" CurrentUserId="1" />
+            <ServerUserList Users="@ServerVm.Server.Users" CurrentUserId="@(ServerVm.UserContext.CurrentUser?.Id ?? 0)" />
         </MudItem>
     </MudGrid>
 }

@@ -1,5 +1,6 @@
 ﻿@page "/login"
 @layout LetsTalk.Client.Views.Layout.LoginLayout
+@using LetsTalk.Client.Context
 @using LetsTalk.Client.Services
 @using MudBlazor
 @using LetsTalk.Shared.ModelsDto
@@ -8,6 +9,8 @@
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 @inject AuthStateService AuthState
+@inject UserContext UserCtx
+
 
 <PageTitle>Connexion</PageTitle>
 
@@ -143,6 +146,15 @@
                     Snackbar.Add($"Bienvenue {result.Data.Username} !", Severity.Success);
 
                     await AuthState.LoginAsync(result.Data);
+
+                    UserCtx.CurrentUser = new UserDto(
+                        result.Data.UtilisateurId,
+                        result.Data.Username,
+                        result.Data.Email,
+                        result.Data.Phone,
+                        result.Data.ProfilPicture,
+                        result.Data.CreatedAt
+                    );
 
                     // Redirection vers la page d'accueil
                     Navigation.NavigateTo("/server/1");
