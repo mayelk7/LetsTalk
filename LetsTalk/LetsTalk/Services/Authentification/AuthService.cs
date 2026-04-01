@@ -1,9 +1,9 @@
 ﻿using LetsTalk.Context;
 using LetsTalk.Helpers;
 using LetsTalk.Models;
-using LetsTalk.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using static QRCoder.PayloadGenerator;
 
 namespace LetsTalk.Services.Authentification;
 
@@ -40,19 +40,6 @@ public class AuthService
         var existingEmail = _context.Utilisateurs.FirstOrDefault(u => u.Email == email);
         if (existingEmail != null)
             return AuthResult.Failed("Cet email est déjà utilisé");
-
-        // Validation mot de passe
-        if (password.Contains(' '))
-            return AuthResult.Failed("Le mot de passe ne doit pas contenir d'espace");
-
-        if (!Regex.IsMatch(password, @"[A-Z]"))
-            return AuthResult.Failed("Le mot de passe doit contenir au moins une majuscule");
-
-        if (!Regex.IsMatch(password, @"[!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?]"))
-            return AuthResult.Failed("Le mot de passe doit contenir au moins un caractère spécial");
-
-        if (password.Length < 8)
-            return AuthResult.Failed("Le mot de passe doit contenir au moins 8 caractères");
 
         // Création utilisateur
         string hashedPassword = HashPassword(password);
@@ -111,29 +98,58 @@ public class AuthService
         };
     }
 
-    // Vérification du code 2FA
-    public AuthResult VerifyTwoFactor(int userId, string code)
+        return AuthResult.Succeeded(user);
+    }
+    // Passwd reset
+    public async Task<string?> PreparePasswordResetAsync(string email)
     {
-        var user = _context.Utilisateurs.FirstOrDefault(u => u.UtilisateurId == userId);
+        // 1. Trouver l'utilisateur par son email
+        var user = await _context.Utilisateurs
+            .FirstOrDefaultAsync(u => u.Email == email);
 
-        if (user == null)
-            return AuthResult.Failed("Utilisateur introuvable");
+        if (user == null) return null;
 
-        if (string.IsNullOrWhiteSpace(user.Type2Fa))
-            return AuthResult.Failed("La double authentification n'est pas activée");
+        // 2. Générer un token unique
+        string token =Guid.NewGuid().ToString();
 
-        bool isValid = _twoFactorService.ValidateCode(user.Type2Fa, code);
+        // 3. Enregistrer le token et l'expiration
+        user.PasswordResetToken = token;
+        user.ResetTokenExpires = DateTime.Now.AddMinutes(15);
 
-        if (!isValid)
-            return AuthResult.Failed("Code 2FA invalide");
+        await _context.SaveChangesAsync();
 
-        // Remplace ce token plus tard par un vrai JWT
-        return new AuthResult
+        return token;
+    }
+    // Reset password
+    public async Task<AuthResult> ResetPasswordAsync(string token, string newPassword)
+    {
+        // 1. Trouver l'utilisateur qui possède CE token précis
+        var user = await _context.Utilisateurs
+            .FirstOrDefaultAsync(u => u.PasswordResetToken == token);
+
+        // 2. Vérifications de sécurité
+        if (user == null || user.ResetTokenExpires < DateTime.Now)
         {
-            Success = true,
-            User = user,
-            Requires2FA = false,
-            Token = "token-temporaire"
-        };
+            return AuthResult.Failed("Le lien est invalide ou a expiré.");
+        }
+
+        try
+        {
+            // 3. Hacher le nouveau mot de passe et nettoyer les champs de reset
+            string hashed = HashPassword(newPassword);
+            user.SetNewPassword(hashed);
+
+            // Save changes
+            await _context.SaveChangesAsync();
+            return AuthResult.Succeeded(user);
+        }
+        catch(ArgumentException ex) 
+        {
+            return AuthResult.Failed(ex.Message);
+        }
+        catch (Exception)
+        {
+            return AuthResult.Failed("Une erreur est survenue lors de la modification.");
+        }    
     }
 }
