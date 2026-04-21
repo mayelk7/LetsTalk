@@ -29,7 +29,7 @@
                 @switch (ServerVm.SelectedChannel?.ChannelType)
                 {
                     case ChannelType.Text:
-                        <TextChannel Channel="ServerVm.SelectedChannel" UserContext="ServerVm.UserContext" @bind-Value="ServerVm.CurrentMessage" @bind-Value:after="ServerVm.OnMessageInput"/>
+                        <TextChannel Channel="ServerVm.SelectedChannel" UserContext="ServerVm.UserContext" @bind-File="ServerVm.File" @bind-Value="ServerVm.CurrentMessage" @bind-Value:after="ServerVm.OnMessageInput"/>
                         break;
                     case ChannelType.Voice:
                         <VoiceChannel Channel="ServerVm.SelectedChannel"/>

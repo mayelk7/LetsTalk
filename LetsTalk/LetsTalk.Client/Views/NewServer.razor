@@ -100,7 +100,7 @@
 
 @code {
     private List<UserDto> alluser = new();
-    private IEnumerable<int> _selectedUserIds = new HashSet<int>();
+    private IReadOnlyCollection<int>? _selectedUserIds = new HashSet<int>();
     private MudForm? _form;
     private bool _isLoading;
     private string? _servername;
