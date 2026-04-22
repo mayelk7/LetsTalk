@@ -1,6 +1,10 @@
-﻿@using LetsTalk.Shared.ModelsDto
+﻿@using LetsTalk.Shared.Perm
+@using LetsTalk.Shared.ModelsDto
+@using LetsTalk.Client.Services
+@inject AuthStateService AuthState
 @inject HttpClient Http
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
 <MudCard Elevation="6" Class="pa-4">
     <MudCardContent>
@@ -14,6 +18,7 @@
     </MudCardContent>
     <MudCardActions>
         <MudButton Variant="Variant.Filled"
+                   Class="mr-2"
                    Color="Color.Primary"
                    StartIcon="@Icons.Material.Filled.Message"
                    OnClick="HandleSendMessage"
@@ -24,7 +29,43 @@
             }
             Message privé
         </MudButton>
+        @if (AuthState.CurrentUser!.HasPermission(ServerId, ServerPermission.KickMember))
+        {
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.DoorBack"
+                       OnClick="Kick"
+                       Disabled="_loading"
+                       class="mr-2">
+                Kick
+            </MudButton>
+        }
+
+        @if (AuthState.CurrentUser!.HasPermission(ServerId, ServerPermission.BanMember))
+        {
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.FlightTakeoff"
+                       OnClick="Ban"
+                       Disabled="_loading"
+                       class="mr-2">
+                Ban
+            </MudButton>
+        }
+
+        @if (AuthState.CurrentUser!.HasPermission(ServerId, ServerPermission.ManageRoles))
+        {
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.AccessibilityNew"
+                       OnClick="OpenRoleSelector"
+                       Disabled="_loading"
+                       class="mr-2">
+                Role
+            </MudButton>
+        }
     </MudCardActions>
+
 </MudCard>
 
 @code {
@@ -34,8 +75,12 @@
     public EventCallback OnClose { get; set; }
     [Parameter]
     public required int CurrentUserId { get; set; }
+    [Parameter]
+    public required int ServerId { get; set; }
 
     private bool _loading = false;
+
+    private List<RoleDto> ServerRoles = new();
 
     private async Task HandleSendMessage()
     {
@@ -56,5 +101,55 @@
 
         _loading = false;
         await OnClose.InvokeAsync();
+    }
+
+    private async Task OpenRoleSelector()
+    {
+        var resultrole = await ApiManagerService.MakeGetRequest<List<RoleDto>>($"role/server/{ServerId}");
+        if (resultrole?.Success == true)
+            ServerRoles = resultrole.Data ?? new();
+        var parameters = new DialogParameters
+    {
+        { "Roles", ServerRoles },
+        { "CurrentRoleId", /* roleId actuel du user si tu l'as */ 0 }
+    };
+
+        var dialog = await DialogService.ShowAsync<RoleSelectorDialog>("Changer le rôle", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var roleId = (int)result.Data!;
+            var response = await ApiManagerService.MakePutRequest<bool, AssignRoleRequest>(
+                $"role/user/{User.Id}/server/{ServerId}",
+                new AssignRoleRequest { RoleId = roleId }
+            );
+
+            Snackbar.Add(
+                response?.Success == true ? "Rôle mis à jour !" : "Erreur lors du changement de rôle.",
+                response?.Success == true ? Severity.Success : Severity.Error
+            );
+        }
+    }
+
+    private async Task Kick()
+    {
+        var response = await ApiManagerService.MakePutRequest<bool, LeaveServerRequestdto>(
+            $"user/servers/{ServerId}/leave",
+            new LeaveServerRequestdto { UserId = User.Id.ToString()! }
+        );
+
+        Snackbar.Add(
+            response?.Success == true ? $"{User.Username} a été expulsé !" : "Erreur lors du kick.",
+            response?.Success == true ? Severity.Success : Severity.Error
+        );
+
+        if (response?.Success == true)
+            await OnClose.InvokeAsync();
+    }
+
+    private async Task Ban()
+    {
+        Snackbar.Add("Ban pas encore implémenté.", Severity.Warning);
     }
 }

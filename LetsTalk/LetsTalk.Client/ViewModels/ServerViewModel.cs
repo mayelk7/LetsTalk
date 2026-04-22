@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace LetsTalk.Client.ViewModels;
 
-public partial class ServerViewModel(UserContext userContext) : ObservableObject
+public partial class ServerViewModel(UserContext userContext, AuthStateService authState) : ObservableObject
 {
     [ObservableProperty]
     private UserContext _userContext = userContext;
+
+    private readonly AuthStateService _authState = authState;
 
     [ObservableProperty] 
     private int _serverId;
@@ -28,27 +30,26 @@ public partial class ServerViewModel(UserContext userContext) : ObservableObject
     
     public void OnMessageInput()
     {
-        if (CurrentMessage == null || SelectedChannel == null)
-        {
-            return;
-        }
-        
-        CurrentMessage = CurrentMessage.Trim();
-        
-        if (CurrentMessage.Length == 0)
-        {
-            return;
-        }
-        
+        var currentUser = _authState.CurrentUser;
+
+        if (currentUser == null) return;
+
         MessageDto message = new(
             0,
-            this._userContext.CurrentUser,
+            new UserDto(
+                currentUser.UtilisateurId,
+                currentUser.Username,
+                currentUser.Email,
+                currentUser.Phone,
+                currentUser.ProfilPicture,
+                currentUser.CreatedAt
+            ),
             CurrentMessage ?? string.Empty,
             DateTime.Now,
             SelectedChannel.Id ?? 0,
             false
         );
-        
+
         SelectedChannel.Messages.Add(message);
         
         CurrentMessage = string.Empty;

@@ -8,6 +8,7 @@
 @using LetsTalk.Shared.Enum
 @using LetsTalk.Client.Services
 @using LetsTalk.Shared.ModelsDto
+@using LetsTalk.Shared.Perm
 
 @if (ServerVm.Server is not null)
 {
@@ -18,7 +19,10 @@
                     <CardHeaderActions>
                         <h2> @ServerVm.Server.Name
                         <MudMenu Icon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
-                            <MudMenuItem Icon="@Icons.Material.Filled.Settings" OnClick="OpenServerSettings">Paramètres du serveur</MudMenuItem>
+                                @if (AuthState.CurrentUser!.OwnedServerIds.Contains(ServerVm.ServerId) || AuthState.CurrentUser!.HasPermission(ServerVm.Server.Id ?? 0, ServerPermission.ManageServer))
+                                {
+                                    <MudMenuItem Icon="@Icons.Material.Filled.Settings" OnClick="OpenServerSettings">Paramètres du serveur</MudMenuItem>
+                                }
                                 <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="Disconnect" Color="Color.Error">Quitter le serveur</MudMenuItem>
                         </MudMenu>
                         </h2>
@@ -45,7 +49,7 @@
                 @switch (ServerVm.SelectedChannel?.ChannelType)
                 {
                     case ChannelType.Text:
-                        <TextChannel Channel="ServerVm.SelectedChannel" UserContext="ServerVm.UserContext" @bind-File="ServerVm.File" @bind-Value="ServerVm.CurrentMessage" @bind-Value:after="ServerVm.OnMessageInput"/>
+                        <TextChannel Channel="ServerVm.SelectedChannel" Serverid="ServerVm.Server.Id" @bind-File="ServerVm.File" @bind-Value="ServerVm.CurrentMessage" @bind-Value:after="ServerVm.OnMessageInput"/>
                         break;
                     case ChannelType.Voice:
                         <VoiceChannel Channel="ServerVm.SelectedChannel"/>
@@ -64,8 +68,7 @@
                     <h2>Utilisateur - @ServerVm.Server.Users.Count</h2>
                 </MudCardHeader>
             </MudCard>
-
-            <ServerUserList Users="@ServerVm.Server.Users" CurrentUserId="@(ServerVm.UserContext.CurrentUser?.Id ?? 0)" />
+            <ServerUserList Users="@ServerVm.Server.Users" CurrentUserId="@(ServerVm.UserContext.CurrentUser?.Id ?? 0)" ServerId="@(ServerVm.Server.Id ?? 0)" />
         </MudItem>
     </MudGrid>
 }

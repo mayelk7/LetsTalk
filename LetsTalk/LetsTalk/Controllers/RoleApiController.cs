@@ -4,6 +4,7 @@ using LetsTalk.Shared.Api;
 using LetsTalk.Shared.ModelsDto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static LetsTalk.Client.Views.Components.ServerSettingsDialog;
 
 namespace LetsTalk.Controllers;
 
@@ -166,6 +167,19 @@ public class RoleApiController(AppDbContext context) : BaseApiController
         await context.SaveChangesAsync();
 
         return Ok(new ApiResponse<bool>(true, "Rôle retiré avec succès", true));
+    }
+    // --- Put Roleid/Permission *------------------
+    [HttpPut("{roleId:int}/permissions")]
+    public async Task<ActionResult<ApiResponse<bool>>> UpdatePermissions(int roleId, [FromBody] UpdateRolePermissionsRequest request)
+    {
+        var role = await context.Roles.FindAsync(roleId);
+        if (role == null)
+            return NotFound(new ApiResponse<bool>(false, "Rôle introuvable", false));
+
+        role.Permissions = request.Permissions;
+        await context.SaveChangesAsync();
+
+        return Ok(new ApiResponse<bool>(true, "Permissions mises à jour", true));
     }
 
 }
