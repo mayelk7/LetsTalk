@@ -101,8 +101,8 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        await AuthState.InitializeAsync(); 
         await MainLayoutVm.InitAsync();
-        
         await base.OnInitializedAsync();
     }
 

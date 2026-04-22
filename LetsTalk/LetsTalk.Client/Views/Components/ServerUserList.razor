@@ -19,6 +19,8 @@
     public required List<UserDto> Users { get; set; }
     [Parameter]
     public required int CurrentUserId { get; set; }
+    [Parameter]
+    public required int Serverid { get; set; }
     [Inject]
     IDialogService DialogService { get; set; } = default!;
 
@@ -27,7 +29,9 @@
         var parameters = new DialogParameters
         {
             ["User"] = user,
-            ["CurrentUserId"] = CurrentUserId
+            ["CurrentUserId"] = CurrentUserId,
+            ["Serverid"] = Serverid
+
         };
         var options = new DialogOptions
         {
