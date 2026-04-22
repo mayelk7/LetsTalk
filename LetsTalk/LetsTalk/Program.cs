@@ -6,8 +6,10 @@ using LetsTalk.Components;
 using LetsTalk.Context;
 using LetsTalk.Controllers;
 using LetsTalk.Data;
+using LetsTalk.Models.Config;
 using LetsTalk.Services.Authentication;
 using LetsTalk.Services.Authentification;
+using LetsTalk.Services.Email;
 using LetsTalk.Services.Livekit;
 using LetsTalk.Shared.Service;
 using LetsTalk.Shared.Service;
@@ -47,6 +49,12 @@ builder.Services.AddScoped<LoginLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
 builder.Services.AddTransient<ServerViewModel>();
 builder.Services.AddTransient<TextChannelViewModel>();
+
+// Lie le JSON à la classe EmailSettings
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
+// Enregistre le service d'email
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Api controllers
 builder.Services.AddScoped<BackApiEf>();
