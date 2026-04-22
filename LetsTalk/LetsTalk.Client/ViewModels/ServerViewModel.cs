@@ -2,6 +2,7 @@
 using LetsTalk.Client.Context;
 using LetsTalk.Client.Services;
 using LetsTalk.Shared.ModelsDto;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace LetsTalk.Client.ViewModels;
 
@@ -21,6 +22,9 @@ public partial class ServerViewModel(UserContext userContext) : ObservableObject
 
     [ObservableProperty]
     private string? _currentMessage;
+
+    [ObservableProperty] 
+    private IBrowserFile? _file;
     
     public void OnMessageInput()
     {
@@ -63,6 +67,11 @@ public partial class ServerViewModel(UserContext userContext) : ObservableObject
                 
                 return Task.CompletedTask;
             });
+
+        if (File != null)
+        {
+            Console.WriteLine("File selected: " + File.Name);
+        }
     }
     
     public async Task InitAsync(int serverId)

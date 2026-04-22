@@ -1,7 +1,9 @@
-﻿@using LetsTalk.Client.Context
+﻿@inject TextChannelViewModel TextChannelVm
+@using LetsTalk.Client.Context
 @using LetsTalk.Shared.ModelsDto
 @inject UserContext UserCtx
 @inject IJSRuntime JS
+@using MudX
 @namespace LetsTalk.Client.Views.Components
 
 <div style="display: flex; flex-direction: column; height: 100%;">
@@ -16,14 +18,12 @@
                 var isMe = UserContext?.CurrentUser?.Username != null
                 && senderName == UserContext.CurrentUser.Username;
 
-                <MudChat Class="pa-2 mb-2"
-                         ChatPosition="@(isMe ? ChatBubblePosition.End : ChatBubblePosition.Start)">
-                    <MudChatHeader Name="@senderName"
-                                   Time="@message.Timestamp.ToString()" />
-                    <MudChatBubble>
+                <MudXChat Class="pa-2 mb-2" ChatPosition="@(message.Sender.Username == UserContext.CurrentUser?.Username ? ChatBubblePosition.End : ChatBubblePosition.Start)">
+                    <MudXChatHeader Name="@message.Sender.Username" Time="@message.Timestamp.ToString()"></MudXChatHeader>
+                    <MudXChatBubble>
                         @message.Content
-                    </MudChatBubble>
-                </MudChat>
+                    </MudXChatBubble>
+                </MudXChat>
             }
         }
         else
@@ -36,13 +36,36 @@
 
     @* Zone de saisie (TOUJOURS visible, même sans messages) *@
     <div @ref="_inputWrapper">
-        <MudTextField T="string" @ref="_mudTextField" Value="@Value" ValueChanged="OnValueChanged"
+        @if (_imageDataUrl != null)
+        {
+            <MudImage Src="@_imageDataUrl" 
+                      Alt="Image preview"
+                      Class="mt-2"
+                      Style="margin-left: calc(100% * 0.05);position: fixed; bottom: 80px; max-width: 200px; max-height: 200px;">
+            </MudImage>
+        }
+        
+        <MudTextField T="string" @ref="_mudTextField" @bind-Value="@Value" @bind-Value:after="async () => await SendMessage()"
                       Placeholder="Écrire un message..." MaxLines="32"
                       Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
                       OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
                       Class="mt-2" Style="width: 55%; margin-left: 5%; position: fixed; bottom: 20px;"
-                      @onkeydown="OnKeyDown" Immediate="true" />
+                      @onkeydown="OnKeyDown"/>
     </div>
+
+    <MudFileUpload T="IBrowserFile"
+                   Class="mt-2"
+                   @bind-Files="File"
+                   @bind-Files:after="async () => await OnFileInput()"
+                   Style="width: 3%;margin-left: calc(100% * 0.01);position: fixed; bottom:20px;"
+                   Accept="image/*">
+        <CustomContent>
+            <MudFab Color="Color.Success"
+                    OnClick="@context.OpenFilePickerAsync"
+                    StartIcon="@Icons.Material.Filled.AttachFile"/>
+        </CustomContent>
+        <SelectedTemplate/>
+    </MudFileUpload>
 </div>
 
 @code {
@@ -57,9 +80,30 @@
 
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
+    
+    [Parameter]
+    public required IBrowserFile? File { get; set; }
+    [Parameter]
+    public EventCallback<IBrowserFile> FileChanged { get; set; }
 
     private MudTextField<string>? _mudTextField;
     private ElementReference _inputWrapper;
+    private string? _imageDataUrl = null;
+    
+    protected override void OnInitialized()
+    {
+        TextChannelVm.PropertyChanged += (_, __) => StateHasChanged();
+        
+        base.OnInitialized();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        TextChannelVm.InitAsync();
+        
+        return base.OnInitializedAsync();
+    }
+    
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -73,16 +117,54 @@
     {
         Value = newValue;
     }
-
-    private async Task OnKeyDown(KeyboardEventArgs e)
+    
+    private async Task SendMessage()
     {
-        if (e.Key == "Enter")
+        Console.WriteLine($"Value: {Value} {_mudTextField?.Text}, File: {File?.Name}");
+        
+        if (Value != string.Empty)
         {
             await ValueChanged.InvokeAsync(Value);
             Value = string.Empty;
             if (_mudTextField != null)
-                await _mudTextField.SetText(string.Empty);
+            {
+                await _mudTextField.SetTextAsync(string.Empty);
+            }
+        }
+
+        if (File != null)
+        {
+            Console.WriteLine($"Sending file: {File.Name}");
+            await FileChanged.InvokeAsync(File);
+            File = null;
+            _imageDataUrl = null;
+        }
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e is { Key: "Enter", ShiftKey: false })
+        {
+            await SendMessage();
+            
+            if (_mudTextField != null)
+            {
+                await _mudTextField.SetTextAsync(string.Empty);
+            }
             StateHasChanged();
+        }
+    }
+    
+    private async Task OnFileInput()
+    {
+        if (File != null)
+        {
+            var format = File.ContentType;
+            var resizedImage = await File.RequestImageFileAsync(format, 100, 100);
+            var buffer = new byte[resizedImage.Size];
+            await resizedImage.OpenReadStream().ReadAsync(buffer);
+            
+            _imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
         }
     }
 }

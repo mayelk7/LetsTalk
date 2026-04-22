@@ -36,6 +36,6 @@
             FullWidth = true,
             Position = DialogPosition.Center
         };
-        DialogService.Show<CarteProfilUser>($"Profil de {user.Username}", parameters, options);
+        DialogService.ShowAsync<CarteProfilUser>($"Profil de {user.Username}", parameters, options);
     }
 }
