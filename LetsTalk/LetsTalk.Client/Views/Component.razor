@@ -1,0 +1,61 @@
+﻿
+@page "/voip"
+@using LetsTalk.Shared.Service
+@inject LiveKitServiceClient LiveKit
+@inject IJSRuntime JS
+
+<MudTextField @bind-Value="TextValue" Label="Standard" Variant="Variant.Text">
+</MudTextField>
+
+<MudButton Color="Color.Success" OnClick="JoinCall">
+    📞 Rejoindre l'appel
+</MudButton>
+
+<MudButton Color="Color.Error" OnClick="LeaveCall">
+    ❌ Quitter
+</MudButton>
+
+<MudToggleIconButton 
+    Toggled="@isMuted"
+    ToggledChanged="OnMuteToggled"
+    Icon="@Icons.Material.Filled.Mic" 
+    ToggledIcon="@Icons.Material.Filled.MicOff"
+    Color="Color.Success"
+    ToggledColor="Color.Error"
+    Title="@(isMuted ? "Activer le micro" : "Couper le micro")" />
+
+@code {
+    public string TextValue { get; set; }
+
+    private bool isMuted = false;
+
+    private async Task OnMuteToggled(bool toggled)
+    {
+        isMuted = toggled;
+        await JS.InvokeVoidAsync("livekitInterop.toggleMute", isMuted);
+    }
+
+    async Task JoinCall()
+    {
+
+		//recupere la room au clique
+        var room = "vocale";
+		//recupere l'id user a la session
+        var userId = TextValue;
+
+        var token = LiveKit.GenerateAccessToken(room, userId);
+        
+
+        await JS.InvokeVoidAsync(
+            "livekitInterop.join",
+            "ws://172.20.11.16:7880",
+            token,
+            userId
+        );
+    }
+
+    async Task LeaveCall()
+    {
+        await JS.InvokeVoidAsync("livekitInterop.leave");
+    }
+}

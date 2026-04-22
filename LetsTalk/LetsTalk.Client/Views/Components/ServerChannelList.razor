@@ -1,0 +1,75 @@
+﻿@using LetsTalk.Shared.Enum
+@using LetsTalk.Shared.ModelsDto
+
+@namespace LetsTalk.Client.Views.Components
+
+<MudStack AlignItems="AlignItems.Start" Class="pl-2 pt-2" Spacing="2">
+    @if (Channels.Count > 0)
+    {
+        foreach (var channel in Channels)
+        {
+            switch (channel.ChannelType)
+            {
+                case ChannelType.Text:
+                    <MudButton StartIcon="@Icons.Material.Filled.Chat" @onclick="_ => HandleChange(channel)">
+                        @channel.Name
+                    </MudButton>
+                    break;
+                case ChannelType.Voice:
+                    <MudButton StartIcon="@Icons.Material.Filled.VolumeUp" @onclick="_ => HandleChange(channel)">
+                        @channel.Name
+                    </MudButton>
+                    break;
+                default:
+                    break;
+            }
+        }
+        <MudButton StartIcon="@Icons.Material.Rounded.Add"
+                   Href="@($"/NewCanal/{ServerId}")"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary">
+            Ajouter un nouveau canal
+        </MudButton>
+    }
+    else
+    {
+        <MudButton StartIcon="@Icons.Material.Rounded.Add"
+                   Href="@($"/NewCanal/{ServerId}")"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary">
+            Ajouter un nouveau canal
+        </MudButton>
+
+    }
+
+</MudStack>
+
+@code {
+
+    [Parameter]
+    public required int? ServerId { get; set; }
+    [Parameter]
+    public required List<ChannelDto> Channels { get; set; }
+    
+    [Parameter]
+    public required ChannelDto SelectedChannel { get; set; }
+    [Parameter]
+    public EventCallback<ChannelDto> SelectedChannelChanged { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        if (Channels.Count > 0)
+            SelectedChannel = Channels[0];
+        
+        base.OnInitialized();
+    }
+
+    private async Task HandleChange(ChannelDto channel)
+    {
+        SelectedChannel = channel;
+        if (SelectedChannelChanged.HasDelegate)
+        {
+            await SelectedChannelChanged.InvokeAsync(channel);
+        }
+    }
+}

@@ -1,0 +1,183 @@
+﻿@page "/"
+@layout LetsTalk.Client.Views.Layout.LoginLayout
+@using LetsTalk.Client.Context
+@using LetsTalk.Client.Services
+@using MudBlazor
+@using LetsTalk.Shared.ModelsDto
+@using LetsTalk.Shared.Api
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+@inject AuthStateService AuthState
+@inject UserContext UserCtx
+
+
+<PageTitle>Connexion</PageTitle>
+
+<MudContainer Square="true" Elevation="0" Class="mud-height-full mud-width-full d-flex align-center justify-center pa-6" style="height: 80vh;">
+
+    <MudContainer MaxWidth="MaxWidth.Large" Class="d-flex align-center justify-center">
+        <MudPaper Outlined="true" Elevation="12" Class="pa-10">
+            <MudGrid Spacing="0">
+
+                <!-- Gauche : Branding -->
+                <MudItem xs="12" md="6" Class="d-flex align-center justify-center pa-8">
+                    <MudStack AlignItems="AlignItems.Center" Spacing="2">
+                        <MudAvatar Size="Size.Large" Color="Color.Primary" Variant="Variant.Filled">
+                            <MudIcon Icon="@Icons.Material.Filled.ChatBubble" />
+                        </MudAvatar>
+
+                        <MudText Typo="Typo.h3">Let's Talk</MudText>
+
+                        <MudText Typo="Typo.subtitle1" Color="Color.Secondary">
+                            Connectez. Discutez. Collaborez.
+                        </MudText>
+                    </MudStack>
+                </MudItem>
+
+                <!-- Droite : Formulaire -->
+                <MudItem xs="12" md="6" Class="d-flex align-center justify-center pa-8">
+                    <MudPaper Elevation="8" Class="pa-8" Width="420px">
+                        <MudText Typo="Typo.h4" Class="mb-6">Connexion</MudText>
+                                <MudForm @ref="_form">
+                                    <MudTextField @bind-Value="_username"
+                                                  Label="Username"
+                                                  Variant="Variant.Filled"
+                                                  Margin="Margin.Dense"
+                                                  FullWidth="true"
+                                                  Required="true"
+                                                  Adornment="Adornment.Start"
+                                                  AdornmentIcon="@Icons.Material.Filled.Person"
+                                                  Class="mb-4"
+                                                  AutoFocus="true"
+                                                  Immediate="true"
+                                                  onkeydown="HandleKeyDown"
+                                                  Disabled="_isLoading" />
+
+                                    <MudTextField @bind-Value="_password"
+                                                  Label="Mot de passe"
+                                                  Variant="Variant.Filled"
+                                                  Margin="Margin.Dense"
+                                                  FullWidth="true"
+                                                  Required="true"
+                                                  InputType="@(_showPassword? InputType.Text: InputType.Password)"
+                                                  Adornment="Adornment.End"
+                                                  AdornmentIcon="@(_showPassword? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                                                  OnAdornmentClick="TogglePassword"
+                                                  Class="mb-6"
+                                                  Immediate="true"
+                                                  onkeydown="HandleKeyDown"
+                                                  Disabled="_isLoading" />
+
+                                    <MudButton ButtonType="ButtonType.Submit"
+                                               FullWidth="true"
+                                               Size="Size.Large"
+                                               Variant="Variant.Filled"
+                                               Color="Color.Primary"
+                                               OnClick="Submit"
+                                               Disabled="_isLoading">
+                                        @if (_isLoading)
+                                        {
+                                            <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+                                            <MudText Class="ml-2">Connexion...</MudText>
+                                        }
+                                        else
+                                        {
+                                            <span>Se connecter</span>
+                                        }
+                                    </MudButton>
+
+                                    <MudStack Direction="Row" Justify="Justify.SpaceBetween" Class="mt-4">
+                                        <MudLink Href="/forgot-password" Underline="Underline.None">Mot de passe oublié ?</MudLink>
+                                        <MudLink Href="/Register" Underline="Underline.None">Créer un compte</MudLink>
+                                    </MudStack>
+                                </MudForm>
+                    </MudPaper>
+                </MudItem>
+
+            </MudGrid>
+        </MudPaper>
+    </MudContainer>
+
+</MudContainer>
+
+@code {
+    private MudForm? _form;
+    private string _username = "";
+    private string _password = "";
+    private bool _showPassword;
+    private bool _isLoading;
+
+    private void TogglePassword() => _showPassword = !_showPassword;
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await Submit();
+        }
+    }
+
+    private async Task Submit()
+    {
+        // Validation du formulaire
+        if (_form is null) return;
+        await _form.Validate();
+        if (!_form.IsValid) return;
+
+        _isLoading = true;
+
+        try
+        {
+            // Préparation DTO
+            var loginDto = new LoginDto(_username, _password);
+
+            // Appel API
+            var response = await Http.PostAsJsonAsync("/api/auth/login", loginDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Lecture de la réponse
+                var result = await response.Content.ReadFromJsonAsync<ApiResponse<UserAuthDto>>();
+
+                if (result?.Data != null)
+                {
+                    // Connexion réussie
+                    Snackbar.Add($"Bienvenue {result.Data.Username} !", Severity.Success);
+
+                    await AuthState.LoginAsync(result.Data);
+
+                    UserCtx.CurrentUser = new UserDto(
+                        result.Data.UtilisateurId,
+                        result.Data.Username,
+                        result.Data.Email,
+                        result.Data.Phone,
+                        result.Data.ProfilPicture,
+                        result.Data.CreatedAt
+                    );
+
+                    // Redirection vers la page d'accueil
+                    Navigation.NavigateTo("/home");
+                }
+                else
+                {
+                    Snackbar.Add(result?.Message ?? "Erreur lors de la connexion", Severity.Error);
+                }
+            }
+            else
+            {
+                // Erreur de l'API
+                var errorResult = await response.Content.ReadFromJsonAsync<ApiResponse<UserAuthDto>>();
+                Snackbar.Add(errorResult?.Message ?? "Identifiants incorrects", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erreur de connexion : {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

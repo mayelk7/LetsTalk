@@ -1,36 +1,86 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
 
 namespace LetsTalk.Models;
 
-[PrimaryKey(nameof(Id))]
+[Index(nameof(Username), [nameof(Email)], IsUnique = true)]
+[PrimaryKey("UtilisateurId")]
 public class Utilisateur
 {
-    public int Id { get; set; }
-    
-    [Column(TypeName = "varchar(255)")]
-    [Required]
+    [Key]
+    public int? UtilisateurId { get; set; }
+
+    [Required, MaxLength(255)]
     public string Username { get; set; }
-    
-    [Column(TypeName = "varchar(300)")]
-    [Required]
+
+    [Required, MaxLength(255)]
     public string Email { get; set; }
-    
-    [Column(TypeName = "varchar(10)")]
-    [Phone]
+
+    [Required,MaxLength(10)]
     public string Phone { get; set; }
-    
-    [Required]
+
+    [Required, MaxLength(255)]
     public string Password { get; set; }
     
-    public string ProfilePicture { get; set; }
-    
-    [Required]
+    public string? ProfilPicture { get; set; }
+
+    [Required,DefaultValue(true)]
     public bool Actif { get; set; }
-    
-    public string Type2FA { get; set; }
-    
+
     [Required]
     public DateTime CreatedAt { get; set; }
+
+    [MaxLength(50)]
+    public string? Type2Fa { get; set; }
+
+    public string? PasswordResetToken { get; set; }
+    public DateTime? ResetTokenExpires { get; set; }
+
+
+    // 2FA TOTP
+    public bool TwoFactorEnabled { get; set; } = false;
+    public string? TwoFactorSecret { get; set; }
+    public DateTime? TwoFactorEnabledAt { get; set; }
+
+    // Navigations
+    public ICollection<Membre> Membres { get; set; }
+    public ICollection<MessageCanal> MessagesCanal { get; set; }
+    public ICollection<MessagePriver> MessagesPriver { get; set; }
+    public ICollection<MembreMP> MembreMPs { get; set; }
+    public ICollection<Notification> Notifications { get; set; }
+    public ICollection<MessageLu> MessageLus { get; set; }
+
+
+    // Owned servers (if user is owner referenced by Server.OwnerId)
+    public ICollection<Server> OwnedServers { get; set; }
+
+    //Constructors
+
+    public Utilisateur()
+    {
+        CreatedAt = DateTime.UtcNow;
+        Membres = new List<Membre>();
+        MessagesCanal = new List<MessageCanal>();
+        MessagesPriver = new List<MessagePriver>();
+        MembreMPs = new List<MembreMP>();
+        Notifications = new List<Notification>();
+        MessageLus = new List<MessageLu>();
+    }
+    public Utilisateur(string username, string email, string phone, string hashedPassword) : this()
+    {
+        Username = username;
+        Email = email;
+        Phone = phone;
+        Password = hashedPassword;
+        Actif = true;
+    }
+    public void SetNewPassword(string hashedPwd)
+    {
+        Password = hashedPwd;
+        PasswordResetToken = null;
+        ResetTokenExpires = null;
+    }
+
 }

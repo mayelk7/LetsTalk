@@ -1,0 +1,107 @@
+﻿@inherits LayoutComponentBase
+@inject LoginLayoutViewModel LoginLayoutVm
+
+
+<MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudLayout>
+
+    <MudMainContent Class="pt-16">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    private bool _drawerOpen = true;
+    private bool _isDarkMode = true;
+    private MudTheme? _theme = null;
+
+    protected override void OnInitialized()
+    {
+        LoginLayoutVm.PropertyChanged += (_, __) => StateHasChanged();
+
+        _theme = new()
+        {
+            PaletteLight = _lightPalette,
+            PaletteDark = _darkPalette,
+            LayoutProperties = new LayoutProperties()
+        };
+
+        base.OnInitialized();
+    }
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private void DarkModeToggle()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+
+    private readonly PaletteLight _lightPalette = new()
+    {
+        Primary = "#7C3AED",
+        Secondary = "#6D28D9",
+
+        Background = "#F8FAFC",
+        Surface = "#FFFFFF",
+        AppbarBackground = "#FFFFFF",
+        AppbarText = "#111827",
+        DrawerBackground = "#FFFFFF",
+        DrawerText = "#111827",
+        TextPrimary = "#111827",
+        TextSecondary = "#6B7280",
+        ActionDefault = "#7C3AED",
+        LinesDefault = "#E5E7EB",
+    };
+
+    private readonly PaletteDark _darkPalette = new()
+    {
+        Primary = "#9225A6",
+        Secondary = "#CA58E0",
+        Background = "#1A1A27",
+        Surface = "#1E1A2B",
+        AppbarBackground = "#070512",
+        AppbarText = "#EAE9F1",
+        DrawerBackground = "#1E1A2B",
+        DrawerText = "#B9B6C8",
+        TextPrimary = "#EAE9F1",
+        TextSecondary = "#B9B6C8",
+        ActionDefault = "#8C869E",
+        LinesDefault = "#5C5B5F33"
+    };
+    Typography Typography => new()
+    {
+        Default = new DefaultTypography()
+        {
+            FontFamily = new[] { "Inter", "SF Pro Text", "Segoe UI", "Roboto", "system-ui", "sans-serif" },
+            FontSize = "15px"
+        },
+        H1 = new H1Typography() { FontSize = "28px", FontWeight = "600", LetterSpacing = "-0.2px" },
+        H2 = new H2Typography() { FontSize = "22px", FontWeight = "600", LetterSpacing = "-0.2px" },
+        H3 = new H3Typography() { FontSize = "18px", FontWeight = "600" },
+        Body1 = new Body1Typography() { FontSize = "15px", FontWeight = "400", LineHeight = "1.6" },
+        Body2 = new Body2Typography() { FontSize = "13px", FontWeight = "400", LineHeight = "1.4" },
+        Caption = new CaptionTypography() { FontSize = "11px", FontWeight = "400", LetterSpacing = "0.2px" }
+    };
+
+    private string DarkLightModeButtonIcon => _isDarkMode switch
+    {
+        true => Icons.Material.Rounded.AutoMode,
+        false => Icons.Material.Outlined.DarkMode,
+    };
+}
+
+
+

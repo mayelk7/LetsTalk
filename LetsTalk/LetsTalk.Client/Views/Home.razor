@@ -1,59 +1,85 @@
-﻿@page "/"
+﻿@page "/home"
+@inject MainLayoutViewModel MainLayoutVm
+@using LetsTalk.Client.ViewModels
 
-<PageTitle>Home</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    @* 1. Header de bienvenue *@
+    <div class="d-flex align-center mb-8">
+        <MudAvatar Color="Color.Primary" Style="height:70px; width:70px; font-size:2rem;" Class="mr-4">
+            @(MainLayoutVm.AuthState.CurrentUser?.Username?.Substring(0, 1).ToUpper() ?? "U")
+        </MudAvatar>
+        <div>
+            <MudText Typo="Typo.h3">Ravi de vous revoir, @(MainLayoutVm.AuthState.CurrentUser?.Username ?? "invité") !</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mud-text-secondary">Prêt à discuter avec votre communauté ?</MudText>
+        </div>
+    </div>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor and the .NET 9 Template!</MudText>
+    <MudGrid>
+        @* 2. Cartes d'actions rapides *@
+        <MudItem Xs="12" Sm="6" Md="4">
+            <MudCard Elevation="4" Class="py-4 px-2 flex-column d-flex align-center justify-center hover-card" Style="cursor:pointer; height: 100%;">
+                <MudIcon Icon="@Icons.Material.Rounded.Groups" Color="Color.Primary" Size="Size.Large" />
+                <MudCardContent>
+                    <MudText Typo="Typo.h6" Align="Align.Center">Mes Serveurs</MudText>
+                    <MudText Typo="Typo.body2" Align="Align.Center">Retrouvez vos @(MainLayoutVm.MenuItems.Count - 2) communautés.</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
 
-<MudAlert Severity="Severity.Normal" ContentAlignment="HorizontalAlignment.Start">
-    You can find documentation and examples on our website here:
-    <MudLink Href="https://mudblazor.com" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
-        <b>www.mudblazor.com</b>
-    </MudLink>
-</MudAlert>
+        <MudItem Xs="12" Sm="6" Md="4">
+            <MudCard Elevation="4" Class="py-4 px-2 flex-column d-flex align-center justify-center hover-card" Style="cursor:pointer; height: 100%;">
+                <MudIcon Icon="@Icons.Material.Rounded.AddCircle" Color="Color.Secondary" Size="Size.Large" />
+                <MudCardContent>
+                    <MudText Typo="Typo.h6" Align="Align.Center">Nouveau Serveur</MudText>
+                    <MudText Typo="Typo.body2" Align="Align.Center">Créez un espace pour vos amis.</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
 
-<br />
-<MudText Typo="Typo.h5" GutterBottom="true">Interactivity in this Template</MudText>
-<br />
-<MudText Typo="Typo.body2">
-    When you opt for the "Global" Interactivity Location, <br />
-    the render modes are defined in App.razor and consequently apply to all child components.<br />
-    In this case, providers are globally set in the MainLayout.<br />
-    <br />
-    On the other hand, if you choose the "Per page/component" Interactivity Location,<br />
-    it is necessary to include the <br />
-    <br />
-    &lt;MudPopoverProvider /&gt; <br />
-    &lt;MudDialogProvider /&gt; <br />
-    &lt;MudSnackbarProvider /&gt; <br />
-    <br />
-    components on every interactive page.<br />
-    <br />
-    If a render mode is not specified for a page, it defaults to Server-Side Rendering (SSR),<br />
-    similar to this page. While MudBlazor allows pages to be rendered in SSR,<br />
-    please note that interactive features, such as buttons and dropdown menus, will not be functional.
-</MudText>
+        <MudItem Xs="12" Sm="6" Md="4">
+            <MudCard Elevation="4" Class="py-4 px-2 flex-column d-flex align-center justify-center hover-card" Style="cursor:pointer; height: 100%;">
+                <MudIcon Icon="@Icons.Material.Rounded.Settings" Color="Color.Info" Size="Size.Large" />
+                <MudCardContent>
+                    <MudText Typo="Typo.h6" Align="Align.Center">Paramètres</MudText>
+                    <MudText Typo="Typo.body2" Align="Align.Center">Gérez votre profil et vos notifications.</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
 
-<br />
-<MudText Typo="Typo.h5" GutterBottom="true">What's New in Blazor with the Release of .NET 9</MudText>
-<br />
+        @* 3. Section d'actualités / Log des mises à jour *@
+        <MudItem Xs="12" Md="8">
+            <MudPaper Elevation="2" Class="pa-6">
+                <MudText Typo="Typo.h5" Class="mb-4">Dernières nouvelles</MudText>
+                <MudTimeline TimelinePosition="TimelinePosition.Start">
+                    <MudTimelineItem Color="Color.Success" Size="Size.Small">
+                        <MudText Typo="Typo.button">Aujourd'hui</MudText>
+                        <MudText Typo="Typo.body2">Lancement de la version stable de LetsTalk !</MudText>
+                    </MudTimelineItem>
+                    <MudTimelineItem Color="Color.Info" Size="Size.Small">
+                        <MudText Typo="Typo.button">Hier</MudText>
+                        <MudText Typo="Typo.body2">Amélioration de la fluidité des messages texte.</MudText>
+                    </MudTimelineItem>
+                </MudTimeline>
+            </MudPaper>
+        </MudItem>
 
-<MudText Typo="Typo.h6" GutterBottom="true">Prerendering</MudText>
-<MudText Typo="Typo.body2" GutterBottom="true">
-    If you're exploring the features of .NET 9 Blazor,<br /> you might be pleasantly surprised to learn that each page is prerendered on the server,<br /> regardless of the selected render mode.<br /><br />
-    This means that you'll need to inject all necessary services on the server,<br /> even when opting for the wasm (WebAssembly) render mode.<br /><br />
-    This prerendering functionality is crucial to ensuring that WebAssembly mode feels fast and responsive,<br /> especially when it comes to initial page load times.<br /><br />
-    For more information on how to detect prerendering and leverage the RenderContext, you can refer to the following link:
-    <MudLink Href="https://github.com/dotnet/aspnetcore/issues/51468#issuecomment-1783568121" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
-        More details
-    </MudLink>
-</MudText>
+        @* 4. Petit Widget latéral *@
+        <MudItem Xs="12" Md="4">
+            <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Icon="@Icons.Material.Rounded.TipsAndUpdates">
+                <MudText Typo="Typo.subtitle2">Astuce du jour :</MudText>
+                <MudText Typo="Typo.body2">Utilisez la barre de recherche en haut pour trouver vos amis plus rapidement.</MudText>
+            </MudAlert>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
-<br />
-<MudText Typo="Typo.h6" GutterBottom="true">InteractiveAuto</MudText>
-<MudText Typo="Typo.body2">
-    A discussion on how to achieve this can be found here:
-    <MudLink Href="https://github.com/dotnet/aspnetcore/issues/51468#issue-1950424116" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
-        More details
-    </MudLink>
-</MudText>
+<style>
+    .hover-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;
+        }
+</style>

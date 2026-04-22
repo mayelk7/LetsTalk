@@ -1,21 +1,80 @@
 ﻿@inherits LayoutComponentBase
+@inject MainLayoutViewModel MainLayoutVm
+@using LetsTalk.Client.Services
+@inject AuthStateService AuthState
+@inject NavigationManager Navigation
+
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
-<MudDialogProvider />
+<MudDialogProvider CloseOnEscapeKey="true" CloseButton="true" />
 <MudSnackbarProvider />
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+        <MudText Typo="Typo.h5" Class="ml-3">Let's Talk</MudText>
         <MudSpacer />
+
+        <MudTextField @bind-Value="@MainLayoutVm.Search"
+                      Placeholder="Rechercher..."
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      Immediate="true"
+                      Variant="Variant.Outlined"
+                      Margin="Margin.Dense"
+                      Class="mx-4"
+                      Style="max-width: 400px;" />
+
+        <MudSpacer />
+
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+
+        <MudMenu Icon="@Icons.Material.Filled.AccountCircle" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+            <div class="pa-4" style="min-width: 200px;">
+                <MudText Typo="Typo.body1">@(MainLayoutVm.AuthState.CurrentUser.Username ?? "invité")</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">En ligne</MudText>
+            </div>
+            <MudDivider />
+            <MudMenuItem Icon="@Icons.Material.Filled.Person">Mon Profil</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Filled.Settings">Paramètres</MudMenuItem>
+            <MudDivider />
+            <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="HandleLogout" IconColor="Color.Error">
+                <MudText Color="Color.Error">Déconnexion</MudText>
+            </MudMenuItem>
+        </MudMenu>
     </MudAppBar>
-    <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavMenu />
+    
+    <MudDrawer id="nav-drawer"
+               ClipMode="DrawerClipMode.Docked"
+               OverlayAutoClose="false"
+               Variant="DrawerVariant.Mini"
+               Open="false"
+               Anchor="Anchor.Start"
+               Elevation="1">
+        <MudNavMenu>
+    
+            @if (MainLayoutVm.MenuItems is not null)
+            {
+                foreach (var item in MainLayoutVm.MenuItems)
+                {
+                    <MudNavLink Href="@item.Href" Match="NavLinkMatch.All" Icon="@item.Icon">@item.Title</MudNavLink>
+                }
+
+            }
+            else
+            {
+                <MudText>Loading...</MudText>
+            }
+
+
+            @* <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="ml-auto"> *@
+            @*     <MudIcon Icon="@Icons.Material.Filled.Add"/> *@
+            @* </MudButton> *@
+
+        </MudNavMenu>
     </MudDrawer>
-    <MudMainContent Class="pt-16 pa-4">
+
+    <MudMainContent Class="pt-16">
+        @*<MudDialogProvider />*@
         @Body
     </MudMainContent>
 </MudLayout>
@@ -32,9 +91,24 @@
     private bool _isDarkMode = true;
     private MudTheme? _theme = null;
 
+    private async Task HandleLogout()
+    {
+        // On appelle ton service pour nettoyer le cache/token
+        await AuthState.LogoutAsync();
+
+        // Redirection vers le login
+        Navigation.NavigateTo("/");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await MainLayoutVm.InitAsync();
+        
+        await base.OnInitializedAsync();
+    }
+
     protected override void OnInitialized()
     {
-        base.OnInitialized();
+        MainLayoutVm.PropertyChanged += (s, e) => StateHasChanged();
 
         _theme = new()
         {
@@ -42,6 +116,14 @@
             PaletteDark = _darkPalette,
             LayoutProperties = new LayoutProperties()
         };
+        
+        base.OnInitialized();
+    }
+    
+    public void Dispose()
+    {
+        // Très important pour la performance
+        MainLayoutVm.PropertyChanged -= (s, e) => StateHasChanged();
     }
 
     private void DrawerToggle()
@@ -56,48 +138,58 @@
 
     private readonly PaletteLight _lightPalette = new()
     {
-        Black = "#110e2d",
-        AppbarText = "#424242",
-        AppbarBackground = "rgba(255,255,255,0.8)",
-        DrawerBackground = "#ffffff",
-        GrayLight = "#e8e8e8",
-        GrayLighter = "#f9f9f9",
+        Primary = "#7C3AED",
+        Secondary = "#6D28D9",
+
+        Background = "#F8FAFC",
+        Surface = "#FFFFFF",
+        AppbarBackground = "#FFFFFF",
+        AppbarText = "#111827",
+        DrawerBackground = "#FFFFFF",
+        DrawerText = "#111827",
+        TextPrimary = "#111827",
+        TextSecondary = "#6B7280",
+        ActionDefault = "#7C3AED",
+        LinesDefault = "#E5E7EB",
     };
 
     private readonly PaletteDark _darkPalette = new()
     {
-        Primary = "#7e6fff",
-        Surface = "#1e1e2d",
-        Background = "#1a1a27",
-        BackgroundGray = "#151521",
-        AppbarText = "#92929f",
-        AppbarBackground = "rgba(26,26,39,0.8)",
-        DrawerBackground = "#1a1a27",
-        ActionDefault = "#74718e",
-        ActionDisabled = "#9999994d",
-        ActionDisabledBackground = "#605f6d4d",
-        TextPrimary = "#b2b0bf",
-        TextSecondary = "#92929f",
-        TextDisabled = "#ffffff33",
-        DrawerIcon = "#92929f",
-        DrawerText = "#92929f",
-        GrayLight = "#2a2833",
-        GrayLighter = "#1e1e2d",
-        Info = "#4a86ff",
-        Success = "#3dcb6c",
-        Warning = "#ffb545",
-        Error = "#ff3f5f",
-        LinesDefault = "#33323e",
-        TableLines = "#33323e",
-        Divider = "#292838",
-        OverlayLight = "#1e1e2d80",
+        Primary = "#9225A6",
+        Secondary = "#CA58E0",
+        Background = "#1A1A27",
+        Surface = "#1E1A2B",
+        AppbarBackground = "#070512",
+        AppbarText = "#EAE9F1",
+        DrawerBackground = "#1E1A2B",
+        DrawerText = "#B9B6C8",
+        TextPrimary = "#EAE9F1",
+        TextSecondary = "#B9B6C8",
+        ActionDefault = "#8C869E",
+        LinesDefault = "#5C5B5F33"
     };
-
-    public string DarkLightModeButtonIcon => _isDarkMode switch
+    Typography Typography => new()
+    {
+        Default = new DefaultTypography()
+        {
+            FontFamily = new[] { "Inter", "SF Pro Text", "Segoe UI", "Roboto", "system-ui", "sans-serif" },
+            FontSize = "15px"
+        },
+        H1 = new H1Typography() { FontSize = "28px", FontWeight = "600", LetterSpacing = "-0.2px" },
+        H2 = new H2Typography() { FontSize = "22px", FontWeight = "600", LetterSpacing = "-0.2px" },
+        H3 = new H3Typography() { FontSize = "18px", FontWeight = "600" },
+        Body1 = new Body1Typography() { FontSize = "15px", FontWeight = "400", LineHeight = "1.6" },
+        Body2 = new Body2Typography() { FontSize = "13px", FontWeight = "400", LineHeight = "1.4" },
+        Caption = new CaptionTypography() { FontSize = "11px", FontWeight = "400", LetterSpacing = "0.2px" }
+    };
+    
+    private string DarkLightModeButtonIcon => _isDarkMode switch
     {
         true => Icons.Material.Rounded.AutoMode,
         false => Icons.Material.Outlined.DarkMode,
     };
+
+
 }
 
 

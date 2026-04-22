@@ -1,0 +1,39 @@
+﻿@page "/test-auth"
+@using LetsTalk.Client.Services
+@inject AuthStateService AuthState
+@inject NavigationManager Navigation
+
+<h3>Test de l'authentification</h3>
+
+@if (AuthState.IsAuthenticated)
+{
+    <MudCard>
+        <MudCardContent>
+            <MudText Typo="Typo.h5">Bienvenue @AuthState.CurrentUser?.Username !</MudText>
+            <MudText>Email: @AuthState.CurrentUser?.Email</MudText>
+            <MudText>ID: @AuthState.CurrentUser?.UtilisateurId</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="HandleLogout">
+                Se déconnecter
+            </MudButton>
+        </MudCardActions>
+    </MudCard>
+}
+else
+{
+    <MudAlert Severity="Severity.Warning">
+        Vous n'êtes pas connecté.
+        <MudButton Href="/login" Variant="Variant.Text" Color="Color.Primary">
+            Se connecter
+        </MudButton>
+    </MudAlert>
+}
+
+@code {
+    private async Task HandleLogout()
+    {
+        await AuthState.LogoutAsync();
+        Navigation.NavigateTo("/login");
+    }
+}
