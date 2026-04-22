@@ -14,13 +14,17 @@
     <div style="flex: 1; display: flex; flex-direction: column-reverse; overflow-y: auto;">
         @if (Channel?.Messages?.Count > 0)
         {
-            foreach (var message in Channel.Messages.AsEnumerable().Reverse())
+            foreach (var message in Channel.Messages)
             {
-                <MudXChat Class="pa-2 mb-2" ChatPosition="@(message.Sender?.Username == AuthState.CurrentUser?.Username ? ChatBubblePosition.End : ChatBubblePosition.Start)">
-                    <MudXChatHeader Name="@(message.Sender?.Username ?? "Inconnu")" Time="@message.Timestamp.ToString()"></MudXChatHeader>
+                <MudXChat Class="pa-2 mb-2">
+                    <MudXChatHeader Name="@message.Sender.Username" Time="@message.Timestamp.ToString()"></MudXChatHeader>
                     <MudXChatBubble>
                         @message.Content
                     </MudXChatBubble>
+                    @if (message?.Fichier?.Url != null)
+                    {
+                        <img src="data:image;base64,@message.Fichier.Url" height="200px" alt="">
+                    }
                 </MudXChat>
             }
         }
@@ -35,19 +39,19 @@
     <div @ref="_inputWrapper">
         @if (_imageDataUrl != null)
         {
-            <MudImage Src="@_imageDataUrl"
+            <MudImage Src="@_imageDataUrl" 
                       Alt="Image preview"
                       Class="mt-2"
                       Style="margin-left: calc(100% * 0.05);position: fixed; bottom: 80px; max-width: 200px; max-height: 200px;">
             </MudImage>
         }
-
+        
         <MudTextField T="string" @ref="_mudTextField" @bind-Value="@Value" @bind-Value:after="async () => await SendMessage()"
                       Placeholder="Écrire un message..." MaxLines="32"
                       Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send"
                       OnAdornmentClick="async () => await ValueChanged.InvokeAsync(Value)" FullWidth="true"
                       Class="mt-2" Style="width: 55%; margin-left: 5%; position: fixed; bottom: 20px;"
-                      @onkeydown="OnKeyDown" />
+                      @onkeydown="OnKeyDown"/>
     </div>
 
     <MudFileUpload T="IBrowserFile"
@@ -59,9 +63,9 @@
         <CustomContent>
             <MudFab Color="Color.Success"
                     OnClick="@context.OpenFilePickerAsync"
-                    StartIcon="@Icons.Material.Filled.AttachFile" />
+                    StartIcon="@Icons.Material.Filled.AttachFile"/>
         </CustomContent>
-        <SelectedTemplate />
+        <SelectedTemplate/>
     </MudFileUpload>
 </div>
 
@@ -74,7 +78,7 @@
 
     [Parameter]
     public EventCallback<string> ValueChanged { get; set; }
-
+    
     [Parameter]
     public required IBrowserFile? File { get; set; }
     [Parameter]
@@ -85,28 +89,38 @@
     private MudTextField<string>? _mudTextField;
     private ElementReference _inputWrapper;
     private string? _imageDataUrl = null;
-
+    
     protected override void OnInitialized()
     {
         TextChannelVm.PropertyChanged += (_, __) => StateHasChanged();
+        
+        TextChannelVm.Id = Channel.Id ?? 0;
+        
         base.OnInitialized();
     }
 
     protected override Task OnInitializedAsync()
     {
         TextChannelVm.InitAsync();
+        
         return base.OnInitializedAsync();
     }
+    
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
+        {
             await JS.InvokeVoidAsync("preventEnterDefault", _inputWrapper);
+        }
     }
 
+    private async Task OnValueChanged(string newValue)
+    {
+        Value = newValue;
+    }
+    
     private async Task SendMessage()
-
-
     {
         if (Value != string.Empty && AuthState.CurrentUser!.HasPermission(Serverid ?? 0, ServerPermission.SendMessage))
         {
@@ -122,9 +136,21 @@
 
         if (File != null)
         {
+            Console.WriteLine($"Sending file: {File.Name}");
             await FileChanged.InvokeAsync(File);
             File = null;
             _imageDataUrl = null;
+        }
+        
+        
+        if (Value != string.Empty || Value != "")
+        {
+            await ValueChanged.InvokeAsync(Value);
+            Value = string.Empty;
+            if (_mudTextField != null)
+            {
+                await _mudTextField.SetTextAsync(string.Empty);
+            }
         }
     }
 
@@ -133,12 +159,15 @@
         if (e is { Key: "Enter", ShiftKey: false })
         {
             await SendMessage();
+            
             if (_mudTextField != null)
+            {
                 await _mudTextField.SetTextAsync(string.Empty);
+            }
             StateHasChanged();
         }
     }
-
+    
     private async Task OnFileInput()
     {
         if (File != null)
@@ -147,6 +176,7 @@
             var resizedImage = await File.RequestImageFileAsync(format, 100, 100);
             var buffer = new byte[resizedImage.Size];
             await resizedImage.OpenReadStream().ReadAsync(buffer);
+            
             _imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
         }
     }

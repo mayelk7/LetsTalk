@@ -2,6 +2,7 @@
 using LetsTalk.Context;
 using LetsTalk.Models;
 using LetsTalk.Shared.Api;
+using LetsTalk.Shared.Enum;
 using LetsTalk.Shared.ModelsDto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ namespace LetsTalk.Controllers;
 public class MessageCanauxApiController(AppDbContext appDbContext) : BaseApiController
 {
     [HttpPost("")]
-    public ApiResponse<MessageCanalDto?> Create([FromBody] MessageDto messageDto)
+    public async Task<ApiResponse<MessageCanalDto?>> Create([FromBody] MessageDto messageDto)
     {
         var message = new MessageCanal()
         {
@@ -25,8 +26,26 @@ public class MessageCanauxApiController(AppDbContext appDbContext) : BaseApiCont
         
         Console.WriteLine(JsonSerializer.Serialize(message));
 
-        appDbContext.MessagesCanal.AddAsync(message);
-        appDbContext.SaveChangesAsync();
+        var messageEntity = await appDbContext.MessagesCanal.AddAsync(message);
+        
+        var fichier = messageDto.Fichier != null
+            ? new Fichier
+            {
+                Nom = messageDto.Fichier?.Nom ?? "Inconnu",
+                Url = messageDto.Fichier?.Url ?? "",
+                Type = "0",
+                MessageType = MessageType.Canal,
+                MessageId = messageEntity.Entity.MessageId
+            }
+            : null;
+        
+        
+        if (fichier != null)
+        {
+            await appDbContext.Fichiers.AddAsync(fichier);
+        }
+        
+        await appDbContext.SaveChangesAsync();
 
         // var messageCanalDto = appDbContext.MessagesCanal
         //     .AsNoTracking()
@@ -62,7 +81,8 @@ public class MessageCanauxApiController(AppDbContext appDbContext) : BaseApiCont
                 m.UtilisateurId,
                 m.Utilisateur.Username,
                 m.CanalId,
-                m.Canal.Nom
+                m.Canal.Nom,
+                m.Fichier != null ? m.Fichier.Url : null
             )).ToList();
 
         return new ApiResponse<List<MessageCanalDto>>(

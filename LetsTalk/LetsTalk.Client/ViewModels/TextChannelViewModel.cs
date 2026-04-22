@@ -1,15 +1,17 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LetsTalk.Client.Services;
-using LetsTalk.Shared.Api;
 using LetsTalk.Shared.ModelsDto;
 
 namespace LetsTalk.Client.ViewModels;
 
-public partial class TextChannelViewModel : ObservableObject
+public partial class TextChannelViewModel(AuthStateService authState) : ObservableObject
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     private PeriodicTimer _refreshTimer = new(TimeSpan.FromSeconds(1));
+    
+    [ObservableProperty]
+    private AuthStateService _authState = authState;
     
     [ObservableProperty]
     private List<MessageCanalDto>? _messages = [];

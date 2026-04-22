@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LetsTalk.Client.Context;
 using LetsTalk.Client.Services;
+using LetsTalk.Shared.Enum;
 using LetsTalk.Shared.ModelsDto;
 using Microsoft.AspNetCore.Components.Forms;
 
@@ -28,8 +29,40 @@ public partial class ServerViewModel(UserContext userContext, AuthStateService a
     [ObservableProperty] 
     private IBrowserFile? _file;
     
-    public void OnMessageInput()
+    public async Task OnMessageInput()
     {
+        if (CurrentMessage == null || SelectedChannel == null)
+        {
+            return;
+        }
+        
+        CurrentMessage = CurrentMessage.Trim();
+        
+        if (CurrentMessage.Length == 0)
+        {
+            return;
+        }
+
+        FichierMessageDto? fichier = null;
+        
+        Console.WriteLine("Current message: " + CurrentMessage);
+        Console.WriteLine("Current file: " + (File != null ? File?.Name : "No file"));
+
+        if (File != null)
+        {
+            var buffer = new byte[File?.Size ?? 0];
+            _ = File?.OpenReadStream().ReadAsync(buffer);
+            
+            Console.WriteLine(Convert.ToBase64String(buffer));
+
+            fichier = new FichierMessageDto(
+                0,
+                File?.Name ?? "Inconnu",
+                Convert.ToBase64String(buffer),
+                MessageType.Canal
+            );
+        }
+        
         var currentUser = _authState.CurrentUser;
 
         if (currentUser == null) return;
@@ -47,12 +80,14 @@ public partial class ServerViewModel(UserContext userContext, AuthStateService a
             CurrentMessage ?? string.Empty,
             DateTime.Now,
             SelectedChannel.Id ?? 0,
-            false
+            false,
+            fichier
         );
-
+        
         SelectedChannel.Messages.Add(message);
         
         CurrentMessage = string.Empty;
+        File = null;
         
         ApiManagerService.MakePostRequest<MessageCanalDto?,MessageDto>("/api/messagecanaux", message)
             .ContinueWith(

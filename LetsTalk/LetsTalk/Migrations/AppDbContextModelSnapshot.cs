@@ -79,6 +79,9 @@ namespace LetsTalk.Migrations
                     b.Property<int>("MessageId")
                         .HasColumnType("int");
 
+                    b.Property<int>("MessagePriveId")
+                        .HasColumnType("int");
+
                     b.Property<string>("MessageType")
                         .IsRequired()
                         .HasColumnType("longtext");

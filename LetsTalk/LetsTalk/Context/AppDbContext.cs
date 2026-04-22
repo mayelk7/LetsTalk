@@ -159,7 +159,15 @@ public class AppDbContext : DbContext
             .HasForeignKey(ml => ml.UtilisateurId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Fichier, Notification, MessageLu: no FK to message tables (messageId + messageType used in app logic)
+        // Fichier: relations with message tables
+        // A Fichier can be linked to a MessageCanal via Fichier.MessageId
+        modelBuilder.Entity<MessageCanal>()
+            .HasOne(m => m.Fichier)
+            .WithOne(f => f.MessageCanal)
+            .HasForeignKey<Fichier>(f => f.MessageId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Note: Fichier also contains MessagePriveId for private messages; that relation is left as-is
 
         // Indexes (optional but useful)
         modelBuilder.Entity<MessageCanal>()

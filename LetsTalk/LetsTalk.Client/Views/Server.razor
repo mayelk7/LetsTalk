@@ -140,7 +140,7 @@ else
             new LeaveServerRequestdto { UserId = useridtostring }
     );
 
-        if (result != null && result.Success)
+        if (result is { Success: true })
             NavigationManager.NavigateTo("/home");
     }
 }

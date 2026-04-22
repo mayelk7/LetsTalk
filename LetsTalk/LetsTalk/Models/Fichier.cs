@@ -21,7 +21,13 @@ public class Fichier
     // messageType + messageId (no FK to two possible tables)
     [Required]
     public MessageType MessageType { get; set; }
+    
+    [Required]
+    public int MessagePriveId { get; set; }
 
     [Required]
     public int MessageId { get; set; }
+
+    // Navigation back to the channel message (nullable because a file can also be linked to a private message)
+    public MessageCanal? MessageCanal { get; set; }
 }

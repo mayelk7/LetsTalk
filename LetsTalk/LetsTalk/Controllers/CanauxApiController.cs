@@ -41,6 +41,6 @@ public class CanauxApiController(BackApiEf _db, AppDbContext appDbContext) : Bas
                 return Response<bool>("Canal créé avec succès.", true);
          
     
-     }
+    }
     
 }
