@@ -17,21 +17,6 @@
   <component name="ChangeListManager">
     <list default="true" id="88ba99b6-afb7-456e-8247-62c505dc6bc0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.LetsTalk/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Services/ApiManagerService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Services/ApiManagerService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/ServerViewModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/TextChannelViewModel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/ViewModels/TextChannelViewModel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/TextChannel.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Components/TextChannel.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Client/Views/Server.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageCanalDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageCanalDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk.Shared/ModelsDto/MessageDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Context/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Context/AppDbContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/CanauxApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/CanauxApiController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/MessageCanauxApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/MessageCanauxApiController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/ServerApiController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Controllers/ServerApiController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Data/BackApiEf.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Data/BackApiEf.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Migrations/AppDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Migrations/AppDbContextModelSnapshot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Models/Fichier.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Models/Fichier.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LetsTalk/LetsTalk/Models/MessageCanal.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LetsTalk/LetsTalk/Models/MessageCanal.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +42,7 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="4" />
+    <option name="cachedIndexableFilesCount" value="2" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -124,32 +109,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.LetsTalk: http.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.LetsTalk: https.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Project.LetsTalk.Client.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#16 on dev&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.LetsTalk: http.executor": "Run",
+    ".NET Launch Settings Profile.LetsTalk: https.executor": "Run",
+    ".NET Project.LetsTalk.Client.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "#18 on dev",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.LetsTalk: http">
     <configuration name="LetsTalk.Client" type="DotNetProject" factoryName=".NET Project">
       <option name="EXE_PATH" value="" />
@@ -251,7 +236,8 @@
       <workItem from="1775028675421" duration="78000" />
       <workItem from="1775029435633" duration="4210000" />
       <workItem from="1776773042980" duration="7394000" />
-      <workItem from="1776838669446" duration="16591000" />
+      <workItem from="1776838669446" duration="16620000" />
+      <workItem from="1778485094684" duration="1413000" />
     </task>
     <task id="LOCAL-00001" summary="init MVVM + EFCore&#10;README">
       <option name="closed" value="true" />
@@ -405,7 +391,15 @@
       <option name="project" value="LOCAL" />
       <updated>1776775431898</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Enhance ApiManagerService and database models to support file uploads in messages; update related API controllers and view models">
+      <option name="closed" value="true" />
+      <created>1776870849893</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1776870849893</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -445,7 +439,8 @@
     <MESSAGE value="Refactor LivekitApiController and VoiceChannel; update context menu handling and API response structure" />
     <MESSAGE value="Enhance TextChannel component; reverse message order and add input field for message sending" />
     <MESSAGE value="Update project dependencies, improve navigation, and enhance TextChannel component with file upload support" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update project dependencies, improve navigation, and enhance TextChannel component with file upload support" />
+    <MESSAGE value="Enhance ApiManagerService and database models to support file uploads in messages; update related API controllers and view models" />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhance ApiManagerService and database models to support file uploads in messages; update related API controllers and view models" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
