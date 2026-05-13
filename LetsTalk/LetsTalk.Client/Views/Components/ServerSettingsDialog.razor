@@ -1,0 +1,237 @@
+﻿
+@using MudBlazor
+@using MudBlazor.Services
+@using LetsTalk.Shared.ModelsDto
+@using LetsTalk.Client.Services;
+@using LetsTalk.Client.Views.Components
+@using LetsTalk.Shared.Perm
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject AuthStateService AuthState
+@* ^^^ Assure-toi que cette ligne est présente ! *@
+
+<MudDialog>
+    <DialogContent>
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+
+            <MudTabPanel Text="Général" Icon="@Icons.Material.Filled.Info">
+                <MudStack Spacing="4">
+                    <MudTextField Label="Nom du serveur" Variant="Variant.Outlined" @bind-Value="_newServerName" />
+                </MudStack>
+                @* Optionnel : Bouton de test rapide *@
+                <MudButton OnClick="HandleSave" Color="Color.Inherit" Class="mt-4">Sauvegarder nom</MudButton>
+            </MudTabPanel>
+
+            @if (AuthState.CurrentUser!.HasPermission(serveur.Id ?? 0, ServerPermission.ManageRoles))
+            {
+            <MudTabPanel Text="Rôles" Icon="@Icons.Material.Filled.Shield">
+                <MudGrid>
+                    <MudItem xs="4">
+                        <MudList T="RoleDto" SelectedValueChanged="OnRoleSelected">
+                            
+                            @foreach (var role in ServerRoles)
+                            {
+                                <MudListItem Value="@role" Text="@role.Nom" Icon="@Icons.Material.Filled.Label" />
+                            }
+                        </MudList>
+                        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.Add"
+                                   Color="Color.Primary" OnClick="OpenCreateRole">Créer un rôle</MudButton>
+                    </MudItem>
+
+                    <MudItem xs="8">
+                        @if (_selectedRole != null)
+                        {
+                            <MudText Typo="Typo.h6" Class="mb-3">Permissions — @_selectedRole.Nom</MudText>
+                            <MudTable Items="@_permissionItems" Hover="true" Elevation="0">
+                                <HeaderContent>
+                                    <MudTh>Permission</MudTh>
+                                    <MudTh>Activé</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd>@context.Label</MudTd>
+                                    <MudTd>
+                                        <MudSwitch @bind-Value="@context.IsEnabled" Color="Color.Primary" />
+                                    </MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                            <MudButton Color="Color.Primary" OnClick="SaveRolePermissions">Sauvegarder</MudButton>
+                        }
+                    </MudItem>
+                </MudGrid>
+            </MudTabPanel>
+            }
+
+        </MudTabs>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Annuler</MudButton>
+        @* On appelle HandleSave qui gère l'API ET la fermeture *@
+        <MudButton Color="Color.Primary" OnClick="HandleSave">Enregistrer les modifications</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter]
+    public FullServerDto serveur { get; set; } = default!;
+
+    private string _newServerName = string.Empty;
+
+    /*private List<PermissionModel> UserPermissions = new()
+    {
+        new ("Envoyer des messages", "Autorise l'envoi de texte", true),
+        new ("Gérer les canaux", "Autorise la création/suppression", false),
+        new ("Expulser des membres", "Droit de modération", false)
+    };
+*/
+    private List<RoleDto> ServerRoles = new();
+
+
+   protected override void OnInitialized()
+    {
+    if (serveur == null)
+    {
+        serveur = new FullServerDto(1, "Serveur Inconnu", new(), new());
+    }
+    _newServerName = serveur.Name;
+    LoadRolesAndPermissions();
+    }
+
+    // Gestion du bouton Annuler avec fallback
+    private void Cancel()
+    {
+    MudDialog.Cancel();   
+    }
+
+        // Méthode unifiée pour sauvegarder et fermer
+    private async Task HandleSave()
+    {
+        var sucess1 = await SaveToApi();
+        var sucess2 = SaveRolePermissions();
+
+        MudDialog.Close(DialogResult.Ok(true));         
+    }
+
+    private async Task<bool> SaveToApi()
+    {
+    var updatedServer = new FullServerDto(
+        serveur.Id,
+        _newServerName,
+        serveur.Channels,
+        serveur.Users
+    );
+
+    var result = await ApiManagerService.MakePutRequest<bool, FullServerDto>(
+        $"server/{serveur.Id}",
+        updatedServer
+    );
+
+    return result?.Success ?? false;
+    }
+
+    public class PermissionModel
+    {
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public bool IsEnabled { get; set; }
+
+    public PermissionModel(string name, string description, bool isEnabled)
+    {
+        Name = name;
+        Description = description;
+        IsEnabled = isEnabled;
+    }
+    }
+    //recupere tout les role via l'api et affiche les permissions de chaque role
+    private async Task LoadRolesAndPermissions()
+    {
+        // Exemple d'appel API pour récupérer les rôles et permissions
+        var rolesResult = await ApiManagerService.MakeGetRequest<List<RoleDto>>($"/api/role/server/{serveur.Id}");
+        if (rolesResult?.Success == true)
+        {
+            ServerRoles = rolesResult.Data;
+            System.Console.WriteLine(ServerRoles);
+        }
+    }
+
+    private async Task<bool> OpenCreateRole()
+    {
+        var dialog = await DialogService.ShowAsync<CreateRoleDialog>("Créer un rôle");
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            var request = (CreateRoleRequest)result.Data!;
+            // appel API avec request.Nom et request.Level
+            request.ServerId = serveur.Id ?? 0;
+            var state = await ApiManagerService.MakePostRequest<bool, CreateRoleRequest>("role", request);
+            if (state.Success)
+            {
+                Snackbar.Add("Rôle créé avec sucesès !", Severity.Success);
+                MudDialog.Close();
+                return true;
+            }
+            else
+            {
+                Snackbar.Add("Rôle non Cree !", Severity.Error);
+                return false;
+            }
+         
+        }
+        return false;
+    }
+
+    private RoleDto? _selectedRole;
+
+    private List<PermissionItem> _permissionItems = new();
+
+    // Quand on clique sur un rôle → charger ses permissions
+    private void OnRoleSelected(RoleDto role)
+    {
+        _selectedRole = role;
+        _permissionItems = Enum.GetValues<ServerPermission>()
+            .Where(p => p != ServerPermission.None)
+            .Select(p => new PermissionItem
+            {
+                Permission = p,
+                Label = p.ToString(),
+                IsEnabled = HelperPerm.HasPermission(role.Permissions, p)
+            })
+            .ToList();
+    }
+
+    // À l'enregistrement — calcul du bitmask et appel API
+    private async Task SaveRolePermissions()
+    {
+        if (_selectedRole == null) return;
+
+        long newPermissions = _permissionItems
+            .Where(p => p.IsEnabled)
+            .Aggregate(0L, (acc, p) => acc | (long)p.Permission);
+
+        // appel API update role
+        var result = await ApiManagerService.MakePutRequest<bool, UpdateRolePermissionsRequest>(
+            $"/api/role/{_selectedRole.RoleId}/permissions",
+            new UpdateRolePermissionsRequest { Permissions = newPermissions }
+        );
+
+        if (result?.Success == true)
+            Snackbar.Add("Permissions sauvegardées !", Severity.Success);
+    }
+
+    public class PermissionItem
+    {
+        public ServerPermission Permission { get; set; }
+        public string Label { get; set; } = string.Empty;
+        public bool IsEnabled { get; set; }
+    }
+
+    public class UpdateRolePermissionsRequest
+    {
+        public long Permissions { get; set; }
+    }
+
+
+}

@@ -83,7 +83,8 @@ public class BackApiEf
                 m.UtilisateurId,
                 m.Utilisateur.Username,
                 m.CanalId,
-                m.Canal.Nom
+                m.Canal.Nom, 
+                m.Fichier != null ? m.Fichier.Url : null
             ))
             .ToList();
     }
@@ -369,8 +370,8 @@ public class BackApiEf
                 Identity = identityId,
                 Name = p.Name,
                 State = p.State.ToString(),
-                CanPublish = p.Permission?.CanPublish ?? false,
-                CanSubscribe = p.Permission?.CanSubscribe ?? false,
+                CanPublish = p.Permission != null ? p.Permission.CanPublish : false,
+                CanSubscribe = p.Permission != null ? p.Permission.CanSubscribe : false,
                 // ✅ LiveKit stocke les tracks actives sur chaque participant
                 IsSharingScreen = p.Tracks.Any(t => t.Source == TrackSource.ScreenShare && !t.Muted),
                 AvatarUrl = userFromDb.ProfilPicture,

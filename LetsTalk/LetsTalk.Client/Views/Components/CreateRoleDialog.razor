@@ -1,0 +1,33 @@
+﻿@using MudBlazor
+@using MudBlazor.Services
+@using LetsTalk.Shared.ModelsDto
+@using LetsTalk.Client.Services;
+@inject IDialogService DialogService
+
+
+<MudDialog>
+    <TitleContent>Créer un rôle</TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="Nom" Label="Nom du rôle" />
+        <MudNumericField @bind-Value="Level" Label="Level" Min="1" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Annuler</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Créer</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+
+    public string Nom { get; set; } = string.Empty;
+    public int Level { get; set; } = 1;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Submit()
+    {
+        if (string.IsNullOrWhiteSpace(Nom)) return;
+        MudDialog.Close(DialogResult.Ok(new CreateRoleRequest { Nom = Nom, Level = Level }));
+    }
+}

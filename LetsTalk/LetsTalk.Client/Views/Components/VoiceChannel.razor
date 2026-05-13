@@ -172,54 +172,66 @@
     }
 }
 
-@* ✅ Contrôles VOIP en bas de page *@
-<MudPaper Elevation="3" Class="pa-3 mb-4" Style="position: sticky; top: 0; z-index: 100;">
+@* ✅ Contrôles VOIP *@
+<MudPaper Elevation="3"
+          Class="pa-3 mb-4"
+          Style="position:sticky; top:0; z-index:100;">
+
     @if (!_isConnected)
     {
-        <MudGrid Spacing="1" Justify="Justify.Center">
-            <MudItem xs="12" sm="6" md="4" Class="d-flex align-center">
-                <MudButton Color="Color.Success" 
-                           Variant="Variant.Filled"
-                           StartIcon="@Icons.Material.Filled.Call"
-                           OnClick="JoinCall"
-                           FullWidth>
-                    Rejoindre l'appel vocal
-                </MudButton>
-            </MudItem>
-        </MudGrid>
+        <MudStack Row="false" AlignItems="AlignItems.Center">
+            <MudButton Color="Color.Success"
+                       Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Call"
+                       OnClick="JoinCall"
+                       FullWidth>
+                Rejoindre l'appel vocal
+            </MudButton>
+        </MudStack>
     }
     else
     {
-        <MudGrid Spacing="2" Justify="Justify.Center">
-            <MudItem xs="6">
-                <MudIconButton 
-                    Icon="@(_isMuted ? Icons.Material.Filled.MicOff : Icons.Material.Filled.Mic)"
-                    Color="@(_isMuted ? Color.Error : Color.Success)"
-                    Variant="Variant.Filled"
-                    Size="Size.Large"
-                    OnClick="ToggleMute"
-                    Title="@(_isMuted ? "Activer le micro" : "Couper le micro")" />
-            </MudItem>
-            @* ✅ NOUVEAU : Bouton partage d'écran *@
-            <MudItem xs="6">
-                <MudIconButton Icon="@(_isSharingScreen? Icons.Material.Filled.StopScreenShare : Icons.Material.Filled.ScreenShare)"
-                               Color="@(_isSharingScreen ? Color.Warning : Color.Primary)"
-                               Variant="Variant.Filled"
-                               Size="Size.Large"
-                               OnClick="ToggleScreenShare"
-                               Title="@(_isSharingScreen ? "Arrêter le partage" : "Partager l'écran")" />
-            </MudItem>
-            <MudItem xs="6">
-                <MudButton Color="Color.Error" 
-                           Variant="Variant.Filled"
-                           StartIcon="@Icons.Material.Filled.CallEnd"
-                           OnClick="LeaveCall">
-                    Quitter
+        @* Ligne unique, centrée, boutons avec labels *@
+        <MudStack Row="true"
+                  Justify="Justify.Center"
+                  AlignItems="AlignItems.Center"
+                  Spacing="2">
+
+            @* Micro *@
+            <MudTooltip Text="@(_isMuted ? "Réactiver le micro" : "Couper le micro")">
+                <MudButton Variant="Variant.Outlined"
+                           Color="@(_isMuted ? Color.Warning : Color.Success)"
+                           StartIcon="@(_isMuted ? Icons.Material.Filled.MicOff : Icons.Material.Filled.Mic)"
+                           OnClick="ToggleMute">
+                    @(_isMuted ? "Micro coupé" : "Micro actif")
                 </MudButton>
-            </MudItem>
-        </MudGrid>
+            </MudTooltip>
+
+            @* Partage d'écran *@
+            <MudTooltip Text="@(_isSharingScreen ? "Arrêter le partage" : "Partager l'écran")">
+                <MudButton Variant="Variant.Outlined"
+                           Color="@(_isSharingScreen ? Color.Warning : Color.Primary)"
+                           StartIcon="@(_isSharingScreen ? Icons.Material.Filled.StopScreenShare : Icons.Material.Filled.ScreenShare)"
+                           OnClick="ToggleScreenShare">
+                    @(_isSharingScreen ? "Partage actif" : "Partager l'écran")
+                </MudButton>
+            </MudTooltip>
+
+            <MudDivider Vertical="true" FlexItem="true" Style="height:32px;" />
+
+            @* Quitter *@
+            <MudButton Color="Color.Error"
+                       Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.CallEnd"
+                       OnClick="LeaveCall">
+                Quitter
+            </MudButton>
+
+        </MudStack>
     }
+
 </MudPaper>
+
 
 @* ✅ Grille des participants *@
 <MudBox Class="ma-4">

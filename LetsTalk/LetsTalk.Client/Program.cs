@@ -15,6 +15,7 @@ builder.Services.AddScoped<LoginLayoutViewModel>();
 builder.Services.AddScoped<CounterViewModel>();
 builder.Services.AddTransient<ServerViewModel>();
 builder.Services.AddScoped<ServerViewModel>();
+builder.Services.AddScoped<TextChannelViewModel>();
 builder.Services.AddSingleton<LiveKitServiceClient>();
 builder.Services.AddSingleton<UserContext>();
 
