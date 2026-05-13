@@ -1,0 +1,28 @@
+﻿@using Shared.ModelsDto
+<MudDialog>
+    <TitleContent>Choisir un rôle</TitleContent>
+    <DialogContent>
+        <MudList T="RoleDto" SelectedValueChanged="OnSelected">
+            @foreach (var role in Roles)
+            {
+                <MudListItem Value="@role" Text="@role.Nom" Icon="@Icons.Material.Filled.Label" />
+            }
+        </MudList>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Annuler</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public List<RoleDto> Roles { get; set; } = new();
+    [Parameter] public int CurrentRoleId { get; set; }
+
+    private void OnSelected(RoleDto role)
+    {
+        MudDialog.Close(DialogResult.Ok(role.RoleId));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+}

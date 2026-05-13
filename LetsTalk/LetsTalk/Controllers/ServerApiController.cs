@@ -7,6 +7,7 @@ using LetsTalk.Shared.ModelsDto;
 using Livekit.Server.Sdk.Dotnet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 
@@ -22,34 +23,44 @@ public class ServerApiController(AppDbContext appDbContext) : BaseApiController
         var server = appDbContext.Servers
             .Include(s => s.Canaux)
                 .ThenInclude(c => c.Messages)
-                    .ThenInclude(messageCanal => messageCanal.Utilisateur)
+                    .ThenInclude(messageCanal => messageCanal.Fichier)
             .Include(s => s.Membres)
                 .ThenInclude(m => m.Utilisateur)
+            .Include(s => s.Canaux)
+                .ThenInclude(c => c.Messages)
+                    .ThenInclude(messageCanal => messageCanal.Utilisateur)
             .FirstOrDefault(s => s.ServerId == id);
 
         if (server == null)
             return Response<FullServerDto>("Serveur non trouvé.", null);
             
-        var channels = server.Canaux.Select(canal => new ChannelDto(
-            canal.CanauxId,
-            canal.Nom,
-            canal.Messages.Select(msg => new MessageDto(
-                msg.MessageId,
-                new UserDto(
-                    msg.Utilisateur.UtilisateurId,
-                    msg.Utilisateur.Username,
-                    msg.Utilisateur.Email,
-                    msg.Utilisateur.Phone,
-                    msg.Utilisateur.ProfilPicture,
-                    msg.Utilisateur.CreatedAt
-                ),
-                msg.Contenu,
-                msg.DateEnvoi,
-                msg.CanalId,
-                msg.Epingle
-            )).ToList(),
-            canal.Type
-        )).ToList();
+        var channels = server.Canaux
+            .Select(canal => new ChannelDto(
+                canal.CanauxId,
+                canal.Nom,
+                canal.Messages.Select(msg => new MessageDto(
+                    msg.MessageId,
+                    new UserDto(
+                        msg.Utilisateur.UtilisateurId,
+                        msg.Utilisateur.Username,
+                        msg.Utilisateur.Email,
+                        msg.Utilisateur.Phone,
+                        msg.Utilisateur.ProfilPicture,
+                        msg.Utilisateur.CreatedAt
+                    ),
+                    msg.Contenu,
+                    msg.DateEnvoi,
+                    msg.CanalId,
+                    msg.Epingle,
+                    new FichierMessageDto(
+                        msg.Fichier != null ? msg.Fichier.FichierId : 0,
+                        msg.Fichier != null ? msg.Fichier.Nom : null,
+                        msg.Fichier != null ? msg.Fichier.Url : null,
+                        msg.Fichier != null ? ((MessageType)Convert.ToInt32(msg.Fichier.MessageType)) : null
+                    ))
+                ).ToList(),
+                canal.Type
+            )).ToList();
 
         var users = server.Membres.Select(user => new UserDto(
             user.UtilisateurId,

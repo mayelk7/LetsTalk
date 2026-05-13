@@ -1,8 +1,10 @@
 ﻿@inject TextChannelViewModel TextChannelVm
-@using LetsTalk.Client.Context
+@using LetsTalk.Client.Services
 @using LetsTalk.Shared.ModelsDto
-@inject UserContext UserCtx
+@using LetsTalk.Shared.Perm
+@inject AuthStateService AuthState
 @inject IJSRuntime JS
+@inject ISnackbar Snackbar
 @using MudX
 @namespace LetsTalk.Client.Views.Components
 
@@ -12,17 +14,17 @@
     <div style="flex: 1; display: flex; flex-direction: column-reverse; overflow-y: auto;">
         @if (Channel?.Messages?.Count > 0)
         {
-            foreach (var message in Channel.Messages.AsEnumerable().Reverse())
+            foreach (var message in Channel.Messages)
             {
-                var senderName = message.Sender?.Username ?? "Inconnu";
-                var isMe = UserContext?.CurrentUser?.Username != null
-                && senderName == UserContext.CurrentUser.Username;
-
-                <MudXChat Class="pa-2 mb-2" ChatPosition="@(message.Sender.Username == UserContext.CurrentUser?.Username ? ChatBubblePosition.End : ChatBubblePosition.Start)">
+                <MudXChat Class="pa-2 mb-2">
                     <MudXChatHeader Name="@message.Sender.Username" Time="@message.Timestamp.ToString()"></MudXChatHeader>
                     <MudXChatBubble>
                         @message.Content
                     </MudXChatBubble>
+                    @if (message?.Fichier?.Url != null)
+                    {
+                        <img src="data:image;base64,@message.Fichier.Url" height="200px" alt="">
+                    }
                 </MudXChat>
             }
         }
@@ -34,7 +36,6 @@
         }
     </div>
 
-    @* Zone de saisie (TOUJOURS visible, même sans messages) *@
     <div @ref="_inputWrapper">
         @if (_imageDataUrl != null)
         {
@@ -73,9 +74,6 @@
     public required ChannelDto Channel { get; set; }
 
     [Parameter]
-    public required UserContext UserContext { get; set; }
-
-    [Parameter]
     public required string Value { get; set; } = string.Empty;
 
     [Parameter]
@@ -85,6 +83,8 @@
     public required IBrowserFile? File { get; set; }
     [Parameter]
     public EventCallback<IBrowserFile> FileChanged { get; set; }
+    [Parameter]
+    public required int? Serverid { get; set; }
 
     private MudTextField<string>? _mudTextField;
     private ElementReference _inputWrapper;
@@ -93,6 +93,8 @@
     protected override void OnInitialized()
     {
         TextChannelVm.PropertyChanged += (_, __) => StateHasChanged();
+        
+        TextChannelVm.Id = Channel.Id ?? 0;
         
         base.OnInitialized();
     }
@@ -120,16 +122,16 @@
     
     private async Task SendMessage()
     {
-        Console.WriteLine($"Value: {Value} {_mudTextField?.Text}, File: {File?.Name}");
-        
-        if (Value != string.Empty)
+        if (Value != string.Empty && AuthState.CurrentUser!.HasPermission(Serverid ?? 0, ServerPermission.SendMessage))
         {
             await ValueChanged.InvokeAsync(Value);
             Value = string.Empty;
             if (_mudTextField != null)
-            {
                 await _mudTextField.SetTextAsync(string.Empty);
-            }
+        }
+        else if (Value != string.Empty)
+        {
+            Snackbar.Add("Vous n'avez pas la permission d'envoyer des messages.", Severity.Warning);
         }
 
         if (File != null)
@@ -138,6 +140,17 @@
             await FileChanged.InvokeAsync(File);
             File = null;
             _imageDataUrl = null;
+        }
+        
+        
+        if (Value != string.Empty || Value != "")
+        {
+            await ValueChanged.InvokeAsync(Value);
+            Value = string.Empty;
+            if (_mudTextField != null)
+            {
+                await _mudTextField.SetTextAsync(string.Empty);
+            }
         }
     }
 

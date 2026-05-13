@@ -9,5 +9,6 @@ public record MessageCanalDto(
     string Username,
 
     int CanalId,
-    string NomCanal
+    string NomCanal,
+    string? File
 );

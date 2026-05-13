@@ -1,16 +1,17 @@
-﻿using LetsTalk.Services.Authentification;
-using LetsTalk.Services.Email;
+﻿using LetsTalk.Context;
+using LetsTalk.Services.Authentification;
 using LetsTalk.Services.Email;
 using LetsTalk.Shared.Api;
 using LetsTalk.Shared.ModelsDto;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
 namespace LetsTalk.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(AuthService authService, IEmailService _emailService) : BaseApiController
+public class AuthController(AuthService authService, IEmailService _emailService, AppDbContext _context) : BaseApiController
 {
     // Register
     [HttpPost("register")]
@@ -35,7 +36,10 @@ public class AuthController(AuthService authService, IEmailService _emailService
             result.User.Phone,
             result.User.ProfilPicture,
             result.User.Actif,
-            result.User.CreatedAt
+            result.User.CreatedAt,
+            null,
+            null,
+            null
         );
 
         return Response("Inscription réussie", userDto);
@@ -43,23 +47,42 @@ public class AuthController(AuthService authService, IEmailService _emailService
 
     // Login
     [HttpPost("login")]
-    public ApiResponse<UserAuthDto> Login([FromBody] LoginDto dto)
+    public async Task<ApiResponse<UserAuthDto>> Login([FromBody] LoginDto dto)
     {
         var result = authService.Login(dto.Username, dto.Password);
 
         if (!result.Success)
-        {
             return Response<UserAuthDto>(result.ErrorMessage, null);
-        }
+
+        var userId = result.User!.UtilisateurId ?? 0;
+
+        // Récupère les serveurs owned
+        var ownedServerIds = await _context.Servers
+            .Where(s => s.OwnerId == userId)
+            .Select(s => s.ServerId)
+            .ToListAsync();
+
+        // Récupère les rôles par serveur
+        var serverRoles = await _context.Membres
+            .Where(m => m.UtilisateurId == userId)
+            .ToDictionaryAsync(m => m.ServerId, m => m.RoleId);
+        
+        var serverPermissions = await _context.Membres
+           .Where(m => m.UtilisateurId == userId)
+           .Include(m => m.Role)
+           .ToDictionaryAsync(m => m.ServerId, m => m.Role.Permissions);
 
         var userDto = new UserAuthDto(
-            result.User!.UtilisateurId ?? 0,
+            userId,
             result.User.Username,
             result.User.Email,
             result.User.Phone,
             result.User.ProfilPicture,
             result.User.Actif,
-            result.User.CreatedAt
+            result.User.CreatedAt,
+            ownedServerIds,
+            serverRoles,
+            serverPermissions
         );
 
         return Response("Connexion réussie", userDto);
@@ -120,6 +143,24 @@ public class AuthController(AuthService authService, IEmailService _emailService
         if (!result.Success)
             return Response<UserAuthDto>(result.ErrorMessage, null);
 
+        var userId = result.User!.UtilisateurId ?? 0;
+
+        // Récupère les serveurs owned
+        var ownedServerIds = await _context.Servers
+            .Where(s => s.OwnerId == userId)
+            .Select(s => s.ServerId)
+            .ToListAsync();
+
+        // Récupère les rôles par serveur
+        var serverRoles = await _context.Membres
+            .Where(m => m.UtilisateurId == userId)
+            .ToDictionaryAsync(m => m.ServerId, m => m.RoleId);
+        
+        var serverPermissions = await _context.Membres
+           .Where(m => m.UtilisateurId == userId)
+           .Include(m => m.Role)
+           .ToDictionaryAsync(m => m.ServerId, m => m.Role.Permissions);
+
         // Mapping vers le DTO de retour (sans le mot de passe !)
         var userDto = new UserAuthDto(
             result.User.UtilisateurId ?? 0,
@@ -128,7 +169,10 @@ public class AuthController(AuthService authService, IEmailService _emailService
             result.User.Phone,
             result.User.ProfilPicture,
             result.User.Actif,
-            result.User.CreatedAt
+            result.User.CreatedAt,
+            ownedServerIds,
+            serverRoles,
+            serverPermissions
         );
 
         return Response("Mot de passe modifié avec succès !", userDto);

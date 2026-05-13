@@ -31,9 +31,10 @@ public static class ApiManagerService
     /// </returns>
     public static async Task<ApiResponse<T>?> MakeGetRequest<T>(string endpoint)
     {
+        HttpClient.DefaultRequestHeaders.Remove("X-ApiManager");
         HttpClient.DefaultRequestHeaders.Add("X-ApiManager", endpoint);
         var response = await HttpClient.GetAsync(endpoint);
-        
+
         var responseContent = await response.Content.ReadAsStringAsync();
 
         return responseContent == string.Empty ? null : JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, JsonSerializerOptions.Web);
@@ -65,11 +66,12 @@ public static class ApiManagerService
         
         HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
         
+        HttpClient.DefaultRequestHeaders.Remove("X-ApiManager");
         HttpClient.DefaultRequestHeaders.Add("X-ApiManager", endpoint);
         var response = await HttpClient.PostAsync(endpoint, content);
-        
+
         var responseContent = await response.Content.ReadAsStringAsync();
-        
+
         return responseContent == string.Empty ? null : JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, JsonSerializerOptions.Web);
     }
     
@@ -89,11 +91,12 @@ public static class ApiManagerService
     /// </returns>
     public static async Task<ApiResponse<T>?> MakeDeleteRequest<T>(string endpoint)
     {
+        HttpClient.DefaultRequestHeaders.Remove("X-ApiManager");
         HttpClient.DefaultRequestHeaders.Add("X-ApiManager", endpoint);
         var response = await HttpClient.DeleteAsync(endpoint);
-        
+
         var responseContent = await response.Content.ReadAsStringAsync();
-        
+
         return responseContent == string.Empty ? null : JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, JsonSerializerOptions.Web);
     }
     
@@ -123,11 +126,12 @@ public static class ApiManagerService
         
         HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
         
+        HttpClient.DefaultRequestHeaders.Remove("X-ApiManager");        
         HttpClient.DefaultRequestHeaders.Add("X-ApiManager", endpoint);
         var response = await HttpClient.PutAsync(endpoint, content);
-        
+
         var responseContent = await response.Content.ReadAsStringAsync();
-        
+
         return responseContent == string.Empty ? null : JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, JsonSerializerOptions.Web);
     }
     
@@ -157,11 +161,12 @@ public static class ApiManagerService
         
         HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
         
+        HttpClient.DefaultRequestHeaders.Remove("X-ApiManager");
         HttpClient.DefaultRequestHeaders.Add("X-ApiManager", endpoint);
         var response = await HttpClient.PatchAsync(endpoint, content);
-        
+
         var responseContent = await response.Content.ReadAsStringAsync();
-        
+
         return responseContent == string.Empty ? null : JsonSerializer.Deserialize<ApiResponse<T>>(responseContent, JsonSerializerOptions.Web);
     }
 }

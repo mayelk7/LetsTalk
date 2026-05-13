@@ -79,6 +79,9 @@ namespace LetsTalk.Migrations
                     b.Property<int>("MessageId")
                         .HasColumnType("int");
 
+                    b.Property<int>("MessagePriveId")
+                        .HasColumnType("int");
+
                     b.Property<string>("MessageType")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -268,6 +271,9 @@ namespace LetsTalk.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<long>("Permissions")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("ServerId")
                         .HasColumnType("int");
 
@@ -325,6 +331,9 @@ namespace LetsTalk.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("PasswordResetToken")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -332,6 +341,9 @@ namespace LetsTalk.Migrations
 
                     b.Property<string>("ProfilPicture")
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("ResetTokenExpires")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)");

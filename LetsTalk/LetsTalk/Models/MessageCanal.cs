@@ -23,4 +23,8 @@ public class MessageCanal
     [Required]
     public int CanalId { get; set; }
     public Canaux Canal { get; set; }
+    
+    // Le FK vers le fichier est stocké dans Fichier.MessageId (relation configurée dans AppDbContext)
+    // On conserve la navigation optionnelle vers le fichier
+    public Fichier? Fichier { get; set; }
 }

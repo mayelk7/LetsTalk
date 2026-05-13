@@ -14,6 +14,7 @@ public class Role
     public int Level { get; set; }
     [Required]
     public int ServerId { get; set; }
+    public long Permissions { get; set; } = 0;
     public Server Server { get; set; }
 
     public ICollection<Membre> Membres { get; set; }
