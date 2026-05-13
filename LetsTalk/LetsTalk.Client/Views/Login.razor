@@ -205,21 +205,6 @@
                 result.Data.ProfilPicture,
                 result.Data.CreatedAt
             );
-
-                    // Redirection vers la page d'accueil
-                    Navigation.NavigateTo("/home");
-                }
-                else
-                {
-                    Snackbar.Add(result?.Message ?? "Erreur lors de la connexion", Severity.Error);
-                }
-            }
-            else
-            {
-                // Erreur de l'API
-                var errorResult = await response.Content.ReadFromJsonAsync<ApiResponse<UserAuthDto>>();
-                Snackbar.Add(errorResult?.Message ?? "Identifiants incorrects", Severity.Error);
-            }
         }
         catch (Exception ex)
         {
