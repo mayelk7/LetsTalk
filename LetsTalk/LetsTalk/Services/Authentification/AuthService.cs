@@ -1,6 +1,7 @@
 ﻿using LetsTalk.Context;
 using LetsTalk.Helpers;
 using LetsTalk.Models;
+using LetsTalk.Services.Authentication;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using static QRCoder.PayloadGenerator;
@@ -98,8 +99,6 @@ public class AuthService
         };
     }
 
-        return AuthResult.Succeeded(user);
-    }
     // Passwd reset
     public async Task<string?> PreparePasswordResetAsync(string email)
     {
@@ -151,5 +150,31 @@ public class AuthService
         {
             return AuthResult.Failed("Une erreur est survenue lors de la modification.");
         }    
+    }
+
+    // Vérification du code 2FA
+    public AuthResult VerifyTwoFactor(int userId, string code)
+    {
+        var user = _context.Utilisateurs.FirstOrDefault(u => u.UtilisateurId == userId);
+
+        if (user == null)
+            return AuthResult.Failed("Utilisateur introuvable");
+
+        if (string.IsNullOrWhiteSpace(user.Type2Fa))
+            return AuthResult.Failed("La double authentification n'est pas activée");
+
+        bool isValid = _twoFactorService.ValidateCode(user.Type2Fa, code);
+
+        if (!isValid)
+            return AuthResult.Failed("Code 2FA invalide");
+
+        // Remplace ce token plus tard par un vrai JWT
+        return new AuthResult
+        {
+            Success = true,
+            User = user,
+            Requires2FA = false,
+            Token = "token-temporaire"
+        };
     }
 }

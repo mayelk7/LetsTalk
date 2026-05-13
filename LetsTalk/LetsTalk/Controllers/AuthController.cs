@@ -150,7 +150,7 @@ public class AuthController(AuthService authService, IEmailService _emailService
 
         // Mapping vers le DTO de retour (sans le mot de passe !)
         var userDto = new UserAuthDto(
-            result.User.UtilisateurId ?? 0,
+            result.User.UtilisateurId,
             result.User.Username,
             result.User.Email,
             result.User.Phone,
